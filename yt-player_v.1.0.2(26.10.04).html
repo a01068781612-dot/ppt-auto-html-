@@ -1,0 +1,89 @@
+<!doctype html>
+<!--
+변경 이력
+| 버전    | 날짜     | 수정 내용 |
+| v.1.0.2 | 26.10.04 | 광고가 나오는 동안에는 화면 클릭이 유튜브로 전달되도록 변경('건너뛰기' 버튼 사용 가능). 클릭 차단은 본 영상이 시작 지점에 도달한 뒤에만 적용. 광고 안내 문구는 아래쪽으로 옮겨 건너뛰기 버튼을 가리지 않게 함 |
+| v.1.0.1 | 26.10.04 | ① 안내 문구(클릭하면 재생/구간 재생 끝)가 안 사라지던 오류 수정 ② 광고가 먼저 나오면 '광고 재생 중'으로 표시하고, 본 영상이 시작 지점에 도달한 뒤부터 끝 시간 감시 ③ 재생 중 화면 클릭이 유튜브로 넘어가지 않게 막음 ④ 끝난 뒤 화면 클릭하면 같은 구간 다시 재생 |
+| v.1.0.0 | 26.10.04 | 최초 작성 — 웹 주소(GitHub Pages)에 올려 두는 유튜브 구간 재생기. 슬라이드 HTML(PC 파일)이 이 페이지를 불러와 재생하므로 '오류 153'이 나지 않음.
+|         |          | 사용: yt-player...html?v=영상ID&s=시작초&e=끝초&t=제목 / 화면 클릭 또는 부모 창에서 postMessage({cmd:'play'}) 로 재생, 끝 초에 자동 정지 |
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>구간 재생기</title>
+<style>
+  :root{--bg:#000;--fg:#e9eef7;--muted:#9aa8bf;--accent:#4fc3f7;color-scheme:dark}
+  [hidden]{display:none!important}
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;overflow:hidden}
+  #player{position:absolute;inset:0;width:100%;height:100%}
+  .cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(11,18,32,.85);cursor:pointer;text-align:center;padding:16px}
+  .cover b{font-size:clamp(18px,3.2vw,34px)}
+  .cover span{color:var(--muted);font-size:clamp(12px,1.6vw,16px)}
+  .play{width:clamp(56px,8vw,84px);aspect-ratio:1;border-radius:50%;background:var(--accent);display:grid;place-items:center}
+  .play::before{content:"";border-left:26px solid #06121f;border-top:16px solid transparent;border-bottom:16px solid transparent;margin-left:7px}
+  .end{position:absolute;inset:0;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;background:rgba(0,0,0,.55);color:var(--muted);font-size:clamp(14px,2vw,20px);cursor:pointer}
+  .shield{position:absolute;inset:0;background:transparent}
+  .ad{position:absolute;left:50%;transform:translateX(-50%);top:12px;pointer-events:none;padding:4px 10px;border-radius:6px;background:rgba(0,0,0,.7);color:#ffd54f;font-size:14px}
+</style>
+</head>
+<body>
+<div id="player"></div>
+<div class="cover" id="cover">
+  <div class="play" aria-hidden="true"></div>
+  <b id="coverTitle">클릭하면 재생</b>
+  <span id="coverSub"></span>
+</div>
+<div class="shield" id="shield" hidden></div>
+<div class="ad" id="adMark" hidden>광고 또는 불러오는 중 — '건너뛰기'가 보이면 눌러 주세요</div>
+<div class="end" id="endMark" hidden><b>구간 재생 끝</b><span>다시 보려면 클릭</span></div>
+<script>
+  const q = new URLSearchParams(location.search);
+  const CLIP = { id: q.get("v") || "", start: parseFloat(q.get("s") || "0"), end: parseFloat(q.get("e") || "0") || null };
+  const fmt = s => Math.floor(s/60) + ":" + String(Math.floor(s%60)).padStart(2,"0");
+  const cover = document.getElementById("cover"), endMark = document.getElementById("endMark"), shield = document.getElementById("shield"), adMark = document.getElementById("adMark");
+  document.getElementById("coverSub").textContent = CLIP.end ? fmt(CLIP.start) + " ~ " + fmt(CLIP.end) + " 구간 · 끝나면 저절로 멈춥니다" : fmt(CLIP.start) + "부터 재생";
+  let player, ready = false, watch = null, pending = false;
+
+  function tell(state, extra){ try { parent.postMessage(Object.assign({ ytClip: true, state }, extra || {}), "*"); } catch(e){} }
+
+  function play(){
+    if (!ready) { pending = true; return; }
+    cover.hidden = true; endMark.hidden = true; shield.hidden = true;
+    const o = { videoId: CLIP.id, startSeconds: CLIP.start }; if (CLIP.end) o.endSeconds = CLIP.end;
+    player.loadVideoById(o);
+    clearInterval(watch);
+    let reached = false;
+    watch = setInterval(() => {
+      const t = player.getCurrentTime ? player.getCurrentTime() : 0;
+      const st = player.getPlayerState ? player.getPlayerState() : -1;
+      // 본 영상이 시작 지점 근처에 와야 '도달'로 봄. 그 전(광고·로딩)은 광고 표시
+      if (!reached && st === 1 && t >= CLIP.start - 1 && (!CLIP.end || t <= CLIP.end + 1)) reached = true;
+      adMark.hidden = reached;
+      shield.hidden = !reached;
+      if (!reached) { tell("loading", { t }); return; }
+      tell("playing", { t });
+      if (CLIP.end && t >= CLIP.end - 0.05) stop();
+    }, 100);
+  }
+  function stop(){ clearInterval(watch); try { player.pauseVideo(); } catch(e){} shield.hidden = true; adMark.hidden = true; endMark.hidden = false; tell("ended"); }
+
+  window.onYouTubeIframeAPIReady = function(){
+    player = new YT.Player("player", {
+      videoId: CLIP.id,
+      playerVars: { start: Math.floor(CLIP.start), end: CLIP.end ? Math.ceil(CLIP.end) : undefined, rel: 0, modestbranding: 1, playsinline: 1, controls: 0, origin: location.origin },
+      events: {
+        onReady: () => { ready = true; tell("ready"); if (pending) { pending = false; play(); } },
+        onStateChange: e => { if (e.data === YT.PlayerState.ENDED) stop(); },
+        onError: e => { tell("error", { code: e.data }); document.getElementById("coverTitle").textContent = "재생 오류 " + e.data; cover.hidden = false; }
+      }
+    });
+  };
+  cover.addEventListener("click", play);
+  endMark.addEventListener("click", play);
+  window.addEventListener("message", e => { const d = e.data || {}; if (d.cmd === "play") play(); if (d.cmd === "stop") stop(); });
+  const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+</script>
+</body>
+</html>
