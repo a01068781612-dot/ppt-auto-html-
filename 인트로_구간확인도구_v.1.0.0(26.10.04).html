@@ -1,0 +1,146 @@
+<!doctype html>
+<!--
+변경 이력
+| 버전    | 날짜     | 수정 내용 |
+| v.1.0.0 | 26.10.04 | 최초 작성 — 8.11 국무회의 영상에서 인트로 컷 ①~⑧ 구간을 찾아 표시·재생·복사하는 도구 |
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인트로 구간 확인</title>
+<style>
+  :root{--bg:#0b1220;--card:#131c2e;--line:#24314a;--text:#e8edf5;--muted:#93a1b8;--accent:#4fc3f7;--gold:#ffd54f}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.5}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:22px;margin:0 0 4px}
+  p.sub{color:var(--muted);margin:0 0 16px;font-size:14px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  button{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:14px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  button.on{background:var(--accent);color:#06121f;border-color:var(--accent);font-weight:700}
+  .player{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden}
+  .player iframe,#yt{position:absolute;inset:0;width:100%;height:100%}
+  .now{margin:10px 0 18px;color:var(--muted);font-size:14px}
+  .now b{color:var(--gold);font-size:18px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  td.who{white-space:nowrap}
+  .kw{color:var(--accent)}
+  input{width:72px;background:#0e1626;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:5px;font-size:14px;text-align:center}
+  .row-btns button{padding:4px 8px;font-size:12px;margin:2px 2px 2px 0}
+  .star td{background:rgba(255,213,79,.06)}
+  textarea{width:100%;height:170px;background:#0e1626;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:13px;margin-top:8px}
+  .tip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;margin:14px 0}
+  .tip ol{margin:6px 0 0;padding-left:20px}
+  @media (max-width:700px){.hide-m{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>인트로 구간 확인 — 26.8.11 국무회의</h1>
+  <p class="sub">영상을 보면서 컷 ①~⑧의 시작·끝 시간을 표시하고, 그 구간만 다시 재생해 확인한 뒤, 결과를 복사해 보내주세요.</p>
+
+  <div class="bar">
+    <button id="bClip" class="on">짧은 클립 (먼저 확인)</button>
+    <button id="bFull">전체 국무회의 영상</button>
+    <button id="bOpen">유튜브에서 직접 열기 ↗</button>
+  </div>
+
+  <div class="player"><div id="yt"></div></div>
+  <div class="now">현재 재생 위치: <b id="now">0:00</b> &nbsp;·&nbsp; <span id="vname"></span></div>
+
+  <div class="tip">
+    <b>장면 찾는 가장 빠른 방법</b>
+    <ol>
+      <li>위 <b>"유튜브에서 직접 열기"</b> → 영상 설명란 <b>"…더보기" → "스크립트 표시"</b></li>
+      <li>스크립트 창에서 <b>Ctrl+F</b> → 아래 표의 <span class="kw">검색어</span> 입력 → 나온 시간을 확인</li>
+      <li>이 페이지로 돌아와 그 시간 근처를 재생하며 <b>[지금=시작] [지금=끝]</b> 버튼으로 표시 → <b>[구간 재생]</b>으로 확인</li>
+    </ol>
+  </div>
+
+  <table>
+    <thead><tr><th>컷</th><th>나오는 사람</th><th class="hide-m">내용</th><th>검색어</th><th>시작</th><th>끝</th><th></th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <h3 style="margin-top:22px">결과 (복사해서 보내주세요)</h3>
+  <div class="bar"><button id="bCopy">결과 복사</button><button id="bPlayAll">표시한 구간 이어서 재생</button></div>
+  <textarea id="out" readonly></textarea>
+</div>
+
+<script>
+const VIDEOS={
+  clip:{id:"xI6fxlGfobQ",name:"짧은 클립 — [자막] \"민간 개발자 채용? 난 이해 안돼\" 대통령 갸우뚱"},
+  full:{id:"A3Vbh8M2ezc",name:"전체 — (26.8.11.) 이재명 대통령 제35회 국무회의"}
+};
+const CUTS=[
+  {k:"①",who:"대통령·총리 투샷",what:"개회 + 날짜 자막",kw:"국무회의를 시작"},
+  {k:"②",who:"대통령",what:"(선택) \"첨단 산업은 경제 대도약의 씨앗\"",kw:"씨앗"},
+  {k:"③",who:"과기부 부총리",what:"범부처 국민 AI 서비스 혁신 추진단 신설",kw:"범부처"},
+  {k:"④",who:"부총리 ↔ 대통령",what:"정부 내 스타트업처럼 운영",kw:"스타트업"},
+  {k:"⑤",who:"대통령",what:"\"채용해서 고용하겠다는 거예요?\"",kw:"고용하겠다"},
+  {k:"⑥",who:"대통령 ↔ 총리 반응",what:"\"기회·플랫폼·성과에 보상\"",kw:"플랫폼"},
+  {k:"⑦",who:"행안부 장관",what:"AI 챔피언 540→1,200, 블랙 18명",kw:"블랙",star:true},
+  {k:"⑧",who:"대통령·총리 투샷",what:"마무리 컷",kw:"(반응·투샷 장면)"}
+];
+let cur="clip", player=null, ready=false, stopAt=null, queue=[];
+const store={}; // per video: [{s,e}]
+function key(){return "intro-cuts-"+cur}
+function load(){try{return JSON.parse(localStorage.getItem(key()))||CUTS.map(()=>({s:"",e:""}))}catch(e){return CUTS.map(()=>({s:"",e:""}))}}
+function save(d){try{localStorage.setItem(key(),JSON.stringify(d))}catch(e){}}
+function fmt(t){t=Math.max(0,Math.floor(t));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(s).padStart(2,"0")}
+function parse(v){if(!v)return null;const p=String(v).trim().split(":").map(Number);if(p.some(isNaN))return null;return p.reduce((a,b)=>a*60+b,0)}
+
+function render(){
+  const d=load(); const tb=document.getElementById("rows"); tb.innerHTML="";
+  CUTS.forEach((c,i)=>{
+    const tr=document.createElement("tr"); if(c.star)tr.className="star";
+    tr.innerHTML=`<td><b>${c.k}</b></td><td class="who">${c.who}</td><td class="hide-m">${c.what}</td><td class="kw">${c.kw}</td>
+      <td><input data-i="${i}" data-f="s" value="${d[i].s}" placeholder="0:00"></td>
+      <td><input data-i="${i}" data-f="e" value="${d[i].e}" placeholder="0:00"></td>
+      <td class="row-btns"><button data-a="s" data-i="${i}">지금=시작</button><button data-a="e" data-i="${i}">지금=끝</button><button data-a="p" data-i="${i}">구간 재생</button></td>`;
+    tb.appendChild(tr);
+  });
+  output();
+}
+function output(){
+  const d=load(); let lines=["[인트로 컷 구간] 영상: "+VIDEOS[cur].name+" (youtu.be/"+VIDEOS[cur].id+")"];
+  CUTS.forEach((c,i)=>{lines.push(`${c.k} ${c.who} — ${d[i].s||"?"} ~ ${d[i].e||"?"}`)});
+  document.getElementById("out").value=lines.join("\n");
+}
+document.addEventListener("input",e=>{if(e.target.matches("input[data-i]")){const d=load();d[+e.target.dataset.i][e.target.dataset.f]=e.target.value;save(d);output()}});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button[data-a]"); if(!b)return;
+  const i=+b.dataset.i, a=b.dataset.a, d=load();
+  if(!ready){alert("영상이 아직 준비되지 않았습니다. 잠시 후 다시 눌러주세요.");return}
+  if(a==="s"||a==="e"){d[i][a]=fmt(player.getCurrentTime());save(d);render()}
+  if(a==="p"){const s=parse(d[i].s),en=parse(d[i].e);if(s==null){alert("시작 시간을 먼저 표시해주세요.");return}queue=[];playRange(s,en)}
+});
+function playRange(s,e){stopAt=e;player.seekTo(s,true);player.playVideo()}
+document.getElementById("bPlayAll").onclick=()=>{
+  if(!ready)return; const d=load();
+  queue=d.map(x=>[parse(x.s),parse(x.e)]).filter(x=>x[0]!=null&&x[1]!=null&&x[1]>x[0]);
+  if(!queue.length){alert("시작·끝이 모두 표시된 구간이 없습니다.");return}
+  const [s,e]=queue.shift(); playRange(s,e);
+};
+setInterval(()=>{
+  if(!ready)return; const t=player.getCurrentTime(); document.getElementById("now").textContent=fmt(t);
+  if(stopAt!=null&&t>=stopAt){ if(queue.length){const [s,e]=queue.shift();playRange(s,e)} else {player.pauseVideo();stopAt=null} }
+},200);
+document.getElementById("bCopy").onclick=async()=>{const t=document.getElementById("out");try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand("copy")}alert("복사했습니다. 채팅에 붙여 넣어 보내주세요.")};
+document.getElementById("bOpen").onclick=()=>{const t=ready?Math.floor(player.getCurrentTime()):0;window.open("https://www.youtube.com/watch?v="+VIDEOS[cur].id+"&t="+t+"s","_blank")};
+function switchTo(v){cur=v;document.getElementById("bClip").classList.toggle("on",v==="clip");document.getElementById("bFull").classList.toggle("on",v==="full");document.getElementById("vname").textContent=VIDEOS[v].name;stopAt=null;queue=[];if(ready)player.cueVideoById(VIDEOS[v].id);render()}
+document.getElementById("bClip").onclick=()=>switchTo("clip");
+document.getElementById("bFull").onclick=()=>switchTo("full");
+
+window.onYouTubeIframeAPIReady=function(){
+  player=new YT.Player("yt",{videoId:VIDEOS[cur].id,playerVars:{rel:0,modestbranding:1},events:{onReady:()=>{ready=true}}});
+};
+document.getElementById("vname").textContent=VIDEOS[cur].name; render();
+const s=document.createElement("script");s.src="https://www.youtube.com/iframe_api";document.head.appendChild(s);
+</script>
+</body>
+</html>
