@@ -1,0 +1,100 @@
+<!doctype html>
+<!--
+변경 이력
+| 버전    | 날짜     | 수정 내용 |
+| v.1.1.1 | 26.10.04 | 유튜브 자막을 기본으로 꺼짐 처리 (cc_load_policy=0 + 재생 시작 때 자막 모듈 끄기). 필요하면 유튜브 조작 화면의 [CC] 버튼으로 다시 켤 수 있음 |
+| v.1.1.0 | 26.10.04 | 유튜브 기본 조작 화면(재생바·되감기·전체화면) 사용으로 변경. 첫 클릭에 전체화면 + 시작 지점 재생. 구간 안에서는 자유 이동, 시작 전으로 가면 시작 지점으로, 끝 지점에 오면 자동 정지(끝난 뒤 재생 누르면 시작 지점부터). 광고 중 건너뛰기 가능. 자체 진행 막대 제거, 왼쪽 위 작은 구간 배지만 표시 |
+| v.1.0.3 | 26.10.04 | 현재 시간·진행 막대 표시 |
+| v.1.0.2 | 26.10.04 | 광고 중 건너뛰기 클릭 가능 |
+| v.1.0.1 | 26.10.04 | 안내 문구 숨김 오류 수정, 광고 표시 |
+| v.1.0.0 | 26.10.04 | 최초 작성 |
+사용: yt-player_v.1.1.0(26.10.04).html?v=영상ID&s=시작초&e=끝초
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>구간 재생기</title>
+<style>
+  :root{--accent:#4fc3f7;--gold:#ffd54f;--muted:#c3cede;color-scheme:dark}
+  [hidden]{display:none!important}
+  html,body{height:100%;margin:0;background:#000;color:#fff;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;overflow:hidden}
+  #player{position:absolute;inset:0;width:100%;height:100%}
+  .cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(11,18,32,.88);cursor:pointer;text-align:center;padding:16px}
+  .cover b{font-size:clamp(18px,3.2vw,34px)}
+  .cover span{color:var(--muted);font-size:clamp(12px,1.6vw,16px)}
+  .play{width:clamp(56px,8vw,84px);aspect-ratio:1;border-radius:50%;background:var(--accent);display:grid;place-items:center}
+  .play::before{content:"";border-left:26px solid #06121f;border-top:16px solid transparent;border-bottom:16px solid transparent;margin-left:7px}
+  .badge{position:absolute;left:12px;top:12px;padding:4px 10px;border-radius:6px;background:rgba(0,0,0,.65);color:var(--gold);font-size:clamp(12px,1.4vw,16px);font-weight:700;font-variant-numeric:tabular-nums;pointer-events:none;transition:opacity .4s}
+  .toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 18px;border-radius:8px;background:rgba(0,0,0,.75);color:#fff;font-size:clamp(14px,2vw,22px);pointer-events:none;text-align:center}
+</style>
+</head>
+<body>
+<div id="player"></div>
+<div class="badge" id="badge" hidden></div>
+<div class="toast" id="toast" hidden></div>
+<div class="cover" id="cover">
+  <div class="play" aria-hidden="true"></div>
+  <b>클릭하면 전체화면으로 재생</b>
+  <span id="coverSub"></span>
+</div>
+<script>
+  const q = new URLSearchParams(location.search);
+  const CLIP = { id: q.get("v") || "", start: parseFloat(q.get("s") || "0"), end: parseFloat(q.get("e") || "0") || null };
+  const fmt = s => Math.floor(s/60) + ":" + String(Math.floor(s%60)).padStart(2,"0");
+  const $ = id => document.getElementById(id);
+  const range = CLIP.end ? fmt(CLIP.start) + " ~ " + fmt(CLIP.end) : fmt(CLIP.start) + "부터";
+  $("coverSub").textContent = "구간 " + range + " · 구간 안에서는 재생바로 되돌리기 가능 · 끝나면 저절로 멈춤";
+  $("badge").textContent = "구간 " + range;
+  let ccOff = false;
+  function captionsOff(){ try { player.unloadModule("captions"); } catch(e){} try { player.unloadModule("cc"); } catch(e){} try { player.setOption("captions", "track", {}); } catch(e){} }
+  let player, ready = false, pending = false, reached = false, stopped = false, toastTimer;
+
+  function tell(state, extra){ try { parent.postMessage(Object.assign({ ytClip: true, state }, extra || {}), "*"); } catch(e){} }
+  function toast(msg, ms){ const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, ms || 1800); }
+
+  function goFull(){ const el = document.documentElement; try { (el.requestFullscreen || el.webkitRequestFullscreen).call(el).catch(()=>{}); } catch(e){} }
+
+  function start(){
+    if (!ready) { pending = true; return; }
+    $("cover").hidden = true; $("badge").hidden = false;
+    reached = false; stopped = false; ccOff = false;
+    player.loadVideoById({ videoId: CLIP.id, startSeconds: CLIP.start });
+  }
+
+  // 구간 지키기: 100ms마다 위치 확인
+  setInterval(() => {
+    if (!ready || !player.getCurrentTime) return;
+    const t = player.getCurrentTime(), st = player.getPlayerState();
+    if (!reached) {
+      if (st === 1 && t >= CLIP.start - 1 && (!CLIP.end || t <= CLIP.end + 1)) reached = true;
+      else { tell("loading", { t }); return; }
+    }
+    if (st === 1) {
+      if (stopped && CLIP.end && t >= CLIP.end - 0.3) { stopped = false; player.seekTo(CLIP.start, true); toast(fmt(CLIP.start) + "부터 다시 재생"); return; }
+      stopped = false;
+      if (t < CLIP.start - 0.5) { player.seekTo(CLIP.start, true); toast("구간 시작 " + fmt(CLIP.start) + "으로 이동"); return; }
+      if (CLIP.end && t > CLIP.end + 1.5) { player.seekTo(CLIP.end - 1, true); toast("구간 끝 " + fmt(CLIP.end) + " 이후는 재생하지 않습니다"); return; }
+      if (CLIP.end && t >= CLIP.end) { player.pauseVideo(); stopped = true; toast(fmt(CLIP.end) + " 구간 끝 · 자동 정지", 2500); tell("ended"); return; }
+      tell("playing", { t });
+    }
+  }, 100);
+
+  window.onYouTubeIframeAPIReady = function(){
+    player = new YT.Player("player", {
+      videoId: CLIP.id,
+      playerVars: { start: Math.floor(CLIP.start), rel: 0, modestbranding: 1, playsinline: 1, controls: 1, fs: 1, iv_load_policy: 3, cc_load_policy: 0, origin: location.origin },
+      events: {
+        onReady: () => { ready = true; tell("ready"); if (pending) { pending = false; start(); } },
+        onStateChange: e => { if (e.data === 1 && !ccOff) { ccOff = true; captionsOff(); setTimeout(captionsOff, 800); } },
+        onError: e => { tell("error", { code: e.data }); toast("재생 오류 " + e.data, 5000); }
+      }
+    });
+  };
+  $("cover").addEventListener("click", () => { goFull(); start(); });
+  window.addEventListener("message", e => { const d = e.data || {}; if (d.cmd === "play") start(); if (d.cmd === "full") goFull(); });
+  const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+</script>
+</body>
+</html>
