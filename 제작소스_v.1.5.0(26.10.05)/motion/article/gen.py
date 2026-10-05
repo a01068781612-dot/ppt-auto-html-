@@ -1,0 +1,34 @@
+import json,os,shutil
+from PIL import Image
+CAP='/tmp/yt/cap/'; BASE='/tmp/claude-0/-home-user-ppt-auto-html-/01f805d1-d26c-5b66-83a4-df70d421d547/scratchpad/hf/p1cover/'
+CSS=open('../news/style.css').read()+open('extra.css').read()
+for t in json.load(open('arts.json')):
+    d=t['id']; os.makedirs(d,exist_ok=True)
+    for f in ['gsap.min.js','PretendardVariable.woff2','hyperframes.json','meta.json','package.json']:
+        if os.path.exists(BASE+f): shutil.copy(BASE+f,d)
+    im=Image.open(CAP+t['cap']+'.png').convert('RGB'); bx=t['box']; y0=max(0,min(bx[1]-200,1280-860))
+    im.crop((0,y0,1280,y0+860)).save(f'{d}/cap.jpg',quality=90)
+    s=880/1280; hx=bx[0]*s; hy=(bx[1]-y0)*s; hw=(bx[2]-bx[0])*s; hh=(bx[3]-bx[1])*s
+    big=f'<div class="big"><b>{t["big"][0]}</b><span>{t["big"][1]}</span><em>{t["big"][2]}</em></div>' if t.get('big') else ''
+    pts=''.join(f'<div class="ln"><i></i>{x}</div>' for x in t['points'])
+    quote=f'<div class="qt"><b>“</b>{t["quote"]}</div>' if t.get('quote') else ''
+    html=f'''<!doctype html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/><script src="gsap.min.js"></script><style>{CSS}</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1920" data-height="1080">
+<div class="lbl2 clip" data-start="0" data-duration="7" data-track-index="0">{t['tag']}</div>
+<div class="win w2 clip" data-start="0" data-duration="7" data-track-index="1"><div class="bar"><i></i><i></i><i></i><div class="url">🔒 {t['url']}</div></div>
+<div class="view"><img class="shot" src="cap.jpg"/><div class="hl" style="left:{hx:.0f}px;top:{hy:.0f}px;width:{hw:.0f}px;height:{hh:.0f}px"></div></div><div class="badge">실제 기사</div></div>
+<div class="sq sq2 clip" data-start="0" data-duration="7" data-track-index="2"></div>
+<div class="rc clip" data-start="0" data-duration="7" data-track-index="3"><div class="t2">{t['title']}</div>{big}<div class="pts">{pts}</div>{quote}</div>
+<div class="src2 clip" data-start="0" data-duration="7" data-track-index="4"><b>출처</b>{t['src']}</div>
+</div>
+<script>
+const tl=gsap.timeline({{paused:true}});
+tl.from(".lbl2",{{opacity:0,x:-30,duration:.5}},0).from(".w2",{{opacity:0,x:-160,duration:.9,ease:"power3.out"}},0.1)
+.from(".sq2",{{opacity:0,scale:.4,rotation:-45,duration:.6,ease:"back.out(1.8)"}},0.6)
+.from(".shot, .hl",{{y:30,duration:6,ease:"none"}},0.2).from(".hl",{{scaleX:0,transformOrigin:"left",duration:.6}},1.3).from(".badge",{{scale:0,duration:.45,ease:"back.out(2)"}},1.5)
+.from(".t2",{{opacity:0,y:40,duration:.7,ease:"power3.out"}},0.5).from(".big",{{opacity:0,y:30,duration:.6}},1.6)
+.from(".ln",{{opacity:0,x:24,duration:.5,stagger:.3}},2.0).from(".qt",{{opacity:0,y:20,duration:.6}},3.0).from(".src2",{{opacity:0,duration:.6}},1.2);
+window.__timelines["main"]=tl;tl.seek(0);
+</script></body></html>'''
+    open(f'{d}/index.html','w').write(html)
+print('ok')

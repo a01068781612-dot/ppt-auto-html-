@@ -1,0 +1,77 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/><script src="gsap.min.js"></script><style>@font-face{font-family:"Pretendard";src:url("PretendardVariable.woff2") format("woff2");font-weight:100 900}
+*{margin:0;padding:0;box-sizing:border-box}html,body{width:1920px;height:1080px;overflow:hidden;background:#0c0b0b}
+#root{width:100%;height:100%;position:relative;font-family:"Pretendard",sans-serif;color:#f4f4f2;background:radial-gradient(ellipse 70% 80% at 42% 45%,#2a2725 0%,#151312 55%,#0c0b0b 100%)}
+.ghost{position:absolute;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.13);pointer-events:none}
+.sq{position:absolute;border:3px solid #f4f4f2}
+.vline{position:absolute;width:1px;background:rgba(255,255,255,.28)}
+.hline{position:absolute;height:1px;background:rgba(255,255,255,.28)}
+.dots{position:absolute;display:flex;gap:14px}.dots i{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6)}.dots i.on{background:#ff5a1f;border-color:#ff5a1f}
+.brand{position:absolute;font-size:22px;letter-spacing:.25em;color:#8a847e}
+.org{position:absolute;left:150px;top:212px;font-size:40px;font-weight:700;color:#ff5a1f;letter-spacing:.02em}
+.ttl{position:absolute;left:150px;top:320px;font-size:200px;font-weight:900;letter-spacing:-.045em;line-height:1}
+.ttl2{position:absolute;left:150px;top:530px;font-size:200px;font-weight:900;letter-spacing:-.045em;line-height:1}
+.g1{left:150px;top:585px;font-size:200px;font-weight:900;letter-spacing:-.045em;line-height:1}
+.sub{position:absolute;left:150px;top:790px;font-size:40px;font-weight:500;color:#cbc5ba}
+.meta{position:absolute;right:150px;top:212px;text-align:right}
+.meta b{display:block;font-size:30px;font-weight:700;letter-spacing:.06em}
+.meta span{display:block;font-size:26px;color:#a59f98;margin-top:10px}
+.who{position:absolute;right:150px;bottom:150px;text-align:right}
+.who b{display:block;font-size:56px;font-weight:900;letter-spacing:.08em}
+.who span{display:block;font-size:28px;font-weight:700;color:#ff5a1f;letter-spacing:.04em;margin-bottom:12px}
+.mini{position:absolute;left:150px;bottom:110px;width:46px;height:46px}
+.mini i{position:absolute;width:28px;height:28px;border:2px solid #8a847e}.mini i+i{left:14px;top:14px}
+</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+<div class="brand clip" style="left:150px;top:110px" data-start="0" data-duration="5" data-track-index="0">2026 AI SPECIAL LECTURE</div>
+<div class="hline clip" style="left:150px;right:150px;top:170px" data-start="0" data-duration="5" data-track-index="1"></div>
+<div class="org clip" data-start="0" data-duration="5" data-track-index="3">경남소방본부 구조구급계</div>
+<div class="ghost g1 clip" data-start="0" data-duration="5" data-track-index="4">지금 어디까지 왔나</div>
+<div data-sq=".ttl" data-dx="0.14" data-dy="0.04" class="sq clip" data-start="0" data-duration="5" data-track-index="2"></div>
+<div class="ttl clip" data-start="0" data-duration="5" data-track-index="5">AI,</div>
+<div class="ttl2 clip" data-start="0" data-duration="5" data-track-index="6">지금 어디까지 왔나</div>
+<div class="sub clip" data-start="0" data-duration="5" data-track-index="7">대답하는 AI에서 일하는 AI로 — 관리자를 위한 2026 AI 트렌드</div>
+<div class="meta clip" data-start="0" data-duration="5" data-track-index="8"><b>2026. 10. 8</b><span>관리자 AI 특강</span></div>
+<div class="vline clip" style="right:120px;top:250px;height:580px" data-start="0" data-duration="5" data-track-index="9"></div>
+<div class="who clip" data-start="0" data-duration="5" data-track-index="10"><span>AI 전문인재(BLACK)</span><b>김경훈</b></div>
+<div class="mini clip" data-start="0" data-duration="5" data-track-index="11"><i></i><i></i></div>
+<div class="dots clip" style="left:50%;bottom:110px;transform:translateX(-50%)" data-start="0" data-duration="5" data-track-index="12"><i class="on"></i><i></i><i></i><i></i></div>
+</div>
+<script>
+const tl=gsap.timeline({paused:true});
+tl.from(".brand",{opacity:0,duration:.6},0).from(".hline",{scaleX:0,transformOrigin:"left",duration:.9,ease:"power3.out"},0.1)
+.from(".sq",{opacity:0,scale:.4,rotation:-45,duration:.7,ease:"back.out(1.8)"},0.4)
+.from(".org",{opacity:0,x:-40,duration:.6},0.6)
+.from(".ttl",{opacity:0,y:60,duration:.8,ease:"power3.out"},0.8)
+.from(".ttl2",{opacity:0,y:60,duration:.8,ease:"power3.out"},1.0)
+.from(".g1",{opacity:0,y:-30,duration:1.2,ease:"power2.out"},1.3)
+.from(".sub",{opacity:0,y:20,duration:.6},1.6)
+.from(".vline",{scaleY:0,transformOrigin:"top",duration:.8},1.2)
+.from(".meta",{opacity:0,x:30,duration:.6},1.5)
+.from(".who",{opacity:0,x:30,duration:.6},1.9)
+.from(".mini,.dots",{opacity:0,duration:.6},2.1);
+window.__timelines["main"]=tl;
+(function(){
+if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);
+function firstText(el){const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.trim()?1:3});return w.nextNode();}
+function place(){
+  const st=document.createElement('style'); st.textContent='#root *{transform:none!important;translate:none!important;scale:none!important;rotate:none!important}'; document.head.appendChild(st);
+  const cv=document.createElement('canvas').getContext('2d');
+  document.querySelectorAll('[data-sq]').forEach(sq=>{
+    const el=document.querySelector(sq.dataset.sq); if(!el) return; const tn=firstText(el); if(!tn) return;
+    let i=0; while(i<tn.nodeValue.length && /\s/.test(tn.nodeValue[i])) i++;
+    const ch=tn.nodeValue[i]; const r=document.createRange(); r.setStart(tn,i); r.setEnd(tn,i+1); const b=r.getBoundingClientRect();
+    const cs=getComputedStyle(tn.parentElement); const f=parseFloat(cs.fontSize);
+    cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily; const m=cv.measureText(ch);
+    const base=b.top+(m.fontBoundingBoxAscent||0.93*f);
+    const inkTop=base-m.actualBoundingBoxAscent, inkLeft=b.left-m.actualBoundingBoxLeft;
+    const s=Math.round(Math.max(40,Math.min(90,0.45*f))), T=Math.max(3,Math.round(0.06*s)), c='#f4f4f2', g='linear-gradient('+c+','+c+')';
+    const dx=parseFloat(sq.dataset.dx||0)*f, dy=parseFloat(sq.dataset.dy||0)*f; sq.style.left=(inkLeft-0.55*s+dx)+'px'; sq.style.top=(inkTop-0.55*s+dy)+'px'; sq.style.width=s+'px'; sq.style.height=s+'px';
+    sq.style.right='auto'; sq.style.bottom='auto'; sq.style.border='none';
+    sq.style.background=g+' left top/100% '+T+'px no-repeat,'+g+' left top/'+T+'px 100% no-repeat,'+g+' right top/'+T+'px 25% no-repeat,'+g+' left bottom/30% '+T+'px no-repeat';
+  });
+  st.remove();
+}
+place(); if(document.fonts) document.fonts.ready.then(place);
+})();
+tl.seek(0);
+</script></body></html>

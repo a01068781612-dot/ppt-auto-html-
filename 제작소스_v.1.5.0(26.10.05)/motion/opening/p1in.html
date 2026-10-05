@@ -1,0 +1,70 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/><script src="gsap.min.js"></script><style>
+@font-face{font-family:"Pretendard";src:url("PretendardVariable.woff2") format("woff2");font-weight:100 900}
+*{margin:0;padding:0;box-sizing:border-box}html,body{width:1920px;height:1080px;overflow:hidden;background:#0c0b0b}
+#root{width:100%;height:100%;position:relative;font-family:"Pretendard",sans-serif;color:#f4f4f2;background:radial-gradient(ellipse 70% 80% at 42% 45%,#2a2725 0%,#151312 55%,#0c0b0b 100%)}
+.ghost{position:absolute;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.13)}
+.sq{position:absolute;border:3px solid #f4f4f2}
+.hline{position:absolute;height:1px;background:rgba(255,255,255,.28)}
+.vline{position:absolute;width:1px;background:rgba(255,255,255,.28)}
+.dots{position:absolute;display:flex;gap:14px}.dots i{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6)}.dots i.on{background:#ff5a1f;border-color:#ff5a1f}
+.brand{position:absolute;font-size:22px;letter-spacing:.25em;color:#8a847e}
+.big{position:absolute;right:110px;top:150px;font-size:560px;font-weight:900;line-height:.86;letter-spacing:-.06em;color:#f4f4f2}
+.bigg{right:110px;top:205px;font-size:560px;font-weight:900;line-height:.86;letter-spacing:-.06em}
+.lbl{position:absolute;left:150px;top:300px;font-size:34px;font-weight:800;letter-spacing:.3em;color:#ff5a1f}
+.ttl{position:absolute;left:150px;top:370px;font-size:150px;font-weight:900;letter-spacing:-.04em;line-height:1.05}
+.sub{position:absolute;left:150px;top:720px;font-size:36px;font-weight:500;color:#cbc5ba}
+.chips{position:absolute;left:150px;right:110px;bottom:130px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.chip{border:1.5px solid rgba(255,255,255,.18);border-radius:22px;background:#1d1a19;padding:26px 30px}
+.chip b{display:block;font-size:22px;font-weight:800;letter-spacing:.2em;color:#8a847e}
+.chip span{display:block;font-size:40px;font-weight:800;margin-top:10px}
+.chip.c{border-color:#ff5a1f}.chip.c b{color:#ff5a1f}
+</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+<div class="brand clip" style="left:150px;top:110px" data-start="0" data-duration="5" data-track-index="0">PART 1 · REVIEW</div>
+<div class="hline clip" style="left:150px;right:110px;top:170px" data-start="0" data-duration="5" data-track-index="1"></div>
+<div class="ghost bigg clip" data-start="0" data-duration="5" data-track-index="2">01</div>
+<div class="big clip" data-start="0" data-duration="5" data-track-index="3" style="color:#262321">01</div>
+<div class="lbl clip" data-start="0" data-duration="5" data-track-index="5">PART 1</div>
+<div data-sq=".ttl" class="sq clip" data-start="0" data-duration="5" data-track-index="4"></div>
+<div class="ttl clip" data-start="0" data-duration="5" data-track-index="6">국토부 실습<br>돌아보기</div>
+<div class="sub clip" data-start="0" data-duration="5" data-track-index="7">국토교통부 AI 실습교육 · 2026. 9. 4 / 9. 7</div>
+<div class="chips clip" data-start="0" data-duration="5" data-track-index="8">
+<div class="chip"><b>01</b><span>ChatGPT</span></div><div class="chip"><b>02</b><span>Gemini</span></div><div class="chip"><b>03</b><span>NotebookLM</span></div><div class="chip c"><b>04</b><span>Claude · HTML</span></div></div>
+<div class="dots clip" style="right:110px;top:118px" data-start="0" data-duration="5" data-track-index="9"><i class="on"></i><i></i><i></i></div>
+</div>
+<script>
+const tl=gsap.timeline({paused:true});
+tl.from(".brand",{opacity:0,duration:.6},0).from(".hline",{scaleX:0,transformOrigin:"left",duration:.9,ease:"power3.out"},0.1)
+.from(".big",{opacity:0,x:140,duration:1.2,ease:"power3.out"},0.2)
+.from(".bigg",{opacity:0,y:-40,duration:1.3},0.6)
+.from(".sq",{opacity:0,scale:.4,rotation:-45,duration:.7,ease:"back.out(1.8)"},0.4)
+.from(".lbl",{opacity:0,x:-40,duration:.6},0.6)
+.from(".ttl",{opacity:0,y:60,duration:.8,ease:"power3.out"},0.8)
+.from(".sub,.dots",{opacity:0,y:20,duration:.6},1.3)
+.from(".chip",{opacity:0,y:50,duration:.5,stagger:.16,ease:"power2.out"},1.6);
+window.__timelines["main"]=tl;
+(function(){
+if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);
+function firstText(el){const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.trim()?1:3});return w.nextNode();}
+function place(){
+  const st=document.createElement('style'); st.textContent='#root *{transform:none!important;translate:none!important;scale:none!important;rotate:none!important}'; document.head.appendChild(st);
+  const cv=document.createElement('canvas').getContext('2d');
+  document.querySelectorAll('[data-sq]').forEach(sq=>{
+    const el=document.querySelector(sq.dataset.sq); if(!el) return; const tn=firstText(el); if(!tn) return;
+    let i=0; while(i<tn.nodeValue.length && /\s/.test(tn.nodeValue[i])) i++;
+    const ch=tn.nodeValue[i]; const r=document.createRange(); r.setStart(tn,i); r.setEnd(tn,i+1); const b=r.getBoundingClientRect();
+    const cs=getComputedStyle(tn.parentElement); const f=parseFloat(cs.fontSize);
+    cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily; const m=cv.measureText(ch);
+    const base=b.top+(m.fontBoundingBoxAscent||0.93*f);
+    const inkTop=base-m.actualBoundingBoxAscent, inkLeft=b.left-m.actualBoundingBoxLeft;
+    const s=Math.round(Math.max(40,Math.min(90,0.45*f))), T=Math.max(3,Math.round(0.06*s)), c='#f4f4f2', g='linear-gradient('+c+','+c+')';
+    const dx=parseFloat(sq.dataset.dx||0)*f, dy=parseFloat(sq.dataset.dy||0)*f; sq.style.left=(inkLeft-0.55*s+dx)+'px'; sq.style.top=(inkTop-0.55*s+dy)+'px'; sq.style.width=s+'px'; sq.style.height=s+'px';
+    sq.style.right='auto'; sq.style.bottom='auto'; sq.style.border='none';
+    sq.style.background=g+' left top/100% '+T+'px no-repeat,'+g+' left top/'+T+'px 100% no-repeat,'+g+' right top/'+T+'px 25% no-repeat,'+g+' left bottom/30% '+T+'px no-repeat';
+  });
+  st.remove();
+}
+place(); if(document.fonts) document.fonts.ready.then(place);
+})();
+tl.seek(0);
+</script></body></html>

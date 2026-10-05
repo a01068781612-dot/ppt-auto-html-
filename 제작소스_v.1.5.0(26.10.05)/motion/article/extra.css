@@ -1,0 +1,15 @@
+.lbl2{position:absolute;left:110px;top:92px;font-size:24px;font-weight:700;letter-spacing:.2em;color:#ff5a1f}
+.w2{left:110px;top:170px}
+.sq2{left:80px;top:140px;width:70px;height:70px}
+.rc{position:absolute;left:1060px;top:170px;width:750px;height:690px;display:flex;flex-direction:column;justify-content:center}
+.rc .ln{font-size:34px;padding:24px 0}
+.t2{font-size:66px;font-weight:900;letter-spacing:-.03em;line-height:1.15;white-space:pre-line}
+.big{margin-top:30px;display:flex;align-items:baseline;flex-wrap:wrap;gap:8px}
+.big b{font-size:120px;font-weight:900;color:#ff5a1f;letter-spacing:-.04em;line-height:1}
+.big span{font-size:44px;font-weight:800}
+.big em{flex-basis:100%;font-style:normal;font-size:26px;color:#a59f98;margin-top:8px}
+.pts{margin-top:30px;border-top:1px solid rgba(255,255,255,.28)}
+.qt{margin-top:26px;background:#1d1a19;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:24px 28px 24px 80px;position:relative;font-size:29px;font-weight:700;line-height:1.4}
+.qt b{position:absolute;left:24px;top:6px;font-size:80px;color:#ff5a1f;font-weight:900}
+.src2{position:absolute;left:110px;top:900px;display:flex;gap:16px;align-items:center;font-size:26px;font-weight:700}
+.src2 b{font-size:20px;letter-spacing:.2em;color:#111;background:#f4f4f2;padding:6px 14px;border-radius:999px}

@@ -1,0 +1,69 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/><script src="gsap.min.js"></script><style>
+@font-face{font-family:"Pretendard";src:url("PretendardVariable.woff2") format("woff2");font-weight:100 900}
+*{margin:0;padding:0;box-sizing:border-box}html,body{width:1920px;height:1080px;overflow:hidden;background:#0c0b0b}
+#root{width:100%;height:100%;position:relative;font-family:"Pretendard",sans-serif;color:#f4f4f2;background:radial-gradient(ellipse 70% 80% at 42% 45%,#2a2725 0%,#151312 55%,#0c0b0b 100%)}
+.ghost{position:absolute;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.13)}
+.hline{position:absolute;height:1px;background:rgba(255,255,255,.28)}
+.lbl{position:absolute;left:110px;top:92px;font-size:22px;font-weight:700;letter-spacing:.25em;color:#ff5a1f}
+.ttl{position:absolute;left:110px;top:134px;font-size:66px;font-weight:900;letter-spacing:-.03em}
+.gh{right:110px;top:60px;font-size:150px;font-weight:900;letter-spacing:-.04em}
+.step{position:absolute;width:318px;border-radius:24px;background:linear-gradient(180deg,#2a2624,#1b1918);border:1.5px solid rgba(255,255,255,.12);padding:30px 30px 0}
+.step.last{border:2.5px solid #ff5a1f}
+.step b{display:block;font-size:24px;font-weight:800;letter-spacing:.2em;color:#ff5a1f}
+.step h3{font-size:54px;font-weight:900;letter-spacing:-.02em;margin-top:8px}
+.step p{font-size:28px;font-weight:600;color:#d6d2c9;margin-top:10px;line-height:1.35}
+.step i{display:block;font-style:normal;font-size:20px;color:#8a847e;margin-top:14px}
+.arrow{position:absolute;left:110px;right:110px;bottom:96px;height:4px;background:linear-gradient(90deg,rgba(255,90,31,.15),#ff5a1f);transform-origin:left}
+.arrowhead{position:absolute;right:96px;bottom:84px;width:0;height:0;border-left:30px solid #ff5a1f;border-top:14px solid transparent;border-bottom:14px solid transparent}
+.axis{position:absolute;left:110px;bottom:40px;font-size:22px;color:#8a847e;letter-spacing:.1em}
+.axis2{position:absolute;right:110px;bottom:40px;font-size:22px;color:#ff5a1f;letter-spacing:.1em;font-weight:700}
+.sq{position:absolute;border:3px solid #f4f4f2}</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+<div class="ghost gh clip" data-start="0" data-duration="5" data-track-index="0">Map.</div>
+<div class="lbl clip" data-start="0" data-duration="5" data-track-index="1">PART 2 · 3막 신문물 지도 · 시간 순서</div>
+<div data-sq=".ttl" class="sq sqn clip" data-start="0" data-duration="5" data-track-index="99"></div>
+<div class="ttl clip" data-start="0" data-duration="5" data-track-index="2">시간 순서로 본 다섯 가지 신문물</div>
+<div class="hline clip" style="left:110px;right:110px;top:244px" data-start="0" data-duration="5" data-track-index="3"></div>
+<div class="step s1 clip" style="left:110px;top:640px;height:300px" data-start="0" data-duration="5" data-track-index="4"><b>01</b><h3>Hermes</h3><p>쓸수록 똑똑해지는 AI</p><i>7월 · Nous Research</i></div>
+<div class="step s2 clip" style="left:450px;top:560px;height:380px" data-start="0" data-duration="5" data-track-index="5"><b>02</b><h3>Aside</h3><p>웹을 직접 조작</p><i>9. 14 · 한국인 창업 3인</i></div>
+<div class="step s3 clip" style="left:790px;top:480px;height:460px" data-start="0" data-duration="5" data-track-index="6"><b>03</b><h3>Jev</h3><p>빠르게 판단</p><i>9. 15 · TypeSafe AI</i></div>
+<div class="step s4 clip" style="left:1130px;top:400px;height:540px" data-start="0" data-duration="5" data-track-index="7"><b>04</b><h3>Muse</h3><p>생활을 대신</p><i>9월 · Meta</i></div>
+<div class="step s5 last clip" style="left:1470px;top:320px;height:620px" data-start="0" data-duration="5" data-track-index="8"><b>05</b><h3>Dots</h3><p>24시간 일하는 직원</p><i>9. 29 · OpenAI</i></div>
+<div class="arrow clip" data-start="0" data-duration="5" data-track-index="9"></div>
+<div class="arrowhead clip" data-start="0" data-duration="5" data-track-index="10"></div>
+<div class="axis clip" data-start="0" data-duration="5" data-track-index="11">올여름</div>
+<div class="axis2 clip" data-start="0" data-duration="5" data-track-index="12">지금</div>
+</div>
+<script>
+const tl=gsap.timeline({paused:true});
+tl.from(".lbl",{opacity:0,x:-30,duration:.5},0).from(".ttl",{opacity:0,y:30,duration:.6},.15).from(".hline",{scaleX:0,transformOrigin:"left",duration:.7},.2).from(".gh",{opacity:0,duration:1},.3)
+.from(".arrow",{scaleX:0,duration:1.2,ease:"power2.inOut"},.6).from(".arrowhead,.axis,.axis2",{opacity:0,duration:.4},1.6)
+.from(".s1",{opacity:0,y:120,duration:.55,ease:"power3.out"},.9).from(".s2",{opacity:0,y:120,duration:.55,ease:"power3.out"},1.15)
+.from(".s3",{opacity:0,y:120,duration:.55,ease:"power3.out"},1.4).from(".s4",{opacity:0,y:120,duration:.55,ease:"power3.out"},1.65)
+.from(".s5",{opacity:0,y:120,duration:.6,ease:"back.out(1.6)"},1.9);
+window.__timelines["main"]=tl;
+(function(){
+if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);
+function firstText(el){const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.trim()?1:3});return w.nextNode();}
+function place(){
+  const st=document.createElement('style'); st.textContent='#root *{transform:none!important;translate:none!important;scale:none!important;rotate:none!important}'; document.head.appendChild(st);
+  const cv=document.createElement('canvas').getContext('2d');
+  document.querySelectorAll('[data-sq]').forEach(sq=>{
+    const el=document.querySelector(sq.dataset.sq); if(!el) return; const tn=firstText(el); if(!tn) return;
+    let i=0; while(i<tn.nodeValue.length && /\s/.test(tn.nodeValue[i])) i++;
+    const ch=tn.nodeValue[i]; const r=document.createRange(); r.setStart(tn,i); r.setEnd(tn,i+1); const b=r.getBoundingClientRect();
+    const cs=getComputedStyle(tn.parentElement); const f=parseFloat(cs.fontSize);
+    cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily; const m=cv.measureText(ch);
+    const base=b.top+(m.fontBoundingBoxAscent||0.93*f);
+    const inkTop=base-m.actualBoundingBoxAscent, inkLeft=b.left-m.actualBoundingBoxLeft;
+    const s=Math.round(Math.max(40,Math.min(90,0.45*f))), T=Math.max(3,Math.round(0.06*s)), c='#f4f4f2', g='linear-gradient('+c+','+c+')';
+    const dx=parseFloat(sq.dataset.dx||0)*f, dy=parseFloat(sq.dataset.dy||0)*f; sq.style.left=(inkLeft-0.55*s+dx)+'px'; sq.style.top=(inkTop-0.55*s+dy)+'px'; sq.style.width=s+'px'; sq.style.height=s+'px';
+    sq.style.right='auto'; sq.style.bottom='auto'; sq.style.border='none';
+    sq.style.background=g+' left top/100% '+T+'px no-repeat,'+g+' left top/'+T+'px 100% no-repeat,'+g+' right top/'+T+'px 25% no-repeat,'+g+' left bottom/30% '+T+'px no-repeat';
+  });
+  st.remove();
+}
+place(); if(document.fonts) document.fonts.ready.then(place);
+})();
+tl.seek(0);
+</script></body></html>
