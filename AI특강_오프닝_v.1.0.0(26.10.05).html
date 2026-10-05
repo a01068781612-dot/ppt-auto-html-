@@ -1,0 +1,212 @@
+<!doctype html>
+<!--
+변경 이력
+| 버전    | 날짜     | 수정 내용 |
+| v.1.0.0 | 26.10.05 | 최초 작성 — 오프닝(화면 1~3). ① 국무회의 인트로 영상(2:44, 클릭 → 전체화면 재생) ② HyperFrames 모션 "블랙 18명 → 그 블랙, 제가 바로 그중 한 명입니다" ③ 9.7판 원본 2·3장(수상 및 활동 · 스마트 행정 & 자격증) ④ HyperFrames 표지 "AI, 지금 어디까지 왔나" + 오늘 순서 3가지. 원본 1장은 국토부 표지라 제외. 글꼴 Pretendard |
+
+조작: → / 스페이스 / 클릭 = 다음(영상 화면에서는 첫 클릭이 재생), ← = 이전, F = 전체화면, 숫자+Enter = 해당 장으로
+영상 재생 중: 스페이스 = 일시정지/재생, Esc = 전체화면 나가기. 영상이 끝나면 전체화면이 저절로 풀리고, 다음 클릭에 다음 장
+폴더 구성: 이 HTML + assets/(글꼴 · 인트로 영상 · 모션 영상 · 원본 이미지)
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 특강 오프닝</title>
+<style>
+  @font-face{font-family:"Pretendard";src:url("assets/fonts/PretendardVariable.woff2") format("woff2");font-weight:100 900;font-display:block}
+  :root{
+    --bg:#110f0e; --bg2:#171413; --card:#1a1716; --line:#3a3330;
+    --fg:#f4f4f2; --body:#cbc5ba; --cap:#b5b0a7; --dim:#6f6862;
+    --accent:#ff5a1f; --accent2:#ff7a45;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000;overflow:hidden}
+  body{font-family:"Pretendard",system-ui,sans-serif;color:var(--fg);cursor:none}
+  body.cur{cursor:default}
+
+  #stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center;background:var(--bg);overflow:hidden}
+  .slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .35s ease}
+  .slide.on{opacity:1;visibility:visible}
+  .slide.img{background:#fff}
+  .slide.img img{width:100%;height:100%;object-fit:contain;display:block}
+  .slide.motion video{width:100%;height:100%;object-fit:cover;display:block;background:var(--bg)}
+
+  .pg{position:absolute;left:0;bottom:0;width:96px;height:96px;background:var(--accent);color:var(--bg);font-size:30px;font-weight:800;display:grid;place-items:center;z-index:2}
+  .vert{position:absolute;left:52px;top:140px;writing-mode:vertical-rl;font-size:18px;letter-spacing:.4em;color:var(--dim);z-index:2}
+
+  /* 인트로 영상 화면: 대기 카드 → 클릭하면 영상만 전체화면 재생 */
+  .slide.clip .bgshot{position:absolute;inset:0;background:center/cover no-repeat;filter:grayscale(1) brightness(.32)}
+  .slide.clip .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(17,15,14,.95) 0%,rgba(17,15,14,.7) 45%,rgba(17,15,14,.15) 100%)}
+  .slide.clip .txt{position:absolute;left:140px;top:240px;z-index:2}
+  .slide.clip .lbl{font-size:30px;font-weight:600;letter-spacing:.3em;color:var(--accent)}
+  .slide.clip .bar{height:4px;width:240px;background:var(--accent);margin:26px 0 40px}
+  .slide.clip h2{font-size:110px;font-weight:900;letter-spacing:-.03em;line-height:1.1}
+  .slide.clip p{font-size:34px;color:var(--body);margin-top:28px}
+  .slide.clip .play{position:absolute;left:140px;top:760px;display:flex;align-items:center;gap:26px;font-size:30px;font-weight:700;color:var(--fg);z-index:2}
+  .slide.clip .play i{width:96px;height:96px;border-radius:50%;background:var(--accent);display:grid;place-items:center}
+  .slide.clip .play i::before{content:"";border-left:30px solid var(--bg);border-top:19px solid transparent;border-bottom:19px solid transparent;margin-left:8px}
+  .slide.clip .play span{color:var(--cap);font-weight:500;font-size:24px;display:block;margin-top:6px}
+  .slide.clip.on .play i{animation:pulse 1.8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,90,31,.55)}50%{box-shadow:0 0 0 22px rgba(255,90,31,0)}}
+  .slide.clip video{position:absolute;inset:0;width:100%;height:100%;background:#000;object-fit:contain;opacity:0;pointer-events:none}
+  .slide.clip.playing video{opacity:1;z-index:3}
+  .slide.clip.done .play b::after{content:" · 다시 보려면 R"}
+  .slide.on .rise{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+  .slide.on .rise.d1{animation-delay:.12s}.slide.on .rise.d2{animation-delay:.24s}.slide.on .rise.d3{animation-delay:.4s}
+  @keyframes rise{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+
+  #prog{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);transition:width .3s;z-index:5}
+  #hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(23,20,19,.92);border:1px solid var(--line);color:var(--body);font-size:15px;padding:10px 18px;border-radius:8px;opacity:0;transition:opacity .4s;pointer-events:none;z-index:10}
+  #hint.on{opacity:1}
+  #jump{position:fixed;right:24px;top:20px;background:var(--bg2);border:1px solid var(--accent);color:var(--fg);font:600 20px "Pretendard",sans-serif;padding:8px 14px;border-radius:6px;display:none;z-index:10}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hint">→ 다음 · ← 이전 · F 전체화면 · 영상 화면은 클릭하면 재생</div>
+<div id="jump"></div>
+
+<script>
+/* type: "clip"(클릭하면 전체화면 재생하는 영상) / "motion"(HyperFrames, 들어오면 자동 재생 후 마지막 장면 정지) / "img"(원본 이미지) */
+const SLIDES = [
+  { type: "clip",   src: "assets/video/intro.mp4", poster: "assets/video/intro_poster.jpg", label: "인트로 영상" },
+  { type: "motion", src: "assets/motion/op_reveal.mp4", poster: "assets/motion/op_reveal_last.jpg", label: "그 블랙, 제가" },
+  { type: "img",    src: "assets/molit/s-002.jpg", label: "수상 및 활동" },
+  { type: "img",    src: "assets/molit/s-003.jpg", label: "스마트 행정 & 자격증" },
+  { type: "motion", src: "assets/motion/op_cover.mp4", poster: "assets/motion/op_cover_last.jpg", label: "표지" },
+];
+
+const stage = document.getElementById("stage");
+SLIDES.forEach((s, i) => {
+  const el = document.createElement("section");
+  el.className = "slide " + s.type;
+  if (s.type === "img") {
+    el.innerHTML = `<img alt="${s.label}" src="${s.src}">`;
+  } else if (s.type === "motion") {
+    el.innerHTML = `<video src="${s.src}" poster="${s.poster}" muted playsinline preload="auto"></video>`;
+  } else if (s.type === "clip") {
+    el.innerHTML = `
+      <div class="bgshot" style="background-image:url('${s.poster}')"></div>
+      <div class="shade"></div>
+      <div class="vert">2026 AI 특강 · 경남소방본부</div>
+      <div class="txt">
+        <div class="lbl rise">2026. 8. 11 · 제35회 국무회의</div>
+        <div class="bar rise d1"></div>
+        <h2 class="rise d1">대통령 앞에서<br>나온 이야기</h2>
+        <p class="rise d2">과학기술정보통신부 · 행정안전부 보고 — 공무원이 직접 만드는 AI</p>
+      </div>
+      <div class="play rise d3"><i></i><div><b>클릭하면 영상이 전체화면으로 재생됩니다</b><span>2분 44초 · 출처 JBN뉴스</span></div></div>
+      <div class="pg">01</div>
+      <video src="${s.src}" playsinline preload="auto"></video>`;
+  }
+  stage.appendChild(el);
+});
+stage.insertAdjacentHTML("beforeend", '<div id="prog"></div>');
+
+const els = [...stage.querySelectorAll(".slide")];
+const prog = document.getElementById("prog");
+let cur = -1;
+
+/* ── 영상(클릭 재생) ── */
+function clipVideo(i){ return els[i].classList.contains("clip") ? els[i].querySelector("video") : null; }
+function playClip(i, fromStart){
+  const el = els[i], v = clipVideo(i);
+  if (fromStart) v.currentTime = 0;
+  el.classList.add("playing"); el.classList.remove("done");
+  v.play().catch(() => {});
+  const fs = v.requestFullscreen || v.webkitRequestFullscreen;      // 영상만 전체화면 (발표 화면이 이미 전체화면이어도 영상이 화면을 채움)
+  if (fs) { try { const r = fs.call(v); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
+}
+function stopClip(i){
+  const el = els[i], v = clipVideo(i);
+  if (!v) return;
+  v.pause(); el.classList.remove("playing");
+  if (document.fullscreenElement === v) document.exitFullscreen().catch(() => {});
+}
+els.forEach((el, i) => {
+  const v = clipVideo(i);
+  if (!v) return;
+  v.addEventListener("ended", () => {
+    el.classList.remove("playing"); el.classList.add("done");
+    if (document.fullscreenElement === v) document.exitFullscreen().catch(() => {});
+  });
+});
+document.addEventListener("fullscreenchange", () => {      // Esc로 영상 전체화면을 나가면 대기 화면으로
+  els.forEach((el, i) => { const v = clipVideo(i); if (v && el.classList.contains("playing") && document.fullscreenElement !== v && v.paused) el.classList.remove("playing"); });
+});
+
+/* ── 장 이동 ── */
+function go(i){
+  i = Math.max(0, Math.min(SLIDES.length - 1, i));
+  if (i === cur) return;
+  if (cur >= 0) {
+    els[cur].classList.remove("on");
+    stopClip(cur);
+    const mv = els[cur].classList.contains("motion") && els[cur].querySelector("video"); if (mv) mv.pause();
+  }
+  cur = i;
+  const el = els[i];
+  el.classList.add("on");
+  if (el.classList.contains("motion")) { const v = el.querySelector("video"); v.currentTime = 0; v.play().catch(() => {}); }
+  prog.style.width = ((i + 1) / SLIDES.length * 100) + "%";
+  try { history.replaceState(null, "", "#" + (i + 1)); } catch (e) {}
+}
+/* 다음: 영상 화면이면 첫 동작은 재생, 재생 중이면 무시(스페이스는 일시정지), 끝났으면 다음 장 */
+function next(){
+  const el = els[cur], v = clipVideo(cur);
+  if (v) {
+    if (el.classList.contains("playing")) return;
+    if (!el.classList.contains("done")) { playClip(cur, v.currentTime === 0 || v.ended); return; }
+  }
+  go(cur + 1);
+}
+
+function fit(){
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `translate(-50%,-50%) scale(${k})`;
+}
+addEventListener("resize", fit); fit();
+
+let typed = "";
+const jump = document.getElementById("jump");
+function full(){
+  const d = document.documentElement;
+  if (!document.fullscreenElement) (d.requestFullscreen || d.webkitRequestFullscreen).call(d);
+  else document.exitFullscreen();
+}
+addEventListener("keydown", e => {
+  const v = clipVideo(cur), playing = v && els[cur].classList.contains("playing");
+  if (playing) {                                             // 영상 재생 중 조작
+    if (e.key === " ") { e.preventDefault(); v.paused ? v.play() : v.pause(); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); v.currentTime = Math.min(v.duration, v.currentTime + 5); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); v.currentTime = Math.max(0, v.currentTime - 5); }
+    return;
+  }
+  if (/^[0-9]$/.test(e.key)) { typed += e.key; jump.textContent = typed + "번으로"; jump.style.display = "block"; return; }
+  if (e.key === "Enter" && typed) { go(parseInt(typed, 10) - 1); typed = ""; jump.style.display = "none"; return; }
+  if (e.key === "Escape" && typed) { typed = ""; jump.style.display = "none"; return; }
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); next(); }
+  else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+  else if (e.key === "Home") go(0);
+  else if (e.key === "End") go(SLIDES.length - 1);
+  else if (e.key === "f" || e.key === "F") full();
+  else if ((e.key === "r" || e.key === "R") && v) playClip(cur, true);
+});
+stage.addEventListener("click", e => {
+  if (e.clientX < innerWidth * 0.15) go(cur - 1); else next();
+});
+
+let hideT;
+const hint = document.getElementById("hint");
+addEventListener("mousemove", () => {
+  document.body.classList.add("cur"); hint.classList.add("on");
+  clearTimeout(hideT); hideT = setTimeout(() => { document.body.classList.remove("cur"); hint.classList.remove("on"); }, 1800);
+});
+
+const start = parseInt((location.hash || "").slice(1), 10);
+document.fonts.ready.then(() => go(isNaN(start) ? 0 : start - 1));
+</script>
+</body>
+</html>
