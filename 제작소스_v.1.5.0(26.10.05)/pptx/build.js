@@ -1,4 +1,4 @@
-// AI특강 슬라이드 v.1.5.0 — 사각 장식을 제목 첫 글자 대각선 왼쪽 위에, 글자 쪽 모서리를 끊은 모양으로(글자에 닿지 않음) · PART 2 3막을 시간 순서(Hermes→Aside→Jev→Muse→Dots)로 / v.1.4.0 — PART 2 기사 교체(제목·첫 문단이 직관적인 기사) · 정적 슬라이드 18장을 HyperFrames 모션으로 / v.1.3.1 — 기사 제목 강조 박스를 글자에 맞게 정밀 수정(15건) / v.1.3.0 기사 소개 모션·PART 3 기사 캡처
+// AI특강 슬라이드 v.1.6.0 — PART 3 기사 3·4·5(47~49장)를 기사 사진 + 사진 설명으로 / v.1.5.0 — 사각 장식을 제목 첫 글자 대각선 왼쪽 위에, 글자 쪽 모서리를 끊은 모양으로(글자에 닿지 않음) · PART 2 3막을 시간 순서(Hermes→Aside→Jev→Muse→Dots)로 / v.1.4.0 — PART 2 기사 교체(제목·첫 문단이 직관적인 기사) · 정적 슬라이드 18장을 HyperFrames 모션으로 / v.1.3.1 — 기사 제목 강조 박스를 글자에 맞게 정밀 수정(15건) / v.1.3.0 기사 소개 모션·PART 3 기사 캡처
 const path = require("path");
 const fs = require("fs");
 const pptxgen = require("/tmp/claude-0/-home-user-ppt-auto-html-/01f805d1-d26c-5b66-83a4-df70d421d547/scratchpad/hf/node_modules/pptxgenjs");
