@@ -33,7 +33,9 @@ pres.author = "김경훈";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 
 let N = 0; const VIDS = [];
-const _addSlide = pres.addSlide.bind(pres); pres.addSlide = (o) => { N++; return _addSlide(o); };
+const ONLY = process.env.ONLY ? process.env.ONLY.split(",").map(Number) : null;
+const DUMMY = new Proxy({}, { get: (t, k) => (k === "background" ? undefined : () => DUMMY), set: () => true });
+const _addSlide = pres.addSlide.bind(pres); pres.addSlide = (o) => { N++; return (!ONLY || ONLY.includes(N)) ? _addSlide(o) : DUMMY; };
 const CLIPDUR = fs.existsSync("/tmp/vids/clips/dur.json") ? JSON.parse(fs.readFileSync("/tmp/vids/clips/dur.json", "utf8")) : {};
 pres.defineSlideMaster({ title: "DARK", background: { path: path.join(__dirname, "bg.png") } });
 pres.defineSlideMaster({ title: "MOTION", background: { color: "0C0B0B" } });
@@ -95,7 +97,7 @@ const CLIPS = "/tmp/vids/clips/";
 function motion(file, poster, name, note, sec, dur) {
   const s = pres.addSlide({ masterName: "MOTION", sectionTitle: sec });
   s.addMedia({ type: "video", path: file, cover: b64(poster), x: 0, y: 0, w: 13.333, h: 7.5, objectName: name });
-  VIDS.push({ n: N, name, dur: dur || 6000 });
+  if (!ONLY || ONLY.includes(N)) VIDS.push({ n: N, name, dur: dur || 6000 });
   s.addNotes(note);
   return s;
 }
