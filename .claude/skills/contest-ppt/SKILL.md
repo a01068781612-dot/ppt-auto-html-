@@ -56,5 +56,5 @@ description: 공모전·경진대회·사례 발표대회에 낼 발표 PPT를 �
 3. 모션 HTML 생성 → `sqfix.py` → `allshot.js`로 **미리보기 이미지 먼저 전달** (PPT는 확인 후)
 4. 렌더(`--crf 24`) → `build.js` → `timing.py` → validate → LibreOffice 미리보기
 5. 전달: 30MB 넘으면 29MB 조각 + `0_합치기.bat`(조각 크기 확인). 일부 장만 바뀌면 교체용 PPT(`ONLY=`)
-6. 예비본 PDF·MP4, 필요하면 예상 질문·답변(competition-qa 스킬) · 시간 맞춘 발표 대본
+6. 예비본 PDF·MP4, 필요하면 예상 질문·답변(competition-qa 스킬) · 시간 맞춘 발표 대본(`발표대본_작성가이드_v.*.md` 형식, 발표 제한 시간에 맞춰 ⏱ 계산)
 7. 진행요약·진행순서표 새 버전 저장, git에는 문서·스크립트만(영상·사진·PPT 제외)
