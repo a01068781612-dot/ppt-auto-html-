@@ -14,7 +14,7 @@
 .chip{border:1.5px solid rgba(255,255,255,.16);border-radius:22px;background:#1d1a19;padding:28px 32px}
 .chip b{display:block;font-size:22px;font-weight:800;letter-spacing:.2em;color:#ff5a1f}
 .chip span{display:block;font-size:40px;font-weight:800;margin-top:10px}
-</style></head><body>
+*{word-break:keep-all;overflow-wrap:break-word}</style></head><body>
 <div id="root" data-composition-id="main" data-start="0" data-duration="6" data-width="1920" data-height="1080">
 <div class="ghost gh clip" data-start="0" data-duration="6" data-track-index="0">Start.</div>
 <div class="lbl clip" data-start="0" data-duration="6" data-track-index="1">PART 3 · 06  우리 조직이 할 일</div>
@@ -29,8 +29,8 @@
 const tl=gsap.timeline({paused:true});
 tl.from(".lbl",{opacity:0,x:-30,duration:.5},0).from(".hline",{scaleX:0,transformOrigin:"left",duration:.8},0.1).from(".gh",{opacity:0,duration:1},0.3)
 .from(".q",{opacity:0,y:20,duration:.6},0.4).from(".sq",{opacity:0,scale:.4,rotation:-45,duration:.6,ease:"back.out(1.8)"},0.9)
-.from(".m1",{opacity:0,y:70,duration:.8,ease:"power3.out"},1.0).from(".m2",{opacity:0,y:70,duration:.8,ease:"power3.out"},1.6)
-.from(".chip",{opacity:0,y:50,duration:.5,stagger:.2},2.4);
+.from(".m1",{opacity:0,y:70,duration:.8,ease:"power3.out"},1.0).from(".m2",{opacity:0,scale:1.8,transformOrigin:"left center",duration:.45,ease:"power4.in"},1.6).to(".m2",{x:"+=10",duration:.05,repeat:5,yoyo:true},2.05)
+.from(".chip",{opacity:0,y:80,duration:.6,stagger:.18,ease:"back.out(2.2)"},2.4);
 window.__timelines["main"]=tl;
 (function(){
 if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);

@@ -18,7 +18,7 @@
 .chip b{display:block;font-size:22px;font-weight:800;letter-spacing:.2em;color:#8a847e}
 .chip span{display:block;font-size:36px;font-weight:800;margin-top:10px}
 .chip.c{border-color:#ff5a1f}.chip.c b{color:#ff5a1f}
-</style></head><body>
+*{word-break:keep-all;overflow-wrap:break-word}</style></head><body>
 <div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
 <div class="brand clip" style="left:150px;top:110px" data-start="0" data-duration="5" data-track-index="0">PART 2 · TREND · MAIN</div>
 <div class="hline clip" style="left:150px;right:110px;top:170px" data-start="0" data-duration="5" data-track-index="1"></div>
@@ -29,19 +29,19 @@
 <div class="ttl clip" data-start="0" data-duration="5" data-track-index="6">2026<br>AI 트렌드</div>
 <div class="sub clip" data-start="0" data-duration="5" data-track-index="7">대답하는 AI에서, 일하는 AI로</div>
 <div class="chips clip" data-start="0" data-duration="5" data-track-index="8" style="grid-template-columns:repeat(3,1fr)">
-<div class="chip"><b>1막 · 왜</b><span>AI 에이전트 · AX</span></div><div class="chip"><b>2막 · 무엇이</b><span>프롬프트 → 하네스</span></div><div class="chip c"><b>3막 · 신문물</b><span>Jev · Aside · Muse · Dots · Hermes</span></div></div>
+<div class="chip"><b>1막 · 왜</b><span>AI 에이전트 · AX</span></div><div class="chip"><b>2막 · 무엇이</b><span>프롬프트 → 하네스</span></div><div class="chip c"><b>3막 · 신문물</b><span>Hermes · Aside · Jev · Muse · Dots</span></div></div>
 <div class="dots clip" style="right:110px;top:118px" data-start="0" data-duration="5" data-track-index="9"><i></i><i class="on"></i><i></i></div>
 </div>
 <script>
 const tl=gsap.timeline({paused:true});
 tl.from(".brand",{opacity:0,duration:.6},0).from(".hline",{scaleX:0,transformOrigin:"left",duration:.9,ease:"power3.out"},0.1)
-.from(".big",{opacity:0,x:140,duration:1.2,ease:"power3.out"},0.2)
+.from(".big",{opacity:0,scale:2.6,filter:"blur(24px)",duration:1.1,ease:"power3.out"},0.15)
 .from(".bigg",{opacity:0,y:-40,duration:1.3},0.6)
 .from(".sq",{opacity:0,scale:.4,rotation:-45,duration:.7,ease:"back.out(1.8)"},0.4)
 .from(".lbl",{opacity:0,x:-40,duration:.6},0.6)
 .from(".ttl",{opacity:0,y:60,duration:.8,ease:"power3.out"},0.8)
 .from(".sub,.dots",{opacity:0,y:20,duration:.6},1.3)
-.from(".chip",{opacity:0,y:50,duration:.5,stagger:.16,ease:"power2.out"},1.6);
+.from(".chip",{opacity:0,rotationY:-90,transformPerspective:1400,transformOrigin:"left center",duration:.6,stagger:.18,ease:"power3.out"},1.6);
 window.__timelines["main"]=tl;
 (function(){
 if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);
