@@ -1,4 +1,4 @@
-// 상황관리 공감 워크숍 AI 특강(26.10.20) v.1.0.0 — AI특강 v.1.7.2 기반: PART 1(국토부) 삭제, PART 번호 1·2로, 표지·목차 수정, 기사 소개·정리 문구를 영상 내용 기준 문장형(굵게)으로
+// 상황관리 공감 워크숍 AI 특강(26.10.20) v.1.0.1 — 강사 소개 1·2(4·5장)를 웹 프로필 최신 내용으로 / v.1.0.0 — AI특강 v.1.7.2 기반: PART 1(국토부) 삭제, PART 번호 1·2로, 표지·목차 수정, 기사 소개·정리 문구를 영상 내용 기준 문장형(굵게)으로
 const path = require("path");
 const fs = require("fs");
 const pptxgen = require("/tmp/claude-0/-home-user-ppt-auto-html-/01f805d1-d26c-5b66-83a4-df70d421d547/scratchpad/hf/node_modules/pptxgenjs");
