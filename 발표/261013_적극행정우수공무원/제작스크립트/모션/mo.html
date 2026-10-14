@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset="utf-8"><style>
 @font-face{font-family:P;src:url(PretendardVariable.woff2) format("woff2");font-weight:100 900}
 *{margin:0;padding:0;box-sizing:border-box}
-body{width:1920px;height:1080px;background:#000;overflow:hidden;font-family:P;color:#fff}
+body{width:1920px;height:1080px;background:transparent;overflow:hidden;font-family:P;color:#fff}
 #c{position:absolute;inset:0}
 .a{position:absolute}
 </style></head><body><div id="c"></div><script>
@@ -72,6 +72,26 @@ S.v2_end={d:9,f(t){let h='';const r=ez(seg(t,.3,1.4));let sec=450-180*r;const mm
  const lp=eo(seg(t,2.2,3.0)),bl=eo(seg(t,3.6,4.3));
  h+=ctr(500,`골든타임은, 함께 지킬 때 <span style="color:${bl>0?'rgba(47,128,237,'+(0.35+.65*bl)+')':'#fff'}">앞당겨집니다.</span>`,76,900,'#fff',lp*fade);
  h+=txt(1440,980,'경상남도 소방본부 119종합상황실',26,700,'#aaa',seg(t,6.6,7.2)*fade);
+ return h}};
+
+S.v1_full={d:45,f(t){let h='';
+ const card=(a,b)=>t>=a&&t<b;
+ let dark=0;
+ if(card(10,14))dark=.62*Math.min(seg(t,10,10.4),1-seg(t,13.7,14));
+ if(card(22.5,27))dark=.62*Math.min(seg(t,22.5,22.9),1-seg(t,26.7,27));
+ if(card(34,37))dark=.62*seg(t,34,34.4);
+ if(t>=37)dark=Math.max(.62*(1-seg(t,37,37.5)),.85*seg(t,37,37.6));
+ if(t>=44.2)dark=.85+.15*seg(t,44.2,45);
+ if(t<3)dark=1;
+ h+=`<div class="a" style="inset:0;background:#000;opacity:${dark}"></div>`;
+ if(card(10,14))h+=S.v1_bars.f(t-10);
+ if(card(22.5,27))h+=S.v1_dots.f(t-22.5);
+ if(card(34,37))h+=S.v1_days.f(Math.min(t-34,3.5)*1.15);
+ if(t>=37)h+=S.v1_finale.f(t-37);
+ const subs=[[4,9,'사이렌은 울려도, 길은 열리지 않습니다.'],[15,20.5,'처음 가는 농촌 길, 답은 책 속에 있습니다.'],[27,32.5,'불이 꺼져도, 일상은 멈춰 있습니다.']];
+ subs.forEach(([a,b,x])=>{if(t>=a&&t<b){const o=Math.min(seg(t,a,a+.4),1-seg(t,b-.4,b));h+=`<div class="a" style="left:0;right:0;bottom:90px;text-align:center;opacity:${o}"><span style="display:inline-block;padding:14px 34px;border-radius:12px;background:rgba(0,0,0,.55);font-size:52px;font-weight:800;letter-spacing:-1px">${x}</span></div>`}});
+ const labs=[[3,14,'재연 영상 · 119원패스 공모전 시연'],[14,18,'재연 영상 · 119원패스 공모전 시연'],[18,21,'실제 자료 · 농촌마을 골든타임 길라잡이 p.220'],[21,22.5,'실제 사진 · 출동차 안'],[22.5,27,'재연 영상 · 119원패스 공모전 시연'],[27,37,'재연 영상 · 재난 원패스 공모전 시연']];
+ labs.forEach(([a,b,x])=>{if(t>=a&&t<b&&!card(10,14)&&!card(22.5,27)&&!card(34,37))h+=txt(1500,40,`<div style="width:380px;text-align:right">${x}</div>`,20,600,'rgba(255,255,255,.7)',1)});
  return h}};
 window.SCENES=S;window.draw=(k,t)=>{H(S[k].f(t))};
 </script></body></html>
