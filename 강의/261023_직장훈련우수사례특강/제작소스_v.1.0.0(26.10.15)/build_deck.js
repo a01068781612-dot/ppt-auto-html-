@@ -1,4 +1,4 @@
-// 직장훈련특강 전체 PPT(114장) 조립 — 기획안 v.3.3.0 기준 · v.1.1.0: 2~5장 워크숍판(00_상황관리워크숍_AI특강_슬라이드_v.1.0.2) 영상, 장면은 p1_v33 · p2_v33 · p3_v36
+// 직장훈련특강 전체 PPT(129장) 조립 — 기획안 v.3.4.0 기준 · v.1.2.0: 제안서 5쪽을 24장으로 잘라 크게(45~68장), 이후 장 +15 · v.1.1.0: 2~5장 워크숍판(00_상황관리워크숍_AI특강_슬라이드_v.1.0.2) 영상, 장면은 p1_v33 · p2_v33 · p3_v36
 // 사용: NODE_PATH=<node_modules> node build_deck.js <작업폴더> <raw.pptx>
 //   작업폴더/img/s001.jpg … s114.jpg  : p1_v32 · p2_v32 · p3_v35 로 렌더한 1920×1080 장면
 //   작업폴더/media/                   : 영상(op2~op5 · 농골길 GPTs/웹 무음 · 홍보 영상)과 첫 화면 이미지
@@ -21,35 +21,35 @@ const VIDEO = {
   3: ["ws3.mp4", "ws3.png", "intro_video", "워크숍판 3장 — 국무회의 영상(2:44) 자동 재생. 끝날 때까지 기다렸다가 클릭"],
   4: ["ws4.mp4", "ws4.png", "op4_motion", "워크숍판 4장 — 강사 소개 1 (BLACK · 7건 · 27곳 · ONLINE)"],
   5: ["ws5.mp4", "ws5.png", "op5_motion", "워크숍판 5장 — 강사 소개 2 (강의 · 자격 · 언론, ssca1612.pages.dev)"],
-  56: ["농골길_gpts_무음.mp4", "gpts.png", "gpts_video", "AI 농골길 코치(GPTs) 실제 화면 — 무음, 자동 재생"],
-  64: ["농골길_웹_무음.mp4", "web.png", "web_video", "농골길 웹 화면 녹화 — 무음, 자동 재생. 다음 장에서 실제 접속(비밀번호는 강사가 입력)"],
-  113: ["promo.mp4", "promo.png", "promo_video", "강사 홍보 영상(1:22) — 자동 재생, 마지막 장면(명함·QR)에서 멈춤. 끝나면 클릭해서 Q&A"],
+  71: ["농골길_gpts_무음.mp4", "gpts.png", "gpts_video", "AI 농골길 코치(GPTs) 실제 화면 — 무음, 자동 재생"],
+  79: ["농골길_웹_무음.mp4", "web.png", "web_video", "농골길 웹 화면 녹화 — 무음, 자동 재생. 다음 장에서 실제 접속(비밀번호는 강사가 입력)"],
+  128: ["promo.mp4", "promo.png", "promo_video", "강사 홍보 영상(1:22) — 자동 재생, 마지막 장면(명함·QR)에서 멈춤. 끝나면 클릭해서 Q&A"],
 };
 
 // 링크: [장 번호, x, y, w, h(px), 주소]
 const ART = {
-  82: "http://www.fpn119.co.kr/sub_read.html?uid=240575",
-  83: "https://www.idomin.com/news/articleView.html?idxno=946953",
-  84: "https://www.heraldk.com/article/2026032322064737999",
-  85: "https://v.daum.net/v/20260324163020234",
-  86: "https://www.fpn119.co.kr/249649",
-  87: "https://www.jeonmae.co.kr/news/articleView.html?idxno=1276072",
-  88: "https://nocutnews.co.kr/news/6557511",
+  97: "http://www.fpn119.co.kr/sub_read.html?uid=240575",
+  98: "https://www.idomin.com/news/articleView.html?idxno=946953",
+  99: "https://www.heraldk.com/article/2026032322064737999",
+  100: "https://v.daum.net/v/20260324163020234",
+  101: "https://www.fpn119.co.kr/249649",
+  102: "https://www.jeonmae.co.kr/news/articleView.html?idxno=1276072",
+  103: "https://nocutnews.co.kr/news/6557511",
 };
 const LINKS = [];
 Object.entries(ART).forEach(([n, u], i) => {
   n = +n;
   LINKS.push([n, 110, 280, 900, 620, u], [n, 1060, 290, 750, 480, u], [n, 1060, 800, 750, 160, u]);
-  LINKS.push([81, 110 + i * 246, 300, 226, 560, u]);
+  LINKS.push([96, 110 + i * 246, 300, 226, 560, u]);
 });
-LINKS.push([37, 110, 875, 820, 50, ART[82]], [37, 930, 875, 880, 50, ART[83]]);
-LINKS.push([65, 110, 290, 1150, 647, "https://nonggolgil.pages.dev/"], [65, 1300, 340, 510, 60, "https://nonggolgil.pages.dev/"]);
-LINKS.push([67, 110, 1030, 1700, 50, "https://www.kukinews.com/article/view/kuk202512310207"]);
-LINKS.push([114, 1000, 300, 800, 540, "https://ssca1612.pages.dev/"], [114, 150, 790, 780, 60, "https://ssca1612.pages.dev/"]);
+LINKS.push([37, 110, 900, 820, 70, ART[97]], [37, 930, 900, 880, 70, ART[98]]);
+LINKS.push([80, 110, 290, 1150, 647, "https://nonggolgil.pages.dev/"], [80, 1300, 290, 520, 647, "https://nonggolgil.pages.dev/"]);
+LINKS.push([82, 110, 1030, 1700, 50, "https://www.kukinews.com/article/view/kuk202512310207"]);
+LINKS.push([129, 1000, 300, 800, 540, "https://ssca1612.pages.dev/"], [129, 150, 790, 780, 60, "https://ssca1612.pages.dev/"]);
 
-const SECTION = n => (n <= 6 ? "오프닝" : n <= 40 ? "PART 1 농골길" : n <= 80 ? "PART 2 AI 농골길 코치" : n <= 110 ? "PART 3 조직과 관할로" : "마무리 · Q&A");
+const SECTION = n => (n <= 6 ? "오프닝" : n <= 40 ? "PART 1 농골길" : n <= 95 ? "PART 2 AI 농골길 코치" : n <= 125 ? "PART 3 조직과 관할로" : "마무리 · Q&A");
 let last = "";
-for (let n = 1; n <= 114; n++) {
+for (let n = 1; n <= 129; n++) {
   const sec = SECTION(n);
   if (sec !== last) { pres.addSection({ title: sec }); last = sec; }
   const s = pres.addSlide({ sectionTitle: sec });
