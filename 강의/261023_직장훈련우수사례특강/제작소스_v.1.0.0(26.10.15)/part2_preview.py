@@ -1,7 +1,7 @@
 # 직장훈련특강 PART 2(22~39장) 정지 미리보기 생성기 — 기획안 v.2.3.0 기준
 # 사용: python3 part2_preview.py <자료폴더> <출력폴더>
 #   자료폴더: PretendardVariable.woff2, bg.png, p220.png, p220_sat.png, limit.png, noentry1/2.png,
-#             doc14.png, g_hi.jpg(GPTs 영상 60초), w20/w70/w130.jpg(웹 영상 프레임)
+#             bulga1/2.png(220쪽 위성지도에서 자른 불가1·2 사진), docplan.png(고도화 계획 공문 PDF 1쪽 220dpi), g_hi.jpg(GPTs 영상 60초), w20/w70/w130.jpg(웹 영상 프레임)
 # 디자인: PPT디자인시스템_v.1.3.0 (검정·흰색·주황, 사각 장식, 외곽선 영단어, 구분선 y=244)
 import os, sys, shutil, subprocess
 
@@ -87,10 +87,10 @@ slide(25, '''<div class="tag"><b>PART 2 · 함께 보기</b>  <span>책자 220�
 # 26 위성지도
 slide(26, head('PART 2 · 함께 보기', '220쪽 위성지도', 'Map.', '한 장의 지도에 담긴 것') + '''
 <div class="shot" style="left:110px;top:290px;width:1180px;height:666px"><img src="p220_sat.png"></div>
-<div class="shot" style="left:1330px;top:290px;width:480px;height:316px"><img src="noentry1.png"></div>
-<div class="a cap" style="left:1330px;top:616px;font-size:22px">▲ 진입곤란 1 · 도로폭 약 1.4m</div>
-<div class="shot" style="left:1330px;top:656px;width:480px;height:260px"><img src="noentry2.png"></div>
-<div class="a cap" style="left:1330px;top:926px;font-size:22px">▲ 진입곤란 2 · 도로폭 약 2.2m</div>''')
+<div class="shot" style="left:1330px;top:290px;width:480px;height:300px"><img src="bulga1.png" style="object-fit:contain;background:#000"></div>
+<div class="a cap" style="left:1330px;top:598px;font-size:22px">▲ 불가1 · 도로폭 약 1.4m, 진입 불가</div>
+<div class="shot" style="left:1330px;top:640px;width:480px;height:280px"><img src="bulga2.png" style="object-fit:contain;background:#000"></div>
+<div class="a cap" style="left:1330px;top:928px;font-size:22px">▲ 불가2 · 도로폭 약 2.2m, 굴곡으로 진입 어려움</div>''')
 
 # 27 4층 구조
 lay = [('01', '식별', '마을명 · 위치 · 도로명주소', '정곡면 법정로6길 92-1'), ('02', '실측', '도로폭 · 거리 · 소화전', '1.4m(113m) · 2.2m(181m)<br>부서위치~최심부 45m'),
@@ -109,7 +109,7 @@ slide(28, '''<div class="tag"><b>PART 2 · 정리</b>  <span>책자에서 AI로<
 # 29 GPTs 영상
 slide(29, '''<div class="shot" style="left:0;top:0;width:1920px;height:1080px;border:0;border-radius:0"><img src="g_hi.jpg" style="object-fit:contain;background:#000"></div>
 <div class="a" style="left:0;top:0;width:1920px;height:1080px;background:rgba(0,0,0,.35)"></div><div class="play" style="left:900px;top:480px"></div>
-<div class="a" style="left:110px;bottom:70px;font-size:30px;font-weight:700">🎬 AI 농골길 코치(GPTs) 실제 화면 · 전체화면 자동 재생 <span class="cap">(2:48)</span></div>''')
+<div class="a" style="left:110px;bottom:70px;font-size:30px;font-weight:700">🎬 AI 농골길 코치(GPTs) 실제 화면 · 전체화면 자동 재생 · 무음 <span class="cap">(2:48)</span></div>''')
 
 # 30 출력 구조
 flow = ['기본 정보', '진입 · 소방 접근', '대체 진입로', '인근 소화전', '비고 · 전술', '근거 자료 표기']
@@ -142,7 +142,7 @@ slide(32, head('PART 2 · 그래서', '한계를 웹에서 푼다', 'Next.', '�
 # 33 웹 영상
 slide(33, '''<div class="shot" style="left:0;top:0;width:1920px;height:1080px;border:0;border-radius:0"><img src="w70.jpg" style="object-fit:contain;background:#000"></div>
 <div class="a" style="left:0;top:0;width:1920px;height:1080px;background:rgba(0,0,0,.35)"></div><div class="play" style="left:900px;top:480px"></div>
-<div class="a" style="left:110px;bottom:70px;font-size:30px;font-weight:700">🎬 농골길 웹 · 휴대폰 화면 녹화 — 핵심 구간 약 2분</div>''')
+<div class="a" style="left:110px;bottom:70px;font-size:30px;font-weight:700">🎬 농골길 웹 · 휴대폰 화면 녹화 — 핵심 구간 약 2분 · 무음</div>''')
 
 # 34 라이브 웹
 slide(34, head('PART 2 · 라이브', '농골길 웹 직접 접속', 'Live.', '지금 만들고 있는 농골길 웹') + '''
@@ -161,13 +161,15 @@ slide(35, head('PART 2 · 훈련으로', '2025. 12.', 'Award.', '직장훈련 �
 <div class="a body" style="left:110px;top:670px;font-size:36px;line-height:1.8">· "AI를 통한 신속한 현장대응활동 기반 조성"<br>· "전국 최초 농촌마을 소방 GPTs 개발"</div>
 <div class="a cap" style="left:110px;top:870px;font-size:24px">출처: 2025 농골길 결과보고(현장대응단-11301)</div>''')
 
-# 36 2026 계단
+# 36 2026 — 왼쪽 카드 3개 같은 높이, 오른쪽 공문 크게
 st = [("'26. 2. 11.", '고도화 · 활용 증진 계획', '책자 개정 · 용수시설 정밀 좌표'), ("'26. 3. 5.", '전 대원 GPTs 활용 교육', '현장대응단-2515'), ("'26. 7.~", 'AI 기반 현지적응훈련', '현장대응단-7033 · 지휘팀 평가')]
-cards = ''.join(f'<div class="card{" hi" if i==2 else ""}" style="left:{110+i*390}px;top:{560-i*90}px;width:365px;height:{300+i*90}px;padding:34px 30px">'
-                f'<div class="acc" style="font-size:26px;font-weight:800">{d}</div><div style="font-size:38px;font-weight:900;margin:14px 0;line-height:1.3">{t}</div>'
-                f'<div class="cap" style="font-size:24px;line-height:1.4">{c}</div></div>' for i, (d, t, c) in enumerate(st))
+cards = ''.join(f'<div class="card{" hi" if i==2 else ""}" style="left:110px;top:{276+i*243}px;width:560px;height:218px;padding:30px 32px">'
+                f'<div class="acc" style="font-size:24px;font-weight:800">{d}</div><div style="font-size:36px;font-weight:900;margin:8px 0 6px">{t}</div>'
+                f'<div class="cap" style="font-size:22px">{c}</div></div>' for i, (d, t, c) in enumerate(st))
 slide(36, head('PART 2 · 훈련으로', '2026 B사업', 'Train.', '도구를 만들고, 훈련에 넣었다') + cards +
-      '<div class="shot" style="left:1340px;top:290px;width:470px;height:664px;background:#fff"><img src="doc14.png" style="object-fit:contain"></div>')
+      '<div class="a acc" style="left:688px;top:600px;font-size:44px;font-weight:900">▶</div>'
+      '<div class="shot" style="left:740px;top:276px;width:1070px;height:704px;background:#fff;border-radius:12px"><img src="docplan.png" style="object-fit:contain"></div>'
+      '<div class="a cap" style="left:740px;top:990px;font-size:22px">▲ 의령소방서 「농촌마을 골든타임 길라잡이 고도화·활용 증진 계획」(2026)</div>')
 
 # 37 평가표
 rows = [('AI 정보 분석', '출동 중 『AI 농골길 코치』에 신속히 접속했는가'), ('지도 연동', '소화전·비상소화장치 위치 실시간 공유'),
