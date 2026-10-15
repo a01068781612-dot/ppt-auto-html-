@@ -15,65 +15,59 @@ function H(h){C.innerHTML=h}
 function txt(x,y,s,size,w,col,op=1,extra=''){return `<div class="a" style="left:${x}px;top:${y}px;font-size:${size}px;font-weight:${w};color:${col};opacity:${op};white-space:nowrap;${extra}">${s}</div>`}
 function ctr(y,s,size,w,col,op=1,extra=''){return `<div class="a" style="left:0;right:0;top:${y}px;text-align:center;font-size:${size}px;font-weight:${w};color:${col};opacity:${op};white-space:nowrap;${extra}">${s}</div>`}
 const S={};
-// 1) 2.3배 막대
 S.v1_bars={d:4,f(t){const v=[2.1,3.2,3.6,4.0,4.7],yr=['21','22','23','24','25'];let h='';
- const base=820,x0=560,bw=110,gap=60;
- h+=`<div class="a" style="left:${x0-40}px;top:${base}px;width:${5*bw+4*gap+80}px;height:2px;background:#555;opacity:${eo(seg(t,0,.4))}"></div>`;
- v.forEach((n,i)=>{const p=eo(seg(t,.2+i*.18,.9+i*.18));const hh=n/4.7*430*p;const x=x0+i*(bw+gap);const last=i==4;
-  h+=`<div class="a" style="left:${x}px;top:${base-hh}px;width:${bw}px;height:${hh}px;border-radius:10px 10px 0 0;background:${last?B:GR}"></div>`;
-  h+=txt(x,base-hh-58,`<div style="width:${bw}px;text-align:center">${n.toFixed(1)}만</div>`,32,800,last?B:'#aaa',p);
-  h+=txt(x,base+16,`<div style="width:${bw}px;text-align:center">'${yr[i]}</div>`,26,600,'#888',eo(seg(t,0,.4)));});
- const k=eo(seg(t,1.9,2.9));h+=txt(1440,330,(1+1.3*k).toFixed(1)+'<span style="font-size:90px">배</span>',170,900,'#fff',seg(t,1.8,2.1),'letter-spacing:-4px');
- h+=ctr(140,'막혀서, 신호를 어기며 달린 소방차·구급차',40,700,'#ddd',eo(seg(t,.1,.7)));
- h+=ctr(1010,"무인단속 적발 건수('21~'25) · 국정감사 자료(소방청)",20,500,'#666',seg(t,.5,1));
+ const base=860,x0=250,bw=130,gap=56;
+ h+=`<div class="a" style="left:${x0-30}px;top:${base}px;width:${5*bw+4*gap+60}px;height:3px;background:#666;opacity:${eo(seg(t,0,.4))}"></div>`;
+ v.forEach((n,i)=>{const p=eo(seg(t,.2+i*.18,.9+i*.18));const hh=n/4.7*470*p;const x=x0+i*(bw+gap);const last=i==4;
+  h+=`<div class="a" style="left:${x}px;top:${base-hh}px;width:${bw}px;height:${hh}px;border-radius:12px 12px 0 0;background:${last?B:GR}"></div>`;
+  h+=txt(x-20,base-hh-72,`<div style="width:${bw+40}px;text-align:center">${n.toFixed(1)}만</div>`,48,800,last?B:'#bbb',p);
+  h+=txt(x,base+18,`<div style="width:${bw}px;text-align:center">'${yr[i]}</div>`,39,700,'#999',eo(seg(t,0,.4)));});
+ const k=eo(seg(t,1.9,2.9));h+=txt(1300,330,(1+1.3*k).toFixed(1)+'<span style="font-size:135px">배</span>',255,900,'#fff',seg(t,1.8,2.1),'letter-spacing:-6px');
+ h+=ctr(110,'막혀서, 신호를 어기며 달린 소방차·구급차',60,800,'#eee',eo(seg(t,.1,.7)));
+ h+=ctr(1000,"무인단속 적발 건수('21~'25) · 국정감사 자료(소방청)",30,500,'#888',seg(t,.5,1));
  return h}};
-// 2) 225 dots -> 164 red
-S.v1_dots={d:4.5,f(t){let h='';const n=225,cols=25,sz=26,gp=12,W=cols*(sz+gp)-gp,x0=(1920-W)/2,y0=300;
+S.v1_dots={d:4.5,f(t){let h='';const n=225,cols=25,sz=30,gp=12,W=cols*(sz+gp)-gp,x0=(1920-W)/2,y0=230;
  for(let i=0;i<n;i++){const r=Math.floor(i/cols),c=i%cols;const ap=seg(t,i*.003,i*.003+.3);
   const red=i<164;const cp=seg(t,1.0+i*.007,1.2+i*.007);const gp2=seg(t,2.3+(i-164)*.01,2.5+(i-164)*.01);
-  let col=red?(cp>0?R:'#444'):(gp2>0?G:'#444');
+  let col=red?(cp>0?R:'#555'):(gp2>0?G:'#555');
   h+=`<div class="a" style="left:${x0+c*(sz+gp)}px;top:${y0+r*(sz+gp)}px;width:${sz}px;height:${sz}px;border-radius:50%;background:${col};opacity:${ap};transform:scale(${.6+.4*eo(ap)})"></div>`;}
  const k=Math.round(164*eo(seg(t,1.0,2.2)));
- h+=ctr(140,'225개 마을 중, 펌프차가 못 들어가는 곳',40,700,'#ddd',eo(seg(t,.1,.6)));
- h+=ctr(690,`<span style="color:${R}">${k}</span><span style="font-size:70px">곳</span>`,150,900,'#fff',seg(t,.9,1.2),'letter-spacing:-4px');
- h+=ctr(890,`<span style="color:${R}">●</span> 진입 불가 &nbsp;&nbsp; <span style="color:${G}">●</span> 진입 가능`,26,600,'#999',seg(t,2.4,2.8));
- h+=ctr(1010,'농촌마을 골든타임 길라잡이 · 225개 마을 실측',20,500,'#666',seg(t,.5,1));
+ h+=ctr(100,'225개 마을 중, 펌프차가 못 들어가는 곳',60,800,'#eee',eo(seg(t,.1,.6)));
+ h+=ctr(600,`<span style="color:${R}">${k}</span><span style="font-size:105px">곳</span>`,225,900,'#fff',seg(t,.9,1.2),'letter-spacing:-6px');
+ h+=ctr(885,`<span style="color:${R}">●</span> 진입 불가 &nbsp;&nbsp; <span style="color:${G}">●</span> 진입 가능`,39,700,'#bbb',seg(t,2.4,2.8));
+ h+=ctr(1000,'농촌마을 골든타임 길라잡이 · 225개 마을 실측',30,500,'#888',seg(t,.5,1));
  return h}};
-// 3) 90일
-S.v1_days={d:3.5,f(t){let h='';const k=Math.round(90*ez(seg(t,.3,2.2)));
- for(let i=0;i<6;i++){const p=seg(t,.3+i*.3,.6+i*.3);h+=`<div class="a" style="left:${760+i*8}px;top:${330-i*8}px;width:400px;height:420px;border-radius:24px;background:#1b1d22;border:2px solid #333;opacity:${p*.9}"></div>`;}
- h+=`<div class="a" style="left:800px;top:290px;width:400px;height:420px;border-radius:24px;background:#24272d;border:2px solid #444"></div>`;
- h+=`<div class="a" style="left:800px;top:290px;width:400px;height:90px;border-radius:24px 24px 0 0;background:${R}"></div>`;
- h+=txt(800,400,`<div style="width:400px;text-align:center">${k}<span style="font-size:80px">일</span></div>`,200,900,'#fff',1,'letter-spacing:-6px');
- h+=ctr(160,'불이 꺼진 뒤, 지원금을 받기까지',40,700,'#ddd',eo(seg(t,.1,.6)));
- h+=ctr(780,'6개 기관 · 8번 방문',34,700,'#aaa',seg(t,1.6,2.2));
+S.v1_days={d:3.5,f(t){let h='';const k=Math.round(90*ez(seg(t,.3,2.2)));const L=660,T=250,Wd=600,Hd=520;
+ for(let i=0;i<6;i++){const p=seg(t,.3+i*.3,.6+i*.3);h+=`<div class="a" style="left:${L-40+i*8}px;top:${T+40-i*8}px;width:${Wd}px;height:${Hd}px;border-radius:28px;background:#1b1d22;border:2px solid #333;opacity:${p*.9}"></div>`;}
+ h+=`<div class="a" style="left:${L}px;top:${T}px;width:${Wd}px;height:${Hd}px;border-radius:28px;background:#24272d;border:2px solid #444"></div>`;
+ h+=`<div class="a" style="left:${L}px;top:${T}px;width:${Wd}px;height:110px;border-radius:28px 28px 0 0;background:${R}"></div>`;
+ h+=txt(L,T+130,`<div style="width:${Wd}px;text-align:center">${k}<span style="font-size:120px">일</span></div>`,300,900,'#fff',1,'letter-spacing:-8px');
+ h+=ctr(110,'불이 꺼진 뒤, 지원금을 받기까지',60,800,'#eee',eo(seg(t,.1,.6)));
+ h+=ctr(820,'6개 기관 · 8번 방문',51,800,'#bbb',seg(t,1.6,2.2));
  return h}};
-// 4) finale
 S.v1_finale={d:8,f(t){let h='';const items=[['2.3배','출동'],['164곳','현장대응'],['90일','복구']];
  const fade=1-seg(t,7.2,8);
- items.forEach((it,i)=>{const p=eo(seg(t,.1+i*.35,.9+i*.35));const cx=[560,960,1360][i];
-  h+=`<div class="a" style="left:${cx-200}px;top:${330+(1-p)*40}px;width:400px;opacity:${p*fade};text-align:center;white-space:nowrap"><div style="font-size:30px;font-weight:700;color:#888">${it[1]}</div><div style="font-size:110px;font-weight:900;letter-spacing:-3px;color:${i==1?R:'#fff'}">${it[0]}</div></div>`;
-  if(i<2)h+=`<div class="a" style="left:${cx+190}px;top:400px;font-size:70px;font-weight:900;color:#555;opacity:${seg(t,1.4,1.8)*fade}">·</div>`;});
- h+=ctr(640,'골든타임은, <span style="color:'+R+'">세 번</span> 늦어집니다.',72,900,'#fff',eo(seg(t,2.0,2.8))*fade);
+ items.forEach((it,i)=>{const p=eo(seg(t,.1+i*.35,.9+i*.35));const cx=[420,960,1500][i];
+  h+=`<div class="a" style="left:${cx-250}px;top:${270+(1-p)*40}px;width:500px;opacity:${p*fade};text-align:center;white-space:nowrap"><div style="font-size:45px;font-weight:800;color:#999">${it[1]}</div><div style="font-size:165px;font-weight:900;letter-spacing:-5px;color:${i==1?R:'#fff'}">${it[0]}</div></div>`;
+  if(i<2)h+=`<div class="a" style="left:${cx+250}px;top:380px;font-size:90px;font-weight:900;color:#555;opacity:${seg(t,1.4,1.8)*fade}">·</div>`;});
+ h+=ctr(650,'골든타임은, <span style="color:'+R+'">세 번</span> 늦어집니다.',108,900,'#fff',eo(seg(t,2.0,2.8))*fade);
  return h}};
-// 5) v2 opening
 S.v2_open={d:3.5,f(t){let h='';const lab=['출동','현장대응','복구'];
- lab.forEach((l,i)=>{const on=seg(t,1.0+i*.45,1.3+i*.45);const x=540+i*300;
-  h+=`<div class="a" style="left:${x}px;top:600px;width:240px;height:84px;border-radius:42px;border:3px solid ${on>0?B:'#444'};background:${on>0?'rgba(47,128,237,'+(.25*on)+')':'transparent'};text-align:center;line-height:78px;font-size:34px;font-weight:800;color:${on>0?'#fff':'#666'}">${l}</div>`;});
- h+=ctr(390,'지금, <span style="color:'+B+'">실제로</span> 작동합니다',88,900,'#fff',eo(seg(t,.1,.8)),'letter-spacing:-2px');
+ lab.forEach((l,i)=>{const on=seg(t,1.0+i*.45,1.3+i*.45);const x=405+i*400;
+  h+=`<div class="a" style="left:${x}px;top:620px;width:310px;height:116px;border-radius:58px;border:4px solid ${on>0?B:'#444'};background:${on>0?'rgba(47,128,237,'+(.25*on)+')':'transparent'};text-align:center;line-height:108px;font-size:51px;font-weight:800;color:${on>0?'#fff':'#666'}">${l}</div>`;});
+ h+=ctr(340,'지금, <span style="color:'+B+'">실제로</span> 작동합니다',132,900,'#fff',eo(seg(t,.1,.8)),'letter-spacing:-3px');
  return h}};
-// 6) v2 ending timer + final line
 S.v2_end={d:9,f(t){let h='';const r=ez(seg(t,.3,1.4));let sec=450-180*r;const mm=Math.floor(sec/60),ss=Math.round(sec%60);
  const shrink=eo(seg(t,1.6,2.4));const ding=Math.max(0,1-Math.abs(t-1.45)/.25);
  const fade=1-seg(t,8.3,9);
- const sz=230-120*shrink,top=380-250*shrink;
- h+=ctr(top,`${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`,sz,800,r>=1?B:'#fff',fade,`letter-spacing:-4px;text-shadow:0 0 ${60*ding}px rgba(47,128,237,${ding})`);
- h+=ctr(top+sz+10,'출동 → 방수',30-10*shrink,600,'#888',(1-shrink)*fade);
+ const sz=330-170*shrink,top=330-250*shrink;
+ h+=ctr(top,`${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`,sz,800,r>=1?B:'#fff',fade,`letter-spacing:-6px;text-shadow:0 0 ${60*ding}px rgba(47,128,237,${ding})`);
+ h+=ctr(top+sz+20,'출동 → 방수',45,700,'#999',(1-shrink)*fade);
  const lp=eo(seg(t,2.2,3.0)),bl=eo(seg(t,3.6,4.3));
- h+=ctr(500,`골든타임은, 함께 지킬 때 <span style="color:${bl>0?'rgba(47,128,237,'+(0.35+.65*bl)+')':'#fff'}">앞당겨집니다.</span>`,76,900,'#fff',lp*fade);
- h+=txt(1440,980,'경상남도 소방본부 119종합상황실',26,700,'#aaa',seg(t,6.6,7.2)*fade);
+ h+=ctr(420,'골든타임은,',114,900,'#fff',lp*fade);
+ h+=ctr(570,`함께 지킬 때 <span style="color:${bl>0?'rgba(47,128,237,'+(0.35+.65*bl)+')':'#fff'}">앞당겨집니다.</span>`,114,900,'#fff',lp*fade);
+ h+=txt(1230,975,'<div style="width:620px;text-align:right">경상남도 소방본부 119종합상황실</div>',39,800,'#bbb',seg(t,6.6,7.2)*fade);
  return h}};
-
 S.v1_full={d:45,f(t){let h='';
  const card=(a,b)=>t>=a&&t<b;
  let dark=0;
@@ -89,9 +83,9 @@ S.v1_full={d:45,f(t){let h='';
  if(card(34,37))h+=S.v1_days.f(Math.min(t-34,3.5)*1.15);
  if(t>=37)h+=S.v1_finale.f(t-37);
  const subs=[[4,9,'사이렌은 울려도, 길은 열리지 않습니다.'],[15,20.5,'처음 가는 농촌 길, 답은 책 속에 있습니다.'],[27,32.5,'불이 꺼져도, 일상은 멈춰 있습니다.']];
- subs.forEach(([a,b,x])=>{if(t>=a&&t<b){const o=Math.min(seg(t,a,a+.4),1-seg(t,b-.4,b));h+=`<div class="a" style="left:0;right:0;bottom:90px;text-align:center;opacity:${o}"><span style="display:inline-block;padding:14px 34px;border-radius:12px;background:rgba(0,0,0,.55);font-size:52px;font-weight:800;letter-spacing:-1px">${x}</span></div>`}});
+ subs.forEach(([a,b,x])=>{if(t>=a&&t<b){const o=Math.min(seg(t,a,a+.4),1-seg(t,b-.4,b));h+=`<div class="a" style="left:0;right:0;bottom:90px;text-align:center;opacity:${o}"><span style="display:inline-block;padding:16px 44px;border-radius:12px;background:rgba(0,0,0,.55);font-size:78px;font-weight:800;letter-spacing:-2px">${x}</span></div>`}});
  const labs=[[3,14,'재연 영상 · 119원패스 공모전 시연'],[14,18,'재연 영상 · 119원패스 공모전 시연'],[18,21,'실제 자료 · 농촌마을 골든타임 길라잡이 p.220'],[21,22.5,'실제 사진 · 출동차 안'],[22.5,27,'재연 영상 · 119원패스 공모전 시연'],[27,37,'재연 영상 · 재난 원패스 공모전 시연']];
- labs.forEach(([a,b,x])=>{if(t>=a&&t<b&&!card(10,14)&&!card(22.5,27)&&!card(34,37))h+=txt(1500,40,`<div style="width:380px;text-align:right">${x}</div>`,20,600,'rgba(255,255,255,.7)',1)});
+ labs.forEach(([a,b,x])=>{if(t>=a&&t<b&&!card(10,14)&&!card(22.5,27)&&!card(34,37))h+=txt(1250,36,`<div style="width:630px;text-align:right">${x}</div>`,30,700,'rgba(255,255,255,.7)',1)});
  return h}};
 window.SCENES=S;window.draw=(k,t)=>{H(S[k].f(t))};
 </script></body></html>
