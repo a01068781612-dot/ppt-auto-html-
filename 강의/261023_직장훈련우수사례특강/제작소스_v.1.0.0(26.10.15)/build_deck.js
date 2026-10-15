@@ -1,5 +1,5 @@
 // 직장훈련특강 전체 PPT(120장) 조립 — 기획안 v.3.6.0 기준 · v.1.4.0: 제안서 15장(원본과 겹치는 설명 삭제, 기대효과+확산 가능성 한 장), 이후 장 +6 · v.1.3.0: 제안서를 의미 단위 16장(45~60장), 이후 장 +7 · v.1.2.0: 제안서 24조각 · v.1.1.0: 2~5장 워크숍판(00_상황관리워크숍_AI특강_슬라이드_v.1.0.2) 영상, 장면은 p1_v33 · p2_v33 · p3_v36
-// 사용: NODE_PATH=<node_modules> node build_deck.js <작업폴더> <raw.pptx>
+// 사용: NODE_PATH=<node_modules> [MOTION_DIR=<모션 폴더>] node build_deck.js <작업폴더> <raw.pptx>
 //   작업폴더/img/s001.jpg … s114.jpg  : p1_v32 · p2_v32 · p3_v35 로 렌더한 1920×1080 장면
 //   작업폴더/media/                   : 영상(op2~op5 · 농골길 GPTs/웹 무음 · 홍보 영상)과 첫 화면 이미지
 // 영상 장은 들어오면 자동 재생(timing.py가 p:timing 추가). 기사 장은 사진 · 제목 · QR을 누르면 원문이 열림.
@@ -9,6 +9,7 @@ const W = process.argv[2], OUT = process.argv[3];
 const X = px => px / 144;                         // 1920×1080 px → 13.333×7.5 in
 const img = n => path.join(W, "img", `s${String(n).padStart(3, "0")}.jpg`);
 const med = f => path.join(W, "media", f);
+const MO = process.env.MOTION_DIR || "";   // 지정하면 모션판(render_motion.js 결과 m###.mp4 · m###.jpg)
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE";
@@ -59,6 +60,10 @@ for (let n = 1; n <= 120; n++) {
     s.addMedia({ type: "video", path: med(v), cover: "image/png;base64," + require("fs").readFileSync(med(cov)).toString("base64"),
       x: 0, y: 0, w: 13.333, h: 7.5, objectName: name });
     s.addNotes(note);
+  } else if (MO) {   // 모션판: 장면마다 등장 모션 영상(자동 재생, 마지막 프레임에서 멈춤) — 영상이 안 되면 첫 화면 대신 마지막 장면이 보이도록 cover = 마지막 프레임
+    const id = `m${String(n).padStart(3, "0")}`;
+    s.addMedia({ type: "video", path: path.join(MO, id + ".mp4"), cover: "image/jpeg;base64," + require("fs").readFileSync(path.join(MO, id + ".jpg")).toString("base64"),
+      x: 0, y: 0, w: 13.333, h: 7.5, objectName: id });
   } else {
     s.addImage({ path: img(n), x: 0, y: 0, w: 13.333, h: 7.5 });
   }

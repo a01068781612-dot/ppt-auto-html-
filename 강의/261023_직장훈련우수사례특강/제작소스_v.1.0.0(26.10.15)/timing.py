@@ -20,6 +20,7 @@ def timing(spid,dur_ms,auto,full):
       '</p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>')
 import json,os
 VJ={v['name']:v['dur'] for v in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'vids.json')))} if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),'vids.json')) else {}
+if len(sys.argv)>3: VJ.update({v['name']:v['dur'] for v in json.load(open(sys.argv[3]))})   # 모션판: 장면 영상 길이 표
 DEF={'intro_video':164500,'promo_video':82500}
 zin=zipfile.ZipFile(src); zout=zipfile.ZipFile(dst,'w',zipfile.ZIP_DEFLATED)
 for it in zin.infolist():
