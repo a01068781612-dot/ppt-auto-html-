@@ -13,6 +13,7 @@ for it in zin.infolist():
         nm = html.escape(f'{n}. {t}'[:120], quote=True)
         x = re.sub(r'<p:cSld(?: name="[^"]*")?>', f'<p:cSld name="{nm}">', x, count=1)
         x, k = re.subn(r'(<p:cNvPr id="\d+" name="슬라이드 제목(?:\(화면 밖\))?"[^>]*?/?>(?:.*?</p:cNvPr>)?<p:cNvSpPr[^>]*?(?:/>|>.*?</p:cNvSpPr>))<p:nvPr(?:/>|></p:nvPr>)', r'\1<p:nvPr><p:ph type="title"/></p:nvPr>', x, count=1, flags=re.S)
+        x = re.sub(r'(</a:ln>)<a:solidFill><a:srgbClr val="FFFFFF"><a:alpha val="0"/></a:srgbClr></a:solidFill>', r'\1<a:noFill/>', x)   # 외곽선 글자: 글자 안 비움
         done += k; d = x.encode('utf-8')
     if it.filename.startswith('ppt/theme/theme') and it.filename.endswith('.xml'):   # 기본 글꼴(새로 넣는 글상자)도 Pretendard로
         x = d.decode('utf-8')
