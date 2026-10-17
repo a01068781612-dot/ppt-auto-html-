@@ -1,0 +1,62 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/><script src="gsap.min.js"></script><style>@font-face{font-family:"Pretendard";src:url("PretendardVariable.woff2") format("woff2");font-weight:100 900}
+*{margin:0;padding:0;box-sizing:border-box}html,body{width:1920px;height:1080px;overflow:hidden;background:#0c0b0b}
+#root{width:100%;height:100%;position:relative;font-family:"Pretendard",sans-serif;color:#f4f4f2;background:#0c0b0b url(bg.png) center/cover no-repeat}
+.a{position:absolute}
+.acc{color:#ff5a1f}.cap{color:#a59f98}.dim{color:#8a847e}.body{color:#d6d2c9}
+.ghost{position:absolute;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.13);font-weight:900;letter-spacing:-.04em;line-height:1;white-space:nowrap}
+.blk{font-weight:900;letter-spacing:-.035em}
+.tag{position:absolute;left:110px;top:92px;font-size:22px;letter-spacing:.12em;white-space:nowrap}
+.tag b{color:#ff5a1f}.tag span{color:#8a847e}
+.ttl{position:absolute;left:110px;top:130px;width:1640px;font-size:66px;font-weight:900;letter-spacing:-.03em;line-height:1.25;white-space:nowrap}
+.hl{position:absolute;height:1px;background:#55504c;transform-origin:left}
+.hl2{position:absolute;height:1px;background:#3a3533;transform-origin:left}
+.vl{position:absolute;width:1px;background:#55504c;transform-origin:top}
+.sq{position:absolute;border:3px solid #f4f4f2}
+.card{position:absolute;background:#1d1a19;border:1.5px solid #3a3533;border-radius:29px}
+.card.hi{background:#2a2523;border:4px solid #ff5a1f}
+.mask{display:block;overflow:hidden}.mask>span{display:block}
+.ch{display:inline-block;white-space:pre}
+*{word-break:keep-all;overflow-wrap:break-word}
+.cur{position:absolute;width:46px;height:46px;z-index:20}
+.rip{position:absolute;width:90px;height:90px;border-radius:50%;border:4px solid #ff5a1f;z-index:19}
+.flash{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#fff;opacity:0;z-index:30;pointer-events:none}
+</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="6" data-width="1920" data-height="1080">
+<div class="a e-lb dim clip" style="left:150px;top:108px;font-size:22px;letter-spacing:.3em" data-start="0" data-duration="6" data-track-index="0">PART 1 · END</div>
+<div class="hl e-hl clip" style="left:150px;top:170px;width:1660px" data-start="0" data-duration="6" data-track-index="1"></div>
+<div class="a e-gh blk clip" style="right:80px;top:236px;font-size:330px;line-height:1.1;color:#24211f" data-start="0" data-duration="6" data-track-index="2">End.</div>
+<div class="a e-p acc clip" style="left:150px;top:298px;font-size:34px;font-weight:700;letter-spacing:.3em" data-start="0" data-duration="6" data-track-index="4">PART 1</div>
+<div data-sq=".e-t" class="sq e-sq clip" data-start="0" data-duration="6" data-track-index="3"></div>
+<div class="a e-t blk clip" style="left:150px;top:364px;font-size:140px;line-height:1.0" data-start="0" data-duration="6" data-track-index="5"><span class="mask"><span>국토부 실습</span></span><span class="mask"><span>돌아보기</span></span></div>
+<div class="a e-s clip" style="left:150px;top:745px;font-size:36px;color:#cbc5ba" data-start="0" data-duration="6" data-track-index="6">말로 만든 업무 도구 — 다음 날 바로 쓰는 AI</div>
+<div class="card e-nx clip" style="left:150px;top:850px;width:1660px;height:110px;border-radius:22px" data-start="0" data-duration="6" data-track-index="7"><div class="a dim" style="left:44px;top:0;height:110px;display:flex;align-items:center;font-size:22px;font-weight:700;letter-spacing:.35em">NEXT</div><div class="a" style="left:204px;top:0;height:110px;display:flex;align-items:center;font-size:36px;font-weight:700"><span class="acc">PART 2&nbsp;&nbsp;</span>2026 AI 트렌드 — 대답하는 AI에서 일하는 AI로</div><div class="a acc e-ar" style="right:36px;top:0;height:110px;display:flex;align-items:center;font-size:48px;font-weight:700">→</div></div>
+</div>
+<script>
+const tl=gsap.timeline({paused:true});
+tl.from(".e-lb",{opacity:0,duration:.5},0).from(".e-hl",{scaleX:0,duration:1,ease:"power2.inOut"},0).from(".e-gh",{opacity:0,x:200,duration:1.4,ease:"power3.out"},.2).from(".e-sq",{opacity:0,scale:.3,rotation:-90,duration:.7,ease:"back.out(1.8)"},.5).from(".e-p",{opacity:0,x:-30,duration:.5},.5).from(".e-t .mask>span",{yPercent:105,duration:.8,stagger:.15,ease:"power3.out"},.6).from(".e-s",{opacity:0,y:20,duration:.6},1.3).from(".e-nx",{clipPath:"inset(0 100% 0 0 round 22px)",duration:.9,ease:"power3.inOut"},1.8).to(".e-ar",{x:14,duration:.4,yoyo:true,repeat:5,ease:"sine.inOut"},2.7);
+window.__timelines["main"]=tl;
+(function(){
+if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);
+function firstText(el){const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.trim()?1:3});return w.nextNode();}
+function place(){
+  const st=document.createElement('style'); st.textContent='#root *{transform:none!important;translate:none!important;scale:none!important;rotate:none!important}'; document.head.appendChild(st);
+  const cv=document.createElement('canvas').getContext('2d');
+  document.querySelectorAll('[data-sq]').forEach(sq=>{
+    const el=document.querySelector(sq.dataset.sq); if(!el) return; const tn=firstText(el); if(!tn) return;
+    let i=0; while(i<tn.nodeValue.length && /\s/.test(tn.nodeValue[i])) i++;
+    const ch=tn.nodeValue[i]; const r=document.createRange(); r.setStart(tn,i); r.setEnd(tn,i+1); const b=r.getBoundingClientRect();
+    const cs=getComputedStyle(tn.parentElement); const f=parseFloat(cs.fontSize);
+    cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily; const m=cv.measureText(ch);
+    const base=b.top+(m.fontBoundingBoxAscent||0.93*f);
+    const inkTop=base-m.actualBoundingBoxAscent, inkLeft=b.left-m.actualBoundingBoxLeft;
+    const s=Math.round(Math.max(40,Math.min(90,0.45*f))), T=Math.max(3,Math.round(0.06*s)), c='#f4f4f2', g='linear-gradient('+c+','+c+')';
+    const dx=parseFloat(sq.dataset.dx||0)*f, dy=parseFloat(sq.dataset.dy||0)*f; sq.style.left=(inkLeft-0.55*s+dx)+'px'; sq.style.top=(inkTop-0.55*s+dy)+'px'; sq.style.width=s+'px'; sq.style.height=s+'px';
+    sq.style.right='auto'; sq.style.bottom='auto'; sq.style.border='none';
+    sq.style.background=g+' left top/100% '+T+'px no-repeat,'+g+' left top/'+T+'px 100% no-repeat,'+g+' right top/'+T+'px 25% no-repeat,'+g+' left bottom/30% '+T+'px no-repeat';
+  });
+  st.remove();
+}
+place(); if(document.fonts) document.fonts.ready.then(place);
+})();
+tl.seek(0);
+</script></body></html>

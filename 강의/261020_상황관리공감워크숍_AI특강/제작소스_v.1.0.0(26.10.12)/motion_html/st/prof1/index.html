@@ -1,0 +1,77 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/><script src="gsap.min.js"></script><style>@font-face{font-family:"Pretendard";src:url("PretendardVariable.woff2") format("woff2");font-weight:100 900}
+*{margin:0;padding:0;box-sizing:border-box}html,body{width:1920px;height:1080px;overflow:hidden;background:#0c0b0b}
+#root{width:100%;height:100%;position:relative;font-family:"Pretendard",sans-serif;color:#f4f4f2;background:#0c0b0b url(bg.png) center/cover no-repeat}
+.a{position:absolute}
+.acc{color:#ff5a1f}.cap{color:#a59f98}.dim{color:#8a847e}.body{color:#d6d2c9}
+.ghost{position:absolute;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.13);font-weight:900;letter-spacing:-.04em;line-height:1;white-space:nowrap}
+.blk{font-weight:900;letter-spacing:-.035em}
+.tag{position:absolute;left:110px;top:92px;font-size:22px;letter-spacing:.12em;white-space:nowrap}
+.tag b{color:#ff5a1f}.tag span{color:#8a847e}
+.ttl{position:absolute;left:110px;top:130px;width:1640px;font-size:66px;font-weight:900;letter-spacing:-.03em;line-height:1.25;white-space:nowrap}
+.hl{position:absolute;height:1px;background:#55504c;transform-origin:left}
+.hl2{position:absolute;height:1px;background:#3a3533;transform-origin:left}
+.vl{position:absolute;width:1px;background:#55504c;transform-origin:top}
+.sq{position:absolute;border:3px solid #f4f4f2}
+.card{position:absolute;background:#1d1a19;border:1.5px solid #3a3533;border-radius:29px}
+.card.hi{background:#2a2523;border:4px solid #ff5a1f}
+.mask{display:block;overflow:hidden}.mask>span{display:block}
+.ch{display:inline-block;white-space:pre}
+*{word-break:keep-all;overflow-wrap:break-word}
+.cur{position:absolute;width:46px;height:46px;z-index:20}
+.rip{position:absolute;width:90px;height:90px;border-radius:50%;border:4px solid #ff5a1f;z-index:19}
+.flash{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#fff;opacity:0;z-index:30;pointer-events:none}
+</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1920" data-height="1080">
+<div class="a p-ph clip" style="left:0;top:0;width:600px;height:1080px;overflow:hidden" data-start="0" data-duration="7" data-track-index="0"><img class="p-img" src="photo_col.jpg" style="width:600px;height:1080px"/><img src="fade.png" style="position:absolute;left:0;top:0;width:600px;height:1080px"/></div>
+<div data-sq=".p-nm" class="sq sqn clip" data-start="0" data-duration="7" data-track-index="99"></div>
+<div class="a p-nm clip" style="left:70px;top:690px;font-size:110px;font-weight:900;letter-spacing:.12em" data-start="0" data-duration="7" data-track-index="1">김경훈</div>
+<div class="a p-en cap clip" style="left:70px;top:836px;font-size:20px;letter-spacing:.6em" data-start="0" data-duration="7" data-track-index="2">KIM KYUNG HUN</div>
+<div class="a p-r1 clip" style="left:70px;top:898px;font-size:30px;font-weight:700" data-start="0" data-duration="7" data-track-index="3">현직 공무원 <span class="acc">AI 강사</span></div>
+<div class="a p-r2 cap clip" style="left:70px;top:946px;font-size:22px" data-start="0" data-duration="7" data-track-index="4">경남소방본부 소방교</div>
+<div class="a p-tg clip" style="left:680px;top:92px;font-size:22px;letter-spacing:.2em;white-space:nowrap" data-start="0" data-duration="7" data-track-index="5"><b class="acc">NO.01 PROFILE 2026 </b><span class="dim">· PUBLIC SECTOR AI</span></div>
+<div class="a p-hd clip" style="left:680px;top:136px;width:1140px;font-size:44px;font-weight:700;line-height:1.2" data-start="0" data-duration="7" data-track-index="6"><span class="mask"><span>외부 강사가 아닌 현직 공무원이,</span></span><span class="mask"><span>공공의 보안 환경에 맞춘 <span class="acc">AI 활용·업무자동화</span>를 가르칩니다</span></span></div>
+<div class="hl p-l1 clip" style="left:680px;top:312px;width:1140px" data-start="0" data-duration="7" data-track-index="7"></div>
+<div class="hl p-l2 clip" style="left:680px;top:494px;width:1140px" data-start="0" data-duration="7" data-track-index="8"></div>
+<div class="a p-st clip" style="left:680px;top:312px;width:285px;height:182px" data-start="0" data-duration="7" data-track-index="9"><div class="a" style="left:0px;top:18px;white-space:nowrap"><span style="font-size:64px;font-weight:900">BLACK</span><span class="acc" style="font-size:28px;font-weight:700"></span></div><div class="a" style="left:0px;top:104px;font-size:22px;font-weight:700;white-space:nowrap">AI 챔피언 최고등급</div><div class="a cap" style="left:0px;top:138px;font-size:18px;white-space:nowrap">행정안전부 인증 · 영남 유일</div></div>
+<div class="a p-st clip" style="left:965px;top:312px;width:285px;height:182px;border-left:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="10"><div class="a" style="left:26px;top:18px;white-space:nowrap"><span style="font-size:64px;font-weight:900"><span class="cnt" data-to="7">7</span></span><span class="acc" style="font-size:28px;font-weight:700"> 건</span></div><div class="a" style="left:26px;top:104px;font-size:22px;font-weight:700;white-space:nowrap">AI·데이터 분야 수상</div><div class="a cap" style="left:26px;top:138px;font-size:18px;white-space:nowrap">1위 4건 · 장관상(대상) 포함</div></div>
+<div class="a p-st clip" style="left:1250px;top:312px;width:285px;height:182px;border-left:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="11"><div class="a" style="left:26px;top:18px;white-space:nowrap"><span style="font-size:64px;font-weight:900"><span class="cnt" data-to="27">27</span></span><span class="acc" style="font-size:28px;font-weight:700"> 곳</span></div><div class="a" style="left:26px;top:104px;font-size:22px;font-weight:700;white-space:nowrap">출강·자문·협업 기관</div><div class="a cap" style="left:26px;top:138px;font-size:18px;white-space:nowrap">중앙부처 · 공공기관 · 대학</div></div>
+<div class="a p-st clip" style="left:1535px;top:312px;width:285px;height:182px;border-left:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="12"><div class="a" style="left:26px;top:18px;white-space:nowrap"><span style="font-size:54px;font-weight:900">ONLINE</span><span class="acc" style="font-size:28px;font-weight:700"></span></div><div class="a" style="left:26px;top:104px;font-size:22px;font-weight:700;white-space:nowrap">국가인재개발원 e러닝</div><div class="a cap" style="left:26px;top:138px;font-size:18px;white-space:nowrap">공무원 대상 AI 활용 과정</div></div>
+<div class="a p-aw clip" style="left:680px;top:532px;font-size:34px;white-space:nowrap" data-start="0" data-duration="7" data-track-index="13"><b class="acc" style="font-size:24px">01&nbsp;&nbsp;</b><b>수상 내역&nbsp;&nbsp;</b><span class="dim" style="font-size:18px;letter-spacing:.3em">AWARDS</span></div>
+<div class="hl p-al clip" style="left:680px;top:592px;width:1140px" data-start="0" data-duration="7" data-track-index="14"></div>
+<div class="a p-row clip" style="left:680px;top:592px;width:1140px;height:58px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="15"><div class="a rk" style="left:0;top:13px;width:64px;height:32px;border:2px solid #ff5a1f;color:#ff5a1f;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center">1위</div><div class="a" style="left:86px;top:0;height:58px;display:flex;align-items:center;font-size:25px;font-weight:700;white-space:nowrap">AI 재난 원패스(Disaster One-Pass)</div><div class="a cap" style="right:96px;top:0;height:58px;display:flex;align-items:center;font-size:21px;white-space:nowrap">대상 · 행정안전부 장관상</div><div class="a body" style="right:0;top:0;height:58px;display:flex;align-items:center;font-size:21px;font-weight:700">2026</div></div>
+<div class="a p-row clip" style="left:680px;top:650px;width:1140px;height:58px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="16"><div class="a rk" style="left:0;top:13px;width:64px;height:32px;border:2px solid #ff5a1f;color:#ff5a1f;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center">1위</div><div class="a" style="left:86px;top:0;height:58px;display:flex;align-items:center;font-size:25px;font-weight:700;white-space:nowrap">119원패스 AI 플랫폼 구축에 관한 연구</div><div class="a cap" style="right:96px;top:0;height:58px;display:flex;align-items:center;font-size:21px;white-space:nowrap">경상남도 도지사 표창</div><div class="a body" style="right:0;top:0;height:58px;display:flex;align-items:center;font-size:21px;font-weight:700">2026</div></div>
+<div class="a p-row clip" style="left:680px;top:708px;width:1140px;height:58px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="17"><div class="a rk" style="left:0;top:13px;width:64px;height:32px;border:2px solid #ff5a1f;color:#ff5a1f;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center">1위</div><div class="a" style="left:86px;top:0;height:58px;display:flex;align-items:center;font-size:25px;font-weight:700;white-space:nowrap">농촌 소방 AI 지능형 훈련 시스템</div><div class="a cap" style="right:96px;top:0;height:58px;display:flex;align-items:center;font-size:21px;white-space:nowrap">최우수 · 소방청장상</div><div class="a body" style="right:0;top:0;height:58px;display:flex;align-items:center;font-size:21px;font-weight:700">2025</div></div>
+<div class="a p-row clip" style="left:680px;top:766px;width:1140px;height:58px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="18"><div class="a rk" style="left:0;top:13px;width:64px;height:32px;border:2px solid #ff5a1f;color:#ff5a1f;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center">1위</div><div class="a" style="left:86px;top:0;height:58px;display:flex;align-items:center;font-size:25px;font-weight:700;white-space:nowrap">500m 격자별 소방력 최적화 배치 분석</div><div class="a cap" style="right:96px;top:0;height:58px;display:flex;align-items:center;font-size:21px;white-space:nowrap">최우수 · KISTI 원장상</div><div class="a body" style="right:0;top:0;height:58px;display:flex;align-items:center;font-size:21px;font-weight:700">2024</div></div>
+<div class="a p-row clip" style="left:680px;top:824px;width:1140px;height:58px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="19"><div class="a rk" style="left:0;top:13px;width:64px;height:32px;border:2px solid #8a847e;color:#f4f4f2;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center">3위</div><div class="a" style="left:86px;top:0;height:58px;display:flex;align-items:center;font-size:25px;font-weight:700;white-space:nowrap">AI 기반 소방 민원 답변 자동화</div><div class="a cap" style="right:96px;top:0;height:58px;display:flex;align-items:center;font-size:21px;white-space:nowrap">장려 · 인사혁신처장상</div><div class="a body" style="right:0;top:0;height:58px;display:flex;align-items:center;font-size:21px;font-weight:700">2025</div></div>
+<div class="a p-row clip" style="left:680px;top:882px;width:1140px;height:58px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="20"><div class="a rk" style="left:0;top:13px;width:64px;height:32px;border:2px solid #8a847e;color:#f4f4f2;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center">3위</div><div class="a" style="left:86px;top:0;height:58px;display:flex;align-items:center;font-size:25px;font-weight:700;white-space:nowrap">119 세이프 리스트</div><div class="a cap" style="right:96px;top:0;height:58px;display:flex;align-items:center;font-size:21px;white-space:nowrap">우수상 · 소방 안전 빅데이터 활용</div><div class="a body" style="right:0;top:0;height:58px;display:flex;align-items:center;font-size:21px;font-weight:700">2026</div></div>
+<div class="a p-row clip" style="left:680px;top:940px;width:1140px;height:58px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="21"><div class="a rk" style="left:0;top:13px;width:64px;height:32px;border:2px solid #8a847e;color:#f4f4f2;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center">3위</div><div class="a" style="left:86px;top:0;height:58px;display:flex;align-items:center;font-size:25px;font-weight:700;white-space:nowrap">기후재난 위험징후 분석·실시간 공유 서비스</div><div class="a cap" style="right:96px;top:0;height:58px;display:flex;align-items:center;font-size:21px;white-space:nowrap">우수상 · 소방 안전 빅데이터 활용</div><div class="a body" style="right:0;top:0;height:58px;display:flex;align-items:center;font-size:21px;font-weight:700">2025</div></div>
+</div>
+<script>
+const tl=gsap.timeline({paused:true});
+tl.from(".p-ph",{clipPath:"inset(0 100% 0 0)",duration:1.1,ease:"power3.inOut"},0).fromTo(".p-img",{scale:1.12},{scale:1,duration:6,ease:"none"},0).from(".p-nm",{opacity:0,letterSpacing:"0.5em",duration:1.1,ease:"power3.out"},.6).from(".p-en",{opacity:0,duration:.6},1.0).from(".p-r1",{opacity:0,y:20,duration:.5},1.1).from(".p-r2",{opacity:0,y:20,duration:.5},1.2).from(".p-tg",{opacity:0,x:-30,duration:.5},.3).from(".p-hd .mask>span",{yPercent:105,duration:.8,stagger:.15,ease:"power3.out"},.4).from(".p-l1,.p-l2",{scaleX:0,duration:.8,ease:"power2.inOut"},.8).from(".p-st",{opacity:0,y:30,duration:.6,stagger:.15,ease:"power3.out"},1.0).from(".p-aw",{opacity:0,x:-30,duration:.5},1.7).from(".p-al",{scaleX:0,duration:.7},1.75).from(".p-row",{opacity:0,x:60,duration:.5,stagger:.12,ease:"power3.out"},1.9).from(".p-row .rk",{scale:0,duration:.4,stagger:.12,ease:"back.out(2.5)"},2.0);document.querySelectorAll(".cnt").forEach(e=>{tl.fromTo(e,{innerText:0},{innerText:+e.dataset.to,snap:{innerText:1},duration:1.2,ease:"power2.out"},1.1);});
+window.__timelines["main"]=tl;
+(function(){
+if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);
+function firstText(el){const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.trim()?1:3});return w.nextNode();}
+function place(){
+  const st=document.createElement('style'); st.textContent='#root *{transform:none!important;translate:none!important;scale:none!important;rotate:none!important}'; document.head.appendChild(st);
+  const cv=document.createElement('canvas').getContext('2d');
+  document.querySelectorAll('[data-sq]').forEach(sq=>{
+    const el=document.querySelector(sq.dataset.sq); if(!el) return; const tn=firstText(el); if(!tn) return;
+    let i=0; while(i<tn.nodeValue.length && /\s/.test(tn.nodeValue[i])) i++;
+    const ch=tn.nodeValue[i]; const r=document.createRange(); r.setStart(tn,i); r.setEnd(tn,i+1); const b=r.getBoundingClientRect();
+    const cs=getComputedStyle(tn.parentElement); const f=parseFloat(cs.fontSize);
+    cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily; const m=cv.measureText(ch);
+    const base=b.top+(m.fontBoundingBoxAscent||0.93*f);
+    const inkTop=base-m.actualBoundingBoxAscent, inkLeft=b.left-m.actualBoundingBoxLeft;
+    const s=Math.round(Math.max(40,Math.min(90,0.45*f))), T=Math.max(3,Math.round(0.06*s)), c='#f4f4f2', g='linear-gradient('+c+','+c+')';
+    const dx=parseFloat(sq.dataset.dx||0)*f, dy=parseFloat(sq.dataset.dy||0)*f; sq.style.left=(inkLeft-0.55*s+dx)+'px'; sq.style.top=(inkTop-0.55*s+dy)+'px'; sq.style.width=s+'px'; sq.style.height=s+'px';
+    sq.style.right='auto'; sq.style.bottom='auto'; sq.style.border='none';
+    sq.style.background=g+' left top/100% '+T+'px no-repeat,'+g+' left top/'+T+'px 100% no-repeat,'+g+' right top/'+T+'px 25% no-repeat,'+g+' left bottom/30% '+T+'px no-repeat';
+  });
+  st.remove();
+}
+place(); if(document.fonts) document.fonts.ready.then(place);
+})();
+tl.seek(0);
+</script></body></html>
