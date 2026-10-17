@@ -55,14 +55,15 @@ function walk() {
         .map(b => (b.st === 'none' || alpha(b.c) === 0 ? { w: 0, c: b.c } : b));
       const anyB = sides.some(b => b.w > 0), hasBg = alpha(bg) > 0;
       const special = (bgi && bgi !== 'none') || el.classList.contains('ghost') || (cs.webkitTextStroke && parseFloat(cs.webkitTextStrokeWidth) > 0)
-        || cs.transform !== 'none' || cs.filter !== 'none' || cs.clipPath !== 'none' || (cs.boxShadow !== 'none' && cs.boxShadow.split('rgba').length > 2);
+        || (anyB && (q.width - (parseFloat(cs.borderLeftWidth) || 0) - (parseFloat(cs.borderRightWidth) || 0) < 1 || q.height - (parseFloat(cs.borderTopWidth) || 0) - (parseFloat(cs.borderBottomWidth) || 0) < 1)) || cs.transform !== 'none' || cs.filter !== 'none' || cs.clipPath !== 'none' || (cs.boxShadow !== 'none' && cs.boxShadow.split('rgba').length > 2);
       if (special && q.width > 0) {
         el.dataset.k = ++k; const pad = cs.boxShadow !== 'none' ? 70 : 4;
         ops.push({ t: 'raster', k, x: q.left, y: q.top, w: q.width, h: q.height, pad, cls, text: (el.textContent || '').trim().slice(0, 30) });
       } else if ((hasBg || anyB || cs.boxShadow !== 'none') && q.width > 0 && q.height > 0) {
         const uni = sides.every(b => b.w === sides[0].w && b.c === sides[0].c);
         const sh = cs.boxShadow !== 'none' ? cs.boxShadow : null;
-        ops.push({ t: 'shape', x: q.left, y: q.top, w: q.width, h: q.height, fill: hasBg ? bg : null, rad: parseFloat(cs.borderTopLeftRadius) || 0,
+        if (hasBg || (uni && sides[0].w > 0) || sh)   // 칠도 테두리도 없는 빈 도형은 만들지 않음(한쪽 테두리만 있으면 선만)
+          ops.push({ t: 'shape', x: q.left, y: q.top, w: q.width, h: q.height, fill: hasBg ? bg : null, rad: parseFloat(cs.borderTopLeftRadius) || 0,
           line: uni && sides[0].w > 0 ? { w: sides[0].w, c: sides[0].c } : null, shadow: sh, op: o, cls, tag });
         if (!uni) sides.forEach((b, i) => { if (!b.w) return;
           const r = i === 0 ? [q.left, q.top, q.width, b.w] : i === 1 ? [q.right - b.w, q.top, b.w, q.height] : i === 2 ? [q.left, q.bottom - b.w, q.width, b.w] : [q.left, q.top, b.w, q.height];

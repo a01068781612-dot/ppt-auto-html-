@@ -13,12 +13,9 @@ const VIDEO = {   // 따로 넣을 큰 영상(첫 화면만 두고 자리 표시
   62: [2, '2.AI 농골길 코치 GPTs 시연 화면_62번슬라이드.mp4', 'gpts.png'], 70: [3, '3.농골길 웹 시연 화면_70번슬라이드.mp4', 'web.png'],
   119: [4, '4.강사 소개 영상_119번슬라이드.mp4', 'promo.png'],
 };
-// PPT 안에 바로 넣는 짧은 모션(7초, 1MB 이하) — 들어오면 자동 재생(timing.py), 이름은 vids.json 길이 표와 맞춤
-const EMBED = {
-  2: ['ws2.mp4', 'ws2.png', 'op2_motion', '국무회의 영상 예고 화면(7초 모션)'],
-  4: ['ws4.mp4', 'ws4.png', 'op4_motion', '강사 프로필1 — 수상 내역(7초 모션)'],
-  5: ['ws5.mp4', 'ws5.png', 'op5_motion', '강사 프로필2 — 강의·자격·언론(7초 모션)'],
-};
+// 2 · 4 · 5장(워크숍판 7초 모션)은 ws_static.py로 정적 장면을 만들어 다른 장처럼 분해(영상 아님)
+const EMBED = {};
+const NAME_FIX = { 4: '강사 소개 1 — 김경훈(수상 내역)', 5: '강사 소개 2 — 직접 만들고, 직접 가르칩니다' };   // 제목 글이 슬라이드 이름으로 맞지 않는 장
 if (process.env.ALL_VIDEO) {   // 영상 포함판: 큰 영상 4개도 PPT 안에(자동 재생)
   Object.assign(EMBED, {
     3: ['ws3.mp4', 'ws3.png', 'intro_video', '국무회의 영상(대통령 AI 언급)'],
@@ -57,7 +54,7 @@ const CUT = (t, n = 14) => { t = (t || '').replace(/\s+/g, ' ').trim(); return t
 function nameOf(o) {
   const c = ' ' + (o.cls || '') + ' ';
   if (o.t === 'shape') {
-    if (o.side) return / key /.test(c) ? 'KEY 띠_주황선' : /^(td|th|tr)$/.test(o.tag) ? '표 줄선' : / shot /.test(c) ? `사진 액자 테두리_${o.side}` : `테두리선_${o.side}`;
+    if (o.side) return / key /.test(c) ? 'KEY 띠_주황선' : /^(td|th|tr)$/.test(o.tag) ? '표 줄선' : / shot /.test(c) ? `사진 액자 테두리_${o.side}` : (o.side === '위' || o.side === '아래') ? '줄 구분선' : '세로 구분선';
     if (/ card hi /.test(c) || (/ card /.test(c) && / hi /.test(c))) return '카드_강조(주황 테두리)';
     if (/ card /.test(c)) return '카드';
     if (/ hl /.test(c)) return '구분선';
@@ -123,7 +120,7 @@ for (let n = 1; n <= 120; n++) {
     }
     const tx = JSON.parse(fs.readFileSync(path.join(E, `o${id}.json`), 'utf8')).filter(o => o.t === 'text');
     const tb = tx.find(b => b.role === '제목') || tx.slice().sort((a, b) => (b.fsMax || 0) - (a.fsMax || 0))[0];
-    if (tb) { tb.isTitle = true; TITLES[n] = tb.lines.map(l => l.map(r => r.text).join('')).join(' '); }
+    if (tb) { tb.isTitle = true; TITLES[n] = NAME_FIX[n] || tb.lines.map(l => l.map(r => r.text).join('')).join(' '); }
     for (const b of tx) {
       const fsMax = Math.max(...b.lines.flat().map(r => r.fs));
       const pitch = b.pitch > 0 ? b.pitch : fsMax * 1.25, glyph = fsMax * 1.2;
