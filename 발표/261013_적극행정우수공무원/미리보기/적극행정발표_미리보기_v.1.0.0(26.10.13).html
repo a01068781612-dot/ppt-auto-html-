@@ -1,0 +1,185 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"><style>
+@font-face{font-family:"Pretendard";src:url("PretendardVariable.woff2") format("woff2");font-weight:100 900}
+*{margin:0;padding:0;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word}
+body{background:#000;font-family:"Pretendard",sans-serif;color:#f4f4f2}
+.s{width:1920px;height:1080px;position:relative;overflow:hidden;background:#0c0b0b url(bg.png) center/cover;margin-bottom:20px}
+.ghost{position:absolute;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.13);font-weight:900;font-size:140px;right:110px;top:70px;letter-spacing:-.03em}
+.tag{position:absolute;left:110px;top:100px;font-size:22px;letter-spacing:.2em;font-weight:700}.tag b{color:#ff5a1f}.tag span{color:#8a847e;margin-left:14px}
+.h{position:absolute;left:110px;top:148px;font-size:66px;font-weight:900;letter-spacing:-.03em}
+.line{position:absolute;left:110px;right:110px;top:244px;height:1px;background:#55504c}
+.sq{position:absolute}
+.dots{position:absolute;left:50%;bottom:60px;transform:translateX(-50%);display:flex;gap:14px}.dots i{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6)}.dots i.on{background:#ff5a1f;border-color:#ff5a1f}
+.card{position:absolute;background:#1d1a19;border:1.5px solid #3a3533;border-radius:29px}
+.lab{font-size:26px;font-weight:800;letter-spacing:.1em;color:#ff5a1f}
+.cap{font-size:20px;color:#a59f98}
+.key{position:absolute;left:110px;right:110px;bottom:110px;height:86px;border-radius:20px;background:#2a2523;border-left:6px solid #ff5a1f;display:flex;align-items:center;padding-left:40px;font-size:36px;font-weight:700}
+.key em{font-style:normal;color:#ff5a1f;font-size:22px;letter-spacing:.2em;margin-right:28px}
+.vid{display:flex;align-items:center;justify-content:center;flex-direction:column;background:#050505}
+.vid b{font-size:90px;font-weight:900}.vid span{font-size:34px;color:#a59f98;margin-top:24px}.vid i{font-style:normal;font-size:26px;color:#ff5a1f;letter-spacing:.3em;margin-bottom:30px}
+</style></head><body>
+
+<!-- 1 표지 -->
+<div class="s" id="s1">
+  <div style="position:absolute;left:150px;top:110px;font-size:22px;letter-spacing:.25em;color:#8a847e">2026 경상남도 적극행정 우수사례 발표</div>
+  <div style="position:absolute;left:150px;right:150px;top:170px;height:1px;background:rgba(255,255,255,.28)"></div>
+  <div style="position:absolute;left:150px;top:212px;font-size:40px;font-weight:700;color:#ff5a1f">경상남도 소방본부 119종합상황실</div>
+  <div class="ghost" style="right:120px;top:300px;font-size:170px;text-align:right;line-height:1">Golden<br>Time.</div>
+  <div class="sq" data-sq="#t1"></div>
+  <div id="t1" style="position:absolute;left:150px;top:320px;font-size:190px;font-weight:900;letter-spacing:-.045em;line-height:1">골든타임을</div>
+  <div style="position:absolute;left:150px;top:525px;font-size:190px;font-weight:900;letter-spacing:-.045em;line-height:1">세 번 <span style="color:#ff5a1f">앞당기다</span></div>
+  <div style="position:absolute;left:150px;top:790px;font-size:38px;font-weight:500;color:#cbc5ba">AI·ICT 기술로 여는 재난 골든타임 — 출동에서 현장대응·복구까지</div>
+  <div style="position:absolute;right:150px;top:212px;text-align:right"><b style="font-size:30px;letter-spacing:.06em">2026. 10.</b><div style="font-size:26px;color:#a59f98;margin-top:10px">적극행정 우수공무원 발표심사</div></div>
+  <div style="position:absolute;right:150px;bottom:150px;text-align:right"><div style="font-size:28px;font-weight:700;color:#ff5a1f;margin-bottom:12px">소방장 · 소방교</div><b style="font-size:56px;font-weight:900;letter-spacing:.08em">박중휘 · 김경훈</b></div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+</div>
+
+<div class="s vid" id="v1"><i>VIDEO 1 · 45초</i><b>🎬 현 문제 실태</b><span>사이렌이 들릴 때 이미 늦다 → 책 속의 길 → 멈춘 14일 → "골든타임은 세 번 늦어집니다"</span></div>
+
+<!-- 2 문제 -->
+<div class="s" id="s2">
+  <div class="tag"><b>PROBLEM</b><span>문제 · 경향</span></div>
+  <div class="ghost">Problem.</div>
+  <div class="sq" data-sq="#t2"></div><div class="h" id="t2">골든타임은 세 번 늦어집니다</div>
+  <div class="line"></div>
+  <!-- 출동 -->
+  <div class="card" style="left:110px;top:300px;width:540px;height:590px;padding:40px">
+    <div class="lab">01 출동</div>
+    <svg width="460" height="230" style="margin-top:20px">
+      <line x1="40" y1="20" x2="440" y2="20" stroke="#55504c" stroke-dasharray="6 6"/><text x="440" y="14" fill="#8a847e" font-size="16" text-anchor="end">목표 100%</text>
+      <line x1="40" y1="200" x2="440" y2="200" stroke="#3a3533"/>
+      <polyline points="80,90 240,87 400,85" fill="none" stroke="#ff5a1f" stroke-width="5"/>
+      <circle cx="80" cy="90" r="9" fill="#ff5a1f"/><circle cx="240" cy="87" r="9" fill="#ff5a1f"/><circle cx="400" cy="85" r="11" fill="#ff5a1f"/>
+      <text x="80" y="70" fill="#f4f4f2" font-size="22" font-weight="700" text-anchor="middle">65.3%</text><text x="240" y="67" fill="#f4f4f2" font-size="22" font-weight="700" text-anchor="middle">65.8%</text><text x="400" y="65" fill="#f4f4f2" font-size="22" font-weight="700" text-anchor="middle">66.1%</text>
+      <text x="80" y="226" fill="#a59f98" font-size="18" text-anchor="middle">'19</text><text x="240" y="226" fill="#a59f98" font-size="18" text-anchor="middle">'20</text><text x="400" y="226" fill="#a59f98" font-size="18" text-anchor="middle">'21</text>
+    </svg>
+    <div style="font-size:84px;font-weight:900;margin-top:20px">3대 중 <span style="color:#ff5a1f">1대</span></div>
+    <div style="font-size:30px;font-weight:700;margin-top:6px">7분 안에 도착하지 못합니다</div>
+    <div class="cap" style="margin-top:22px">경남 화재현장 7분 내 도착률 · 경남소방본부 <span style="color:#ff5a1f">*최신 수치 교체 예정</span></div>
+  </div>
+  <!-- 대응 -->
+  <div class="card" style="left:690px;top:300px;width:540px;height:590px;padding:40px">
+    <div class="lab">02 현장대응</div>
+    <svg width="460" height="230" style="margin-top:20px"><g transform="translate(230,115)">
+      <circle r="95" fill="none" stroke="#3a3533" stroke-width="34"/>
+      <circle r="95" fill="none" stroke="#ff5a1f" stroke-width="34" stroke-dasharray="417.8 596.9" transform="rotate(-90)"/>
+      <text y="14" fill="#f4f4f2" font-size="48" font-weight="900" text-anchor="middle">70%</text></g></svg>
+    <div style="font-size:84px;font-weight:900;margin-top:20px"><span style="color:#ff5a1f">10명</span> 중 7명</div>
+    <div style="font-size:30px;font-weight:700;margin-top:6px">화재로 숨진 노인은 농촌에 있습니다</div>
+    <div class="cap" style="margin-top:22px">경남 노인 화재 사망자 중 읍·면 거주 비율 · 소방청('21~'23)</div>
+  </div>
+  <!-- 복구 -->
+  <div class="card" style="left:1270px;top:300px;width:540px;height:590px;padding:40px">
+    <div class="lab">03 복구</div>
+    <svg width="460" height="230" style="margin-top:20px">
+      <line x1="20" y1="130" x2="440" y2="130" stroke="#3a3533" stroke-width="6"/>
+      <line x1="20" y1="130" x2="440" y2="130" stroke="#ff5a1f" stroke-width="6"/>
+      <g fill="#f4f4f2" font-size="18" font-weight="700" text-anchor="middle"><circle cx="40" cy="130" r="10" fill="#ff5a1f"/><text x="40" y="100">1회</text><circle cx="95" cy="130" r="10" fill="#ff5a1f"/><text x="95" y="172">2회</text><circle cx="150" cy="130" r="10" fill="#ff5a1f"/><text x="150" y="100">3회</text><circle cx="205" cy="130" r="10" fill="#ff5a1f"/><text x="205" y="172">4회</text><circle cx="260" cy="130" r="10" fill="#ff5a1f"/><text x="260" y="100">5회</text><circle cx="315" cy="130" r="10" fill="#ff5a1f"/><text x="315" y="172">6회</text><circle cx="370" cy="130" r="10" fill="#ff5a1f"/><text x="370" y="100">7회</text><circle cx="425" cy="130" r="10" fill="#ff5a1f"/><text x="425" y="172">8회</text></g>
+      <text x="20" y="225" fill="#a59f98" font-size="18">1일</text><text x="440" y="225" fill="#a59f98" font-size="18" text-anchor="end">14일</text>
+    </svg>
+    <div style="font-size:84px;font-weight:900;margin-top:20px"><span style="color:#ff5a1f">14</span>일</div>
+    <div style="font-size:30px;font-weight:700;margin-top:6px">6개 기관 · 8번 방문</div>
+    <div class="cap" style="margin-top:22px">재난 피해주민 지원 신청 과정 · 자체 조사</div>
+  </div>
+  <div class="key" style="bottom:70px;height:76px;font-size:32px"><em>KEY</em>문제는 사람이 아니라, <span style="color:#ff5a1f;margin-left:10px">연결되지 않은 정보</span>였습니다</div>
+</div>
+
+<!-- 3 시스템 -->
+<div class="s" id="s3">
+  <div class="tag"><b>HOW</b><span>기존 시스템 + 새로운 연결</span></div>
+  <div class="ghost">Connect.</div>
+  <div class="sq" data-sq="#t3"></div><div class="h" id="t3">새로 사지 않고, 있는 것을 연결했습니다</div>
+  <div class="line"></div>
+  <div style="position:absolute;right:110px;top:272px;display:flex;gap:14px">
+    <div style="border:2px solid #ff5a1f;border-radius:40px;padding:10px 26px;font-size:26px;font-weight:800;color:#ff5a1f">예산 0원</div>
+    <div style="border:2px solid #ff5a1f;border-radius:40px;padding:10px 26px;font-size:26px;font-weight:800;color:#ff5a1f">외주 0건</div>
+    <div style="border:2px solid #ff5a1f;border-radius:40px;padding:10px 26px;font-size:26px;font-weight:800;color:#ff5a1f">직접 구축 2주</div></div>
+  <div style="position:absolute;left:110px;top:372px;font-size:22px;letter-spacing:.2em;color:#ff5a1f;font-weight:700">NEW · 새로 결합</div>
+  <div style="position:absolute;left:110px;top:778px;font-size:22px;letter-spacing:.2em;color:#8a847e;font-weight:700">BASE · 기존 시스템</div>
+  <!-- columns -->
+  <script>
+  const cols=[["출동","카카오내비 연계","도로교통공단 경유 · 운전자에게 미리 알림","차량관제시스템","소방차 위치·경로 (내부 전용)"],
+              ["현장대응","AI 검색 (GPTs)","질문하면 5초 만에 답","239개 마을 조사책자","책장 넘기며 찾기"],
+              ["복구","정부24 재난 원패스","한 번 신청, 6개 기관 연결","기관별 지원 창구","6곳을 따로 방문"]];
+  cols.forEach((c,i)=>{const x=110+i*580;document.write(
+   `<div class="card" style="left:${x}px;top:412px;width:540px;height:230px;border:3px solid #ff5a1f;background:#2a2523;padding:34px 40px">
+     <div class="lab" style="font-size:22px">${c[0]}</div><div style="font-size:40px;font-weight:900;margin-top:14px">${c[1]}</div><div style="font-size:26px;color:#d6d2c9;margin-top:12px">${c[2]}</div></div>
+    <div style="position:absolute;left:${x+240}px;top:650px;width:60px;height:110px;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:900;color:#ff5a1f">+</div>
+    <div class="card" style="left:${x}px;top:818px;width:540px;height:170px;padding:30px 40px">
+     <div style="font-size:36px;font-weight:800;color:#d6d2c9">${c[3]}</div><div style="font-size:24px;color:#8a847e;margin-top:10px">${c[4]}</div></div>`)});
+  </script>
+</div>
+
+<div class="s vid" id="v2"><i>VIDEO 2 · 1분 20초</i><b>🎬 실제 작동 + 감동</b><span>① 내비 실제 구동 → ② 농골기 실제 구동 → ③ 원패스 가상 작동 → "그 1분이, 누군가에게는 평생입니다"</span></div>
+
+<!-- 4 성과 -->
+<div class="s" id="s4">
+  <div class="tag"><b>RESULT</b><span>성과 · 기대효과</span></div>
+  <div class="ghost">Result.</div>
+  <div class="sq" data-sq="#t4"></div><div class="h" id="t4">세 번의 골든타임, 이렇게 앞당겼습니다</div>
+  <div class="line"></div>
+  <div class="card" style="left:110px;top:300px;width:540px;height:660px;padding:44px">
+    <div class="lab">01 출동 · 성과</div>
+    <div style="font-size:96px;font-weight:900;margin-top:40px;line-height:1.05"><span style="color:#ff5a1f">전국</span><br>최초</div>
+    <div style="font-size:30px;font-weight:700;margin-top:24px">내비게이션 긴급차량 접근 알림</div>
+    <div style="font-size:24px;color:#a59f98;margin-top:8px">사이렌 듣고 피양 → 내비가 미리 안내</div>
+    <div style="display:flex;gap:16px;margin-top:44px">
+      <div style="flex:1;border-top:2px solid #55504c;padding-top:16px"><b style="font-size:44px;font-weight:900">497<small style="font-size:24px">대</small></b><div class="cap">운영 차량</div></div>
+      <div style="flex:1;border-top:2px solid #55504c;padding-top:16px"><b style="font-size:44px;font-weight:900">0<small style="font-size:24px">원</small></b><div class="cap">소요 예산</div></div>
+      <div style="flex:1;border-top:2px solid #55504c;padding-top:16px"><b style="font-size:44px;font-weight:900">6<small style="font-size:24px">개월</small></b><div class="cap">협약 → 개시</div></div></div>
+  </div>
+  <div class="card" style="left:690px;top:300px;width:540px;height:660px;padding:44px;border:4px solid #ff5a1f;background:#2a2523;box-shadow:0 18px 50px rgba(255,90,31,.25)">
+    <div class="lab">02 현장대응 · 성과</div>
+    <div style="font-size:150px;font-weight:900;margin-top:20px;line-height:1;color:#ff5a1f">40<span style="font-size:80px">%↓</span></div>
+    <div style="font-size:30px;font-weight:700;margin-top:24px">화재 대응시간 7~8분 → 4~5분</div>
+    <div style="font-size:24px;color:#a59f98;margin-top:8px">신고부터 방수까지 · 농촌 239개 마을</div>
+    <div style="display:flex;gap:16px;margin-top:44px">
+      <div style="flex:1;border-top:2px solid #55504c;padding-top:16px"><b style="font-size:44px;font-weight:900">90→5<small style="font-size:24px">초</small></b><div class="cap">마을 정보 확인</div></div>
+      <div style="flex:1;border-top:2px solid #55504c;padding-top:16px"><b style="font-size:44px;font-weight:900">95<small style="font-size:24px">%</small></b><div class="cap">마을 숙지도(35%→)</div></div></div>
+    <div class="cap" style="margin-top:22px;color:#ff5a1f">경남 적극행정 종합평가 '최우수' 견인</div>
+  </div>
+  <div class="card" style="left:1270px;top:300px;width:540px;height:660px;padding:44px;border:2px dashed #8a847e;background:transparent">
+    <div class="lab" style="color:#d6d2c9">03 복구 · 기대효과</div>
+    <div style="font-size:96px;font-weight:900;margin-top:40px;line-height:1.05">14일 →<br><span style="color:#ff5a1f">7분</span></div>
+    <div style="font-size:30px;font-weight:700;margin-top:24px">한 번 신청 · 서류 0건</div>
+    <div style="font-size:24px;color:#a59f98;margin-top:8px">고령자 음성 접수 · 6개 기관 원스톱 (설계)</div>
+    <div style="margin-top:44px;border-top:2px solid #55504c;padding-top:16px"><b style="font-size:30px;font-weight:900">행안부장관상 → <span style="color:#ff5a1f">정부24 개발 착수</span></b><div class="cap">AI 기반 민원 서비스 혁신 공모전 대상</div></div>
+  </div>
+</div>
+
+<!-- 5 확산 -->
+<div class="s" id="s5">
+  <div class="tag"><b>SCALE</b><span>확산 · 지속 가능성</span></div>
+  <div class="ghost">Spread.</div>
+  <div class="sq" data-sq="#t5"></div><div class="h" id="t5">경남에서 시작해, 전국으로</div>
+  <div class="line"></div>
+  <script>
+  const st=[["'26. 4.","경남","카카오내비 서비스 개시"],["'26. 8.","전국","소방청 전국 확산 추진"],["협의 중","민간","티맵 · 네이버 · 아틀란"],["'27.","자동차","현대·기아 내장 내비 적용 예정"],["개발 착수","국가","정부24 재난 원패스"]];
+  st.forEach((s,i)=>{const x=110+i*344,h=250+i*95,top=930-h;const last=i==4;document.write(
+   `<div class="card" style="left:${x}px;top:${top}px;width:316px;height:${h}px;padding:30px;${last?'border:4px solid #ff5a1f;background:#2a2523;box-shadow:0 18px 50px rgba(255,90,31,.25)':''}">
+     <div style="font-size:22px;color:#ff5a1f;font-weight:800;letter-spacing:.06em">${s[0]}</div>
+     <div style="font-size:54px;font-weight:900;margin-top:10px">${s[1]}</div>
+     <div style="font-size:24px;color:#d6d2c9;margin-top:10px;line-height:1.35">${s[2]}</div></div>`+(i<4?`<div style="position:absolute;left:${x+310}px;top:${top-40}px;font-size:40px;color:#ff5a1f;font-weight:900">↗</div>`:''))});
+  </script>
+  <div style="position:absolute;left:110px;bottom:70px;font-size:24px;color:#a59f98">외부 검증 &nbsp;·&nbsp; 행정안전부장관상 &nbsp;·&nbsp; 소방청장상 &nbsp;·&nbsp; 언론 보도 8건 (연합뉴스 · KBS · SBS · 노컷뉴스 외)</div>
+</div>
+
+<!-- 6 아웃트로 -->
+<div class="s" id="s6">
+  <div class="ghost" style="font-size:150px">Thank you.</div>
+  <div class="sq" data-sq="#t6"></div>
+  <div id="t6" style="position:absolute;left:150px;top:330px;font-size:120px;font-weight:900;letter-spacing:-.04em;line-height:1.15">골든타임은,<br><span style="color:#ff5a1f;border-bottom:8px solid #ff5a1f">먼저 움직인 사람</span>이 지킵니다</div>
+  <div style="position:absolute;left:150px;top:680px;font-size:36px;color:#cbc5ba">출동 · 현장대응 · 복구 — 재난의 모든 시간을 앞당기겠습니다</div>
+  <div style="position:absolute;right:150px;bottom:150px;text-align:right"><div style="font-size:28px;font-weight:700;color:#ff5a1f;margin-bottom:12px">경상남도 소방본부 119종합상황실</div><b style="font-size:48px;font-weight:900;letter-spacing:.08em">박중휘 · 김경훈</b></div>
+</div>
+
+<script>
+function firstText(el){const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.trim()?1:3});return w.nextNode();}
+function place(){const cv=document.createElement('canvas').getContext('2d');
+ document.querySelectorAll('[data-sq]').forEach(sq=>{const el=document.querySelector(sq.dataset.sq);const tn=firstText(el);
+  const r=document.createRange();r.setStart(tn,0);r.setEnd(tn,1);const b=r.getBoundingClientRect();const pb=sq.parentElement.getBoundingClientRect();
+  const cs=getComputedStyle(tn.parentElement);const f=parseFloat(cs.fontSize);cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily;const m=cv.measureText(tn.nodeValue[0]);
+  const base=b.top+(m.fontBoundingBoxAscent||0.93*f);const inkTop=base-m.actualBoundingBoxAscent-pb.top,inkLeft=b.left-m.actualBoundingBoxLeft-pb.left;
+  const s=Math.round(Math.max(40,Math.min(90,0.45*f))),T=Math.max(3,Math.round(0.06*s)),c='#f4f4f2',g='linear-gradient('+c+','+c+')';
+  Object.assign(sq.style,{left:(inkLeft-0.55*s)+'px',top:(inkTop-0.55*s)+'px',width:s+'px',height:s+'px',background:g+' left top/100% '+T+'px no-repeat,'+g+' left top/'+T+'px 100% no-repeat,'+g+' right top/'+T+'px 25% no-repeat,'+g+' left bottom/30% '+T+'px no-repeat'});});}
+document.fonts.ready.then(()=>{place();document.body.dataset.ready=1});
+</script></body></html>
