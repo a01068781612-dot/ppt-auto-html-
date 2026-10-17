@@ -4,6 +4,7 @@
 // 규칙: ① 줄바꿈으로 나뉜 글이 한 줄에 들어가면 한 줄로(안 들어가면 원래 줄바꿈 그대로)
 //       ② 카드 안 글자(크기 · 줄 간격 · 들여쓰기)를 같은 배율로 키움(최대 1.45배, 위아래 간격은 그대로) — 카드 크기는 그대로, 글이 카드 폭 · 높이(위아래 24px 여유) 안에 들어가는 가장 큰 배율
 //       ③ 원래 없던 자동 줄바꿈이 생기면 그 배율은 안 씀(단어 하나만 다음 줄로 넘어가는 일 없게)
+//       ⑦ 작은 글씨(36px 미만)는 18 · 22 · 26 · 30 · 34px 5단계로, 한글 작은 글씨 자간 0(일관성)
 //       ⑥ 저절로 줄이 바뀐 글은 의미 단위(' · ' ' → ' ' (' ', ')에서 끊어 줄바꿈(<br>)
 //       ⑤ 가로 flex 안에 글 · 강조가 섞여 문장이 칸으로 끊기는 곳은 한 덩어리로 감쌈
 //       ④ 칸 구성이 같은 나란한 카드(같은 줄 · 같은 높이)는 같은 배율로, 머리글(주황 작은 글)을 맨 위에 1.4배로, 칸 높이를 맞춰 가로줄을 맞춤
@@ -107,6 +108,27 @@ function fit() {
     trial(best.s, best.force);   // 고른 배율로 다시 적용
     C.forEach((c, k) => report.push({ text: c.textContent.trim().slice(0, 16), s: best.s, joined: best.r[k].joined, row: par, free0: +info[k].free0.toFixed(2), free: +best.r[k].free.toFixed(2) }));
   }
+  // 작은 글씨(36px 미만) 맞춤 — 크기를 5단계(18 · 22 · 26 · 30 · 34px)로 모으고, 한글 작은 글씨의 넓은 자간은 없앰(영문 대문자 머리말 · KEY는 그대로)
+  const TIERS = [18, 22, 26, 30, 34]; let snapped = 0;
+  for (const e of [...document.querySelectorAll('#r *')]) {
+    if (e.closest('svg, .ghost') || e.tagName === 'BR' || e.tagName === 'IMG') continue;
+    if (![...e.childNodes].some(x => x.nodeType === 3 && x.nodeValue.trim())) continue;   // 글이 직접 들어 있는 요소만
+    const z = getComputedStyle(e), fs = parseFloat(z.fontSize); if (fs >= 35.5) continue;
+    const blk = (() => { let b = e; while (b.parentElement && getComputedStyle(b).display === 'inline') b = b.parentElement; return b; })();
+    const keep = e.getAttribute('style'), lines0 = linesOf(blk), box = blk.getBoundingClientRect(), par = blk.parentElement.getBoundingClientRect();
+    const near = TIERS.reduce((a, t) => Math.abs(t - fs) < Math.abs(a - fs) ? t : a), floor = [...TIERS].reverse().find(t => t <= fs + 0.01) || TIERS[0];
+    const hangul = /[가-힣]/.test(e.textContent), ls = parseFloat(z.letterSpacing) || 0;
+    for (const t of near === floor ? [near] : [near, floor]) {
+      e.setAttribute('style', keep || '');
+      e.style.fontSize = t + 'px';
+      if (/px$/.test(z.lineHeight)) e.style.lineHeight = (parseFloat(z.lineHeight) * t / fs).toFixed(2) + 'px';
+      if (hangul && ls > 0 && !e.closest('.tag, .key')) e.style.letterSpacing = '0px';
+      const nb = blk.getBoundingClientRect();
+      if (linesOf(blk) <= lines0 && nb.right <= Math.max(box.right, par.right) + 1 && nb.bottom <= Math.max(box.bottom, par.bottom) + 1) { snapped++; break; }   // 줄이 늘거나 칸을 넘으면 다음 후보(내림)
+      e.setAttribute('style', keep || ''); if (keep === null) e.removeAttribute('style');
+    }
+  }
+  if (snapped) report.push({ snapSmall: snapped });
   let sem = 0;
   const avail = b => { const z = getComputedStyle(b); return b.clientWidth - parseFloat(z.paddingLeft) - parseFloat(z.paddingRight); };
   for (const b of [...new Set(blocksOf(document.getElementById('r')))]) {
@@ -165,6 +187,6 @@ function fit() {
     fs.writeFileSync(path.join(sub, path.basename(f)), html);
   }
   fs.writeFileSync(path.join(OUT, 'fit.json'), JSON.stringify(rep, null, 1)); await br.close();
-  const cards = Object.values(rep).flat().filter(c => !c.mixedFlex && !c.semWrap);
+  const cards = Object.values(rep).flat().filter(c => !c.mixedFlex && !c.semWrap && !c.snapSmall);
   console.log('slides', Object.keys(rep).length, 'cards', cards.length, 'joined br', cards.reduce((a, c) => a + c.joined, 0));
 })();
