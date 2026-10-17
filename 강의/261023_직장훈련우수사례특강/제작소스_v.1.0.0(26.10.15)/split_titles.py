@@ -14,5 +14,10 @@ for it in zin.infolist():
         x = re.sub(r'<p:cSld(?: name="[^"]*")?>', f'<p:cSld name="{nm}">', x, count=1)
         x, k = re.subn(r'(<p:cNvPr id="\d+" name="슬라이드 제목(?:\(화면 밖\))?"[^>]*?/?>(?:.*?</p:cNvPr>)?<p:cNvSpPr[^>]*?(?:/>|>.*?</p:cNvSpPr>))<p:nvPr(?:/>|></p:nvPr>)', r'\1<p:nvPr><p:ph type="title"/></p:nvPr>', x, count=1, flags=re.S)
         done += k; d = x.encode('utf-8')
+    if it.filename.startswith('ppt/theme/theme') and it.filename.endswith('.xml'):   # 기본 글꼴(새로 넣는 글상자)도 Pretendard로
+        x = d.decode('utf-8')
+        x = x.replace('<a:latin typeface="Calibri Light"', '<a:latin typeface="Pretendard ExtraBold"').replace('<a:latin typeface="Calibri"', '<a:latin typeface="Pretendard"')
+        x = x.replace('<a:ea typeface=""', '<a:ea typeface="Pretendard"').replace('script="Hang" typeface="맑은 고딕"', 'script="Hang" typeface="Pretendard"')
+        d = x.encode('utf-8')
     zout.writestr(it, d, compress_type=zipfile.ZIP_STORED if it.filename.endswith(('.mp4', '.jpg', '.jpeg', '.png')) else zipfile.ZIP_DEFLATED)
 zout.close(); print('ok titles', done)
