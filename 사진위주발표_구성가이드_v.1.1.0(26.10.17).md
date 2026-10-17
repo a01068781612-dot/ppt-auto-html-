@@ -6,7 +6,7 @@
 |---|---|
 | 버전 | v.1.1.0 (26.10.17) |
 | 기준 | 지방호족 기획안 v.2.4.0 + 장면 v.0.5.0 (사용자 "디자인·구조 괜찮다" 확인) |
-| 디자인 짝 | hyperframes-ffmpeg `kit/dark-motion/사진위주디자인_광주·직장_v.*.md` · 스킬 `photo-deck-gwangju` |
+| 디자인 짝 | hyperframes-ffmpeg `kit/dark-motion/사진위주디자인_광주·직장훈련형_v.*.md` · 스킬 `photo-deck-gwangju` |
 
 ## 변경 이력
 | 버전 | 날짜 | 수정 내용 |
