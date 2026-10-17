@@ -33,7 +33,8 @@ function walk() {
     if (cs.display === 'none' || cs.visibility === 'hidden') return;
     const q = el.getBoundingClientRect(), o = opac(el);
     const tag = el.tagName.toLowerCase();
-    if (tag === 'svg') { el.dataset.k = ++k; ops.push({ t: 'raster', k, x: q.left, y: q.top, w: q.width, h: q.height, pad: 4 }); return; }
+    const cls = (typeof el.className === 'string' ? el.className : (el.getAttribute('class') || '')).trim();
+    if (tag === 'svg') { el.dataset.k = ++k; ops.push({ t: 'raster', k, x: q.left, y: q.top, w: q.width, h: q.height, pad: 4, cls: 'svg', paths: el.querySelectorAll('path').length, rects: el.querySelectorAll('rect,circle,line,polyline').length }); return; }
     if (tag === 'img') {
       const nw = el.naturalWidth, nh = el.naturalHeight; if (!nw || q.width < 1) return;
       const fit = cs.objectFit; const [pp0, pp1] = cs.objectPosition.split(' ').map(v => parseFloat(v) / 100);
@@ -45,7 +46,7 @@ function walk() {
       if (Rr - L < 1 || B - T < 1) return;
       const sx = nw / dw, sy = nh / dh;
       ops.push({ t: 'img', src: decodeURIComponent(new URL(el.currentSrc || el.src).pathname), x: L, y: T, w: Rr - L, h: B - T,
-        sx: (L - dx) * sx, sy: (T - dy) * sy, sw: (Rr - L) * sx, sh: (B - T) * sy, rad, op: o });
+        sx: (L - dx) * sx, sy: (T - dy) * sy, sw: (Rr - L) * sx, sh: (B - T) * sy, rad, op: o, cls: (el.closest('.shot') || el).className, label: (el.closest('.shot') && el.closest('.shot').querySelector('.lbl') || {}).textContent || '' });
       return;
     }
     if (el !== R) {
@@ -57,15 +58,15 @@ function walk() {
         || cs.transform !== 'none' || cs.filter !== 'none' || cs.clipPath !== 'none' || (cs.boxShadow !== 'none' && cs.boxShadow.split('rgba').length > 2);
       if (special && q.width > 0) {
         el.dataset.k = ++k; const pad = cs.boxShadow !== 'none' ? 70 : 4;
-        ops.push({ t: 'raster', k, x: q.left, y: q.top, w: q.width, h: q.height, pad });
+        ops.push({ t: 'raster', k, x: q.left, y: q.top, w: q.width, h: q.height, pad, cls, text: (el.textContent || '').trim().slice(0, 30) });
       } else if ((hasBg || anyB || cs.boxShadow !== 'none') && q.width > 0 && q.height > 0) {
         const uni = sides.every(b => b.w === sides[0].w && b.c === sides[0].c);
         const sh = cs.boxShadow !== 'none' ? cs.boxShadow : null;
         ops.push({ t: 'shape', x: q.left, y: q.top, w: q.width, h: q.height, fill: hasBg ? bg : null, rad: parseFloat(cs.borderTopLeftRadius) || 0,
-          line: uni && sides[0].w > 0 ? { w: sides[0].w, c: sides[0].c } : null, shadow: sh, op: o });
+          line: uni && sides[0].w > 0 ? { w: sides[0].w, c: sides[0].c } : null, shadow: sh, op: o, cls, tag });
         if (!uni) sides.forEach((b, i) => { if (!b.w) return;
           const r = i === 0 ? [q.left, q.top, q.width, b.w] : i === 1 ? [q.right - b.w, q.top, b.w, q.height] : i === 2 ? [q.left, q.bottom - b.w, q.width, b.w] : [q.left, q.top, b.w, q.height];
-          ops.push({ t: 'shape', x: r[0], y: r[1], w: r[2], h: r[3], fill: b.c, rad: 0, line: null, shadow: null, op: o }); });
+          ops.push({ t: 'shape', x: r[0], y: r[1], w: r[2], h: r[3], fill: b.c, rad: 0, line: null, shadow: null, op: o, cls, tag, side: ['위', '오른쪽', '아래', '왼쪽'][i] }); });
       }
     }
     for (const ch of el.children) visit(ch);
@@ -109,7 +110,8 @@ function grab() {   // 글상자 — edit_extract.js와 같은 방법(화면 줄
     lines.forEach(l => { const r = l.runs[l.runs.length - 1]; if (r) r.text = r.text.replace(/\s+$/, ''); l.runs = l.runs.filter(r => r.text.length); });
     const ls = lines.filter(l => l.runs.length); if (!ls.length || L > Rr) continue;
     const pitch = ls.length > 1 ? (ls[ls.length - 1].top - ls[0].top) / (ls.length - 1) : (parseFloat(bcs.lineHeight) || fsMax * 1.25);
-    boxes.push({ t: 'text', x: L, y: T, w: Rr - L, h: B - T, pitch, align: bcs.textAlign, lines: ls.map(l => l.runs) });
+    const role = blk.closest('.ttl') ? '제목' : blk.closest('.tag') ? '머리표' : blk.closest('.key') ? 'KEY' : blk.closest('.pg') ? '쪽번호' : blk.closest('.lbl') ? '사진 설명' : blk.closest('td,th') ? '표' : blk.closest('.chip') ? '칩' : '';
+    boxes.push({ t: 'text', x: L, y: T, w: Rr - L, h: B - T, pitch, align: bcs.textAlign, lines: ls.map(l => l.runs), role, fsMax });
   }
   return boxes;
 }
