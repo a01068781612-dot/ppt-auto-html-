@@ -97,7 +97,8 @@ function addBox(s, b, name, ol) {   // 글상자 하나(줄바꿈은 화면 그�
     if (tr) o.transparency = tr;
     if (ol) { const [lc, lt] = color(ol.sc); o.color = 'FFFFFF'; o.transparency = 100; o.outline = { size: PT(ol.sw), color: { color: lc, transparency: lt } }; }
     if (ri === line.length - 1 && li < b.lines.length - 1) o.breakLine = true;
-    runs.push({ text: r.text, options: o });
+    const ind = align === 'left' && b.lefts && ri === 0 ? Math.round(b.lefts[li] - b.x) : 0;   // 둘째 줄 들여쓰기 → split_titles.py가 문단 왼쪽 여백(marL)으로 바꿈
+    runs.push({ text: (ind >= 2 ? `\u2063I${ind}\u2063` : '') + r.text, options: o });
   }));
   s.addText(runs, { x: X(x), y: X(y), w: X(w), h: X(h), margin: 0, valign: 'top', align, lineSpacing: PT(pitch), fit: 'none', wrap: false, autoFit: false, objectName: name });
 }

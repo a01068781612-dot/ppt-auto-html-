@@ -105,14 +105,14 @@ function grab() {   // 글상자 — edit_extract.js와 같은 방법(화면 줄
           if (last && last.color === st.color && last.fs === st.fs && last.fw === st.fw && last.ls === st.ls && last.it === st.it) last.text += ch; else cur.runs.push({ ...st, text: ch });
         }
         cur.bottom = Math.max(cur.bottom, rc.bottom);
-        if (ch !== ' ') { L = Math.min(L, rc.left); Rr = Math.max(Rr, rc.right); T = Math.min(T, rc.top); B = Math.max(B, rc.bottom); }
+        if (ch !== ' ') { L = Math.min(L, rc.left); Rr = Math.max(Rr, rc.right); T = Math.min(T, rc.top); B = Math.max(B, rc.bottom); cur.left = Math.min(cur.left ?? 1e9, rc.left); }
       }
     }
     lines.forEach(l => { const r = l.runs[l.runs.length - 1]; if (r) r.text = r.text.replace(/\s+$/, ''); l.runs = l.runs.filter(r => r.text.length); });
     const ls = lines.filter(l => l.runs.length); if (!ls.length || L > Rr) continue;
     const pitch = ls.length > 1 ? (ls[ls.length - 1].top - ls[0].top) / (ls.length - 1) : (parseFloat(bcs.lineHeight) || fsMax * 1.25);
     const role = blk.closest('.ttl') ? '제목' : blk.closest('.tag') ? '머리표' : blk.closest('.key') ? 'KEY' : blk.closest('.pg') ? '쪽번호' : blk.closest('.lbl') ? '사진 설명' : blk.closest('td,th') ? '표' : blk.closest('.chip') ? '칩' : '';
-    boxes.push({ t: 'text', x: L, y: T, w: Rr - L, h: B - T, pitch, align: bcs.textAlign, lines: ls.map(l => l.runs), role, fsMax });
+    boxes.push({ t: 'text', x: L, y: T, w: Rr - L, h: B - T, pitch, align: bcs.textAlign, lines: ls.map(l => l.runs), lefts: ls.map(l => l.left), role, fsMax });   // lefts: 줄마다 왼쪽 끝(둘째 줄 들여쓰기)
   }
   return boxes;
 }

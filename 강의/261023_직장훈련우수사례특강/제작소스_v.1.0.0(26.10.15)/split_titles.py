@@ -14,6 +14,11 @@ for it in zin.infolist():
         x = re.sub(r'<p:cSld(?: name="[^"]*")?>', f'<p:cSld name="{nm}">', x, count=1)
         x, k = re.subn(r'(<p:cNvPr id="\d+" name="슬라이드 제목(?:\(화면 밖\))?"[^>]*?/?>(?:.*?</p:cNvPr>)?<p:cNvSpPr[^>]*?(?:/>|>.*?</p:cNvSpPr>))<p:nvPr(?:/>|></p:nvPr>)', r'\1<p:nvPr><p:ph type="title"/></p:nvPr>', x, count=1, flags=re.S)
         x = re.sub(r'(</a:ln>)<a:solidFill><a:srgbClr val="FFFFFF"><a:alpha val="0"/></a:srgbClr></a:solidFill>', r'\1<a:noFill/>', x)   # 외곽선 글자: 글자 안 비움
+        def ind(m):   # 들여쓴 줄: 표시(⁣I<px>⁣)를 지우고 문단 왼쪽 여백으로(1px = 6350 EMU)
+            p = m.group(0); px = int(re.search('\u2063I(\\d+)\u2063', p).group(1))
+            p = re.sub('\u2063I\\d+\u2063', '', p)
+            return re.sub(r'<a:pPr([^>]*?) indent="0" marL="0"', lambda q: f'<a:pPr{q.group(1)} indent="0" marL="{px * 6350}"', p, count=1)
+        x = re.sub(r'<a:p>(?:(?!</a:p>).)*?\u2063I\d+\u2063.*?</a:p>', ind, x, flags=re.S)
         done += k; d = x.encode('utf-8')
     if it.filename.startswith('ppt/theme/theme') and it.filename.endswith('.xml'):   # 기본 글꼴(새로 넣는 글상자)도 Pretendard로
         x = d.decode('utf-8')
