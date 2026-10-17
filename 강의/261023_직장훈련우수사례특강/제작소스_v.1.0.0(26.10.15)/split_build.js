@@ -8,12 +8,26 @@ const [E, MEDIA, OUT] = process.argv.slice(2);
 const X = px => px / 144, PT = px => Math.round(px * 0.5 * 10) / 10;
 
 // 영상 장: [영상 번호, 파일 이름, 첫 화면]
-const VIDEO = {
-  2: [1, '1.오프닝 모션(2장).mp4', 'ws2.png'], 3: [2, '2.국무회의 영상(3장).mp4', 'ws3.png'],
-  4: [3, '3.강사 소개1(4장).mp4', 'ws4.png'], 5: [4, '4.강사 소개2(5장).mp4', 'ws5.png'],
-  62: [5, '5.AI 농골길 코치 GPTs 화면(62장).mp4', 'gpts.png'], 70: [6, '6.농골길 웹 화면(70장).mp4', 'web.png'],
-  119: [7, '7.강사 소개 영상(119장).mp4', 'promo.png'],
+const VIDEO = {   // 따로 넣을 큰 영상(첫 화면만 두고 자리 표시)
+  3: [1, '1.국무회의 영상(대통령 AI 언급)_3번슬라이드.mp4', 'ws3.png'],
+  62: [2, '2.AI 농골길 코치 GPTs 시연 화면_62번슬라이드.mp4', 'gpts.png'], 70: [3, '3.농골길 웹 시연 화면_70번슬라이드.mp4', 'web.png'],
+  119: [4, '4.강사 소개 영상_119번슬라이드.mp4', 'promo.png'],
 };
+// PPT 안에 바로 넣는 짧은 모션(7초, 1MB 이하) — 들어오면 자동 재생(timing.py), 이름은 vids.json 길이 표와 맞춤
+const EMBED = {
+  2: ['ws2.mp4', 'ws2.png', 'op2_motion', '국무회의 영상 예고 화면(7초 모션)'],
+  4: ['ws4.mp4', 'ws4.png', 'op4_motion', '강사 프로필1 — 수상 내역(7초 모션)'],
+  5: ['ws5.mp4', 'ws5.png', 'op5_motion', '강사 프로필2 — 강의·자격·언론(7초 모션)'],
+};
+if (process.env.ALL_VIDEO) {   // 영상 포함판: 큰 영상 4개도 PPT 안에(자동 재생)
+  Object.assign(EMBED, {
+    3: ['ws3.mp4', 'ws3.png', 'intro_video', '국무회의 영상(대통령 AI 언급)'],
+    62: ['농골길_gpts_무음.mp4', 'gpts.png', 'gpts_video', 'AI 농골길 코치 GPTs 시연 화면'],
+    70: ['농골길_웹_무음.mp4', 'web.png', 'web_video', '농골길 웹 시연 화면'],
+    119: ['promo.mp4', 'promo.png', 'promo_video', '강사 소개 영상'],
+  });
+  for (const k of Object.keys(VIDEO)) delete VIDEO[k];
+}
 const ART = { 88: 'http://www.fpn119.co.kr/sub_read.html?uid=240575', 89: 'https://www.idomin.com/news/articleView.html?idxno=946953',
   90: 'https://www.heraldk.com/article/2026032322064737999', 91: 'https://v.daum.net/v/20260324163020234', 92: 'https://www.fpn119.co.kr/249649',
   93: 'https://www.jeonmae.co.kr/news/articleView.html?idxno=1276072', 94: 'https://nocutnews.co.kr/news/6557511' };
@@ -76,11 +90,17 @@ for (let n = 1; n <= 120; n++) {
   const id = String(n).padStart(3, '0'), sec = SECTION(n);
   if (sec !== last) { pres.addSection({ title: sec }); last = sec; }
   const s = pres.addSlide({ sectionTitle: sec }); s.background = { color: '0C0B0B' };
-  if (VIDEO[n]) {
+  if (EMBED[n]) {
+    const [v, cov, oname, title] = EMBED[n];
+    s.addMedia({ type: 'video', path: path.join(MEDIA, v), cover: 'image/png;base64,' + fs.readFileSync(path.join(MEDIA, cov)).toString('base64'), x: 0, y: 0, w: 13.333, h: 7.5, objectName: oname });
+    s.addText(title, { x: 13.6, y: 0.2, w: 6, h: 0.6, fontFace: 'Pretendard', fontSize: 18, color: 'FFFFFF', objectName: '슬라이드 제목(화면 밖)' });
+    s.addNotes(`${title} — PPT 안에 들어 있는 영상, 들어오면 자동 재생${oname === 'intro_video' ? ' (2:44, 끝날 때까지 기다렸다가 클릭)' : oname === 'promo_video' ? ' (1:36, 마지막 장면에서 멈춤 → 클릭해서 Q&A)' : ''}`);
+    TITLES[n] = title;
+  } else if (VIDEO[n]) {
     const [k, name, cov] = VIDEO[n];
     s.addImage({ path: path.join(MEDIA, cov), x: 0, y: 0, w: 13.333, h: 7.5, altText: `영상 ${k} 자리: ${name}`, objectName: `영상 ${k} 자리(첫 화면)` });
-    s.addText(`영상 ${k} — ${name.replace(/^\d+\./, '').replace(/\.mp4$/, '')}`, { x: 13.6, y: 0.2, w: 6, h: 0.6, fontFace: 'Pretendard', fontSize: 18, color: 'FFFFFF', objectName: '슬라이드 제목(화면 밖)' });
-    TITLES[n] = `영상 ${k} — ${name.replace(/^\d+\./, '').replace(/\.mp4$/, '')}`;
+    s.addText(`영상 ${k} — ${name.replace(/^\d+\./, '').replace(/_\d+번슬라이드\.mp4$/, '')}`, { x: 13.6, y: 0.2, w: 6, h: 0.6, fontFace: 'Pretendard', fontSize: 18, color: 'FFFFFF', objectName: '슬라이드 제목(화면 밖)' });
+    TITLES[n] = `영상 ${k} — ${name.replace(/^\d+\./, '').replace(/_\d+번슬라이드\.mp4$/, '')}`;
     s.addNotes(`▶ 영상 ${k} 자리 — ${name} (영상 zip에 들어 있음). 이 장에 영상을 넣고, 들어오면 자동 재생으로 맞춥니다.`);
   } else {
     s.addImage({ path: path.join(E, `b${id}.jpg`), x: 0, y: 0, w: 13.333, h: 7.5, altText: '바탕', objectName: '바탕' });
