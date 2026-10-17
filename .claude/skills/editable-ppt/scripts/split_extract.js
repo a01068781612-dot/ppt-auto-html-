@@ -87,6 +87,7 @@ function grab() {   // 글상자 — edit_extract.js와 같은 방법(화면 줄
     if (cs.visibility === 'hidden' || cs.color === 'rgba(0, 0, 0, 0)') continue;
     const b = blockOf(t); if (!groups.has(b)) groups.set(b, []); groups.get(b).push(t);
   }
+  const spaceW = el => { const a = document.createElement('span'); a.style.cssText = 'position:absolute;white-space:pre;letter-spacing:0'; el.appendChild(a); a.textContent = 'a a'; const w1 = a.getBoundingClientRect().width; a.textContent = 'aa'; const w2 = a.getBoundingClientRect().width; a.remove(); return w1 - w2; };   // 이 글꼴 · 크기 · 굵기의 공백 한 칸 폭
   const boxes = [];
   for (const [blk, texts] of groups) {
     const bcs = getComputedStyle(blk); const lines = []; let cur = null;
@@ -100,10 +101,16 @@ function grab() {   // 글상자 — edit_extract.js와 같은 방법(화면 줄
         const rc = [...rg.getClientRects()].filter(q => q.width > 0 || q.height > 0)[0]; if (!rc) continue;
         const ch = /\s/.test(s[i]) ? ' ' : s[i];
         if (!cur || rc.top > cur.bottom - (cur.bottom - cur.top) * 0.3) { cur = { runs: [], top: rc.top, bottom: rc.bottom }; lines.push(cur); }
+        // 공백 문자 없이 생긴 가로 빈칸(margin · padding · 요소 사이 공백)은 PPT에서 사라져 글자가 붙음 → 공백 하나 + 자간으로 같은 폭을 만듦
+        if (ch !== ' ' && cur.runs.length && cur.right != null && rc.left - cur.right > st.fs * 0.18) {
+          const g = rc.left - cur.right;
+          cur.runs.push({ ...st, ls: +(g - spaceW(t.parentElement)).toFixed(2), text: ' ', gap: Math.round(g) });
+        }
         if (ch !== ' ' || cur.runs.length) {
           const last = cur.runs[cur.runs.length - 1];
-          if (last && last.color === st.color && last.fs === st.fs && last.fw === st.fw && last.ls === st.ls && last.it === st.it) last.text += ch; else cur.runs.push({ ...st, text: ch });
+          if (last && !last.gap && last.color === st.color && last.fs === st.fs && last.fw === st.fw && last.ls === st.ls && last.it === st.it) last.text += ch; else cur.runs.push({ ...st, text: ch });
         }
+        cur.right = ch === ' ' && cur.right != null ? Math.max(cur.right, rc.right) : rc.right;
         cur.bottom = Math.max(cur.bottom, rc.bottom);
         if (ch !== ' ') { L = Math.min(L, rc.left); Rr = Math.max(Rr, rc.right); T = Math.min(T, rc.top); B = Math.max(B, rc.bottom); cur.left = Math.min(cur.left ?? 1e9, rc.left); }
       }
