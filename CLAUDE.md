@@ -11,4 +11,5 @@
 - **새 강의·새 PPT** 작업이면: 최신 `PPT디자인시스템_v.*.md`와 `.claude/skills/dark-motion-ppt/SKILL.md`를 먼저 읽고, `강의/<YYMMDD>_<강의이름>/` 폴더에 그 강의의 기획안·진행요약을 따로 만든다. 디자인·모션은 그대로, 내용만 바꾼다.
 - **대회·공모전 발표 PPT** 작업이면: `.claude/skills/contest-ppt/SKILL.md`를 따른다. `발표/<YYMMDD>_<대회명>/대회정보_v.*.md`부터 읽고, 없으면 `발표/대회정보_양식_v.*.md`를 복사해 시작한다.
 - **글자 고칠 수 있는 분해판 PPT(편집용 PPT · zip · ff방에 보낼 PPT)** 작업이면: `.claude/skills/editable-ppt/SKILL.md`를 따르고, 최신 `편집용PPT_점검표_v.*.md`를 프리뷰 주기 전에 한 줄씩 확인한다.
+- **직장훈련·소방학교·현장 우수사례·사진 많은 강의 PPT** 작업이면: `.claude/skills/field-case-ppt/SKILL.md`를 따르고 최신 `현장사례PPT_레퍼런스_v.*.md`를 기준으로 만든다(꺾쇠 위치·머리표 간격·카드 구조·저화질 사진 사전 보고·장 유형별 모션·프리뷰 방식).
 - 진행 중인 강의·발표 폴더가 있으면 그 폴더의 최신 진행요약부터 읽는다.
