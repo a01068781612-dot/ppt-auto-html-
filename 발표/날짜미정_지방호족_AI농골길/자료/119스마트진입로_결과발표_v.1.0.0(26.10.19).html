@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>농어촌 소방차량 스마트 진입로 판정 및 2단계 전술 관제 시스템 — Step 1 알고리즘 고도화 반영 종합 발표자료</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --bg-slide: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-alt: #131c31;
+      --border: #334155;
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+      --text-muted: #94a3b8;
+      --accent-cyan: #00f0ff;
+      --accent-blue: #38bdf8;
+      --accent-green: #22c55e;
+      --accent-amber: #f59e0b;
+      --accent-orange: #f97316;
+      --accent-red: #ef4444;
+      --accent-purple: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Pretendard', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.55;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.scroll-mode {
+      overflow-y: auto;
+      height: auto;
+    }
+
+    /* Top Navigation Bar */
+    .pres-topbar {
+      height: 54px;
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    body.scroll-mode .pres-topbar {
+      position: sticky;
+      top: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--text-main);
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      background: #1e293b;
+      color: var(--text-main);
+      border: 1px solid #475569;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #334155;
+      border-color: var(--accent-blue);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: #38bdf8;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+    }
+
+    .btn-fire {
+      background: linear-gradient(135deg, #ea580c, #dc2626);
+      border-color: #fb923c;
+      color: #fff;
+    }
+
+    /* Slide Viewport */
+    .slides-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    body.scroll-mode .slides-viewport {
+      display: block;
+      overflow: visible;
+      padding: 28px 0 60px;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1440px;
+      height: 100%;
+      padding: 26px 42px 24px;
+      overflow-y: auto;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .slide.active {
+      display: flex;
+      animation: fadeIn 0.22s ease-out;
+    }
+
+    body.scroll-mode .slide {
+      display: flex !important;
+      height: auto;
+      margin: 0 auto 36px;
+      background: var(--bg-slide);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px 44px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slide Header */
+    .slide-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .slide-step {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-cyan);
+      margin-bottom: 4px;
+    }
+
+    .slide-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.4px;
+    }
+
+    .slide-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 15px 18px;
+    }
+
+    .card-alt {
+      background: var(--bg-card-alt);
+      border: 1px solid #263554;
+      border-radius: 10px;
+      padding: 15px 18px;
+    }
+
+    .card-highlight {
+      background: linear-gradient(145deg, rgba(14, 116, 144, 0.22), rgba(30, 41, 59, 0.92));
+      border: 1px solid var(--accent-blue);
+    }
+
+    .card-warn {
+      background: linear-gradient(145deg, rgba(180, 83, 9, 0.2), rgba(30, 41, 59, 0.92));
+      border: 1px solid var(--accent-amber);
+    }
+
+    .card-green {
+      background: linear-gradient(145deg, rgba(21, 128, 61, 0.22), rgba(30, 41, 59, 0.92));
+      border: 1px solid var(--accent-green);
+    }
+
+    .card h3 {
+      font-size: 15.2px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card p, .card li {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    .card ul, .card ol {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* KPI Stat Boxes */
+    .kpi-card {
+      background: linear-gradient(160deg, #1e293b, #0f172a);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent-blue);
+      border-radius: 10px;
+      padding: 13px 16px;
+    }
+
+    .kpi-card.green { border-top-color: var(--accent-green); }
+    .kpi-card.amber { border-top-color: var(--accent-amber); }
+    .kpi-card.red { border-top-color: var(--accent-red); }
+    .kpi-card.purple { border-top-color: var(--accent-purple); }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .kpi-val {
+      font-size: 23px;
+      font-weight: 800;
+      color: #fff;
+      margin: 4px 0;
+    }
+
+    .kpi-desc {
+      font-size: 11.8px;
+      color: var(--text-sub);
+    }
+
+    /* Easy Metaphor Box (For Non-Specialists) */
+    .easy-box {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.14), rgba(30, 41, 59, 0.6));
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: 0 8px 8px 0;
+      padding: 11px 16px;
+      font-size: 13.2px;
+      color: #e2e8f0;
+    }
+
+    .easy-box strong {
+      color: var(--accent-cyan);
+    }
+
+    /* Before/After Analogy Box inside Algorithm Cards */
+    .analogy-pill {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid #334155;
+      border-left: 3px solid var(--accent-amber);
+      border-radius: 6px;
+      padding: 8px 11px;
+      margin-bottom: 9px;
+      font-size: 12.4px;
+      color: #f1f5f9;
+    }
+
+    .analogy-pill.green {
+      border-left-color: var(--accent-green);
+    }
+
+    .analogy-pill.purple {
+      border-left-color: var(--accent-purple);
+    }
+
+    .ba-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .ba-box {
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 12.2px;
+    }
+
+    .ba-before {
+      background: rgba(239, 68, 68, 0.11);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fecaca;
+    }
+
+    .ba-after {
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #bbf7d0;
+    }
+
+    /* Badges & Tags */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .tag-green { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .tag-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .tag-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .tag-blue { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .tag-purple { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+
+    /* Tables */
+    table.pres-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.3px;
+    }
+
+    table.pres-table th,
+    table.pres-table td {
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      text-align: left;
+    }
+
+    table.pres-table th {
+      background: #0f172a;
+      color: var(--accent-blue);
+      font-weight: 700;
+    }
+
+    table.pres-table tr:nth-child(even) td {
+      background: rgba(15, 23, 42, 0.45);
+    }
+
+    table.pres-table tr.row-best td {
+      background: rgba(34, 197, 94, 0.13);
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+
+    /* Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      position: relative;
+      padding-left: 22px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-blue), var(--accent-green), var(--accent-orange));
+    }
+
+    .tl-item {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+    }
+
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -19px;
+      top: 14px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      border: 2px solid var(--bg-dark);
+    }
+
+    .tl-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+
+    .tl-desc {
+      font-size: 12.3px;
+      color: var(--text-sub);
+    }
+
+    /* Flow Pipeline */
+    .flow-row {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .flow-step {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      position: relative;
+    }
+
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      color: var(--accent-blue);
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    code.inline-code {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #334155;
+      color: #7dd3fc;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'Consolas', monospace;
+      font-size: 11.8px;
+    }
+
+    pre.code-block {
+      background: #090d16;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 9px 13px;
+      color: #e2e8f0;
+      font-family: 'Consolas', monospace;
+      font-size: 11.8px;
+      overflow-x: auto;
+      line-height: 1.45;
+    }
+
+    /* Bottom Footer Navigation */
+    .pres-footer {
+      height: 48px;
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+
+    body.scroll-mode .pres-footer {
+      display: none;
+    }
+
+    .dot-nav {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot-btn {
+      width: 26px;
+      height: 24px;
+      border-radius: 5px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .dot-btn.active {
+      background: var(--accent-blue);
+      color: #090d16;
+      border-color: var(--accent-cyan);
+    }
+
+    /* UI Mockup Wireframe */
+    .ui-wireframe {
+      border: 2px solid #475569;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #0b1120;
+    }
+
+    .ui-wf-header {
+      background: #1e293b;
+      padding: 8px 14px;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .ui-wf-body {
+      display: grid;
+      grid-template-columns: 240px 1fr 310px;
+      min-height: 280px;
+    }
+
+    .ui-wf-left {
+      border-right: 1px solid #334155;
+      padding: 12px;
+      background: #0f172a;
+      font-size: 12px;
+    }
+
+    .ui-wf-map {
+      position: relative;
+      background: radial-gradient(circle at center, #132338 0%, #09121e 100%);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .ui-wf-right {
+      border-left: 1px solid #334155;
+      padding: 12px;
+      background: #0f172a;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    @media (max-width: 1100px) {
+      .grid-2, .grid-3, .grid-4, .ui-wf-body, .ba-grid {
+        grid-template-columns: 1fr;
+      }
+      .flow-row {
+        flex-direction: column;
+      }
+    }
+
+    @media print {
+      body {
+        overflow: visible !important;
+        height: auto !important;
+        background: #0f172a !important;
+      }
+      .pres-topbar, .pres-footer {
+        display: none !important;
+      }
+      .slides-viewport {
+        display: block !important;
+        overflow: visible !important;
+      }
+      .slide {
+        display: flex !important;
+        height: auto !important;
+        page-break-after: always;
+        border-bottom: 2px solid #334155;
+        margin-bottom: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="pres-topbar">
+    <div class="brand">
+      <span class="brand-badge">119 SMART FIREWAY · STEP 1 UPGRADED</span>
+      <span>농어촌 소방차량 스마트 진입로 판정 시스템 — 구현 이력 · Step 1 알고리즘 개선 · 현행 형상 발표자료</span>
+    </div>
+    <div class="top-controls">
+      <button type="button" id="btn-toggle-mode" class="btn btn-primary">📄 스크롤 전체보기 전환</button>
+      <a href="./integrated_ui_mockup.html" target="_blank" class="btn btn-fire">🚒 단일번들 웹앱 실행</a>
+      <a href="../web/index.html" target="_blank" class="btn">🌐 표준 웹앱 열기</a>
+      <button type="button" onclick="window.print()" class="btn">🖨 인쇄 / PDF 저장</button>
+    </div>
+  </header>
+
+  <!-- Main Slides Viewport -->
+  <main class="slides-viewport" id="slides-container">
+
+    <!-- ==================== SLIDE 1: OVERVIEW ==================== -->
+    <section class="slide active" data-slide="1">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 01 / 12 · Executive Summary</div>
+          <h1 class="slide-title">농어촌 소방차량 스마트 진입로 판정 및 2단계 전술 관제 시스템 (Step 1 고도화 반영)</h1>
+        </div>
+        <div class="slide-subtitle">경상남도 의령군 13개 전 읍·면 · 239개 전 마을 (89,681개 구간) 구축 및 검증 완료</div>
+      </div>
+
+      <div class="easy-box">
+        <strong>💡 배경 지식이 없는 분을 위한 핵심 한 줄 요약:</strong><br/>
+        일반 자동차 내비게이션(T맵·네이버·카카오)은 승용차 기준으로만 길을 안내해, <strong>차폭이 넓고 차체가 긴 소방차가 좁은 시골 골목이나 90° 직각 담벼락 코너에 끼여 고립되는 사고</strong>를 막지 못합니다. 본 시스템은 <strong>① 소방차가 어디까지 안전하게 들어갈 수 있는지(1차 차량 진입 경로)</strong>와 <strong>② 차에서 내려 어느 골목으로 소방호스를 몇 본(15m 단위) 들고 뛰어가야 하는지(2차 호스 연장 경로)</strong>를 1초 안에 계산하며, 특히 <strong>Step 1 3대 알고리즘 고도화(주거코어 필터링 · 2D 차체 회전 스윕폭 · 골목 연속성 스무딩)</strong>를 통해 판정 정확도를 <strong>69.55%에서 84.04%(+14.48%p)</strong>로 끌어올린 실전 지휘 관제 시스템입니다.
+      </div>
+
+      <div class="grid-4">
+        <div class="kpi-card green">
+          <div class="kpi-label">Step 1 판정 정확도 도약</div>
+          <div class="kpi-val">69.55% ➔ 84.04%</div>
+          <div class="kpi-desc"><strong>+14.48%p 향상</strong> · F1-Score <strong>2.12배</strong> 상승 (16.28%→34.54%)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">외곽 농로 오차단(FP) 감축</div>
+          <div class="kpi-val">-56.1% 대폭 감소</div>
+          <div class="kpi-desc">오탐 20,376건→8,940건 감축 · 실제 협착 적중(TP) <strong>+42.2% 증가</strong></div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">데이터 무결성 (Zero Leakage)</div>
+          <div class="kpi-val">정답 데이터 유입 0건</div>
+          <div class="kpi-desc">100% VWorld 공공 API + 위성 AI + 물리·기하 규칙만으로 달성</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">행정구역 커버리지 &amp; 번들</div>
+          <div class="kpi-val">13개 읍·면 · 239개 마을</div>
+          <div class="kpi-desc">마을 범위 사각형·마을입구 탑재 + 서버리스/단독실행 번들 완비</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>🎯 1. 무엇을 해결했는가? (문제 해결)</h3>
+          <ul>
+            <li><strong>골목길 소방차 고립 원천 방지:</strong> 직선 도로 폭뿐 아니라 <strong>교차로 90° 회전 가산폭(+0.65m~+1.12m)과 곡선 골목 2D 스윕 궤적</strong>을 계산해 진입 불가 코너를 사전 차단합니다.</li>
+            <li><strong>최적 하차 거점(Staging Point) 도출:</strong> 화점 앞까지 진입이 불가할 때, 호스를 가장 짧게 연장할 수 있는 최적 하차 지점과 필요 호스 본수(15m 단위)를 자동 산출합니다.</li>
+          </ul>
+        </div>
+        <div class="card card-highlight">
+          <h3>🚀 2. Step 1에서 무엇이 똑똑해졌는가? (3대 개선)</h3>
+          <ul>
+            <li><strong>① 주거 코어 필터링:</strong> 집이 한 채도 없는 허허벌판 논두렁길·산길을 골목 판정에서 분리해 <strong>가짜 위험 경보(오탐)를 82% 제거</strong>했습니다.</li>
+            <li><strong>② 2D 차체 스윕폭 &amp; 편측 담장 보정:</strong> 굽은 골목 회전 시 차체가 쓸고 지나가는 면적과 한쪽 담벼락 골목을 잡아내 <strong>실제 병목 탐지력을 2.4배 향상</strong>했습니다.</li>
+            <li><strong>③ 다중 입구 &amp; 골목 흐름 스무딩:</strong> 나무 그림자 한 곳 때문에 골목 전체가 막히는 '도미노 오차단'을 해결했습니다.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🚒 3. 현장에서 어떻게 쓰는가? (운용 형상)</h3>
+          <ul>
+            <li><strong>직관적 조작:</strong> 마을 선택 시 <strong>마을 범위 사각형과 [마을 입구]</strong>가 표시되며, <code class="inline-code">[경로탐색]</code> 또는 입구 우클릭으로 <strong>① 출발지 → ② 화점</strong> 경로를 즉시 생성합니다.</li>
+            <li><strong>실시간 공공 API 연동:</strong> 국토부 <strong>건축물대장 표제부</strong> 실시간 조회 및 <strong>안전 우회 경유지(<code class="inline-code">navVia</code>) 포함 T맵 / 네이버 / 카카오 길안내</strong>를 원클릭 호출합니다.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 2: PROBLEM STATEMENT ==================== -->
+    <section class="slide" data-slide="2">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 02 / 12 · Problem Statement</div>
+          <h2 class="slide-title">문제 정의: 왜 일반 내비게이션으로는 농어촌 화재 출동이 실패하는가?</h2>
+        </div>
+        <div class="slide-subtitle">직선 폭원의 착시 · 90° 코너 회전반경 한계 · 하차 후 호스 전개 정보 부재</div>
+      </div>
+
+      <div class="easy-box">
+        <strong>💡 비전공자를 위한 비유 (이삿짐 소파 옮기기):</strong><br/>
+        복도 폭이 2.5m인 아파트에서 길이 2m짜리 소파를 들고 직진할 수는 있지만, <strong>직각(90°)으로 꺾어진 복도 모퉁이를 돌 때는 소파 대각선 길이 때문에 모퉁이에 끼여 돌 수 없는 현상</strong>과 똑같습니다. 소방차(길이 6.8m~8.5m)도 골목 직선 폭만 보고 들어갔다가 코너에서 오도 가도 못 하고 갇히게 됩니다.
+      </div>
+
+      <div class="grid-3">
+        <div class="card card-warn">
+          <h3>❌ 한계 1: 도로 대장 폭과 실제 골목 폭의 괴리</h3>
+          <ul>
+            <li>공공 도로 대장에는 폭이 <code class="inline-code">3.0m</code>로 적혀 있어도, 농어촌 마을은 <strong>주택 담장·처마·창고가 도로 쪽으로 돌출</strong>된 구간이 많습니다.</li>
+            <li>골목 입구는 넓어도 안쪽 병목(Pinch Point) 한 곳만 <code class="inline-code">2.1m</code>이면 소형펌프차(기준 2.2m)는 통과할 수 없으나, 일반 내비게이션은 이를 전혀 구분하지 못합니다.</li>
+          </ul>
+        </div>
+        <div class="card card-warn">
+          <h3>❌ 한계 2: 교차로 회전반경(내륜차·외륜차) 미반영</h3>
+          <ul>
+            <li>소방차는 앞바퀴~뒷바퀴 거리(축거 3.75m~4.60m)가 길어 코너를 돌 때 뒷바퀴가 안쪽으로 끌리는 <strong>내륜차</strong>와 앞 범퍼가 바깥으로 스윙하는 <strong>외륜차</strong>가 크게 발생합니다.</li>
+            <li>예를 들어 2.2m 소형펌프차가 90° 골목 코너를 돌려면 <strong>최소 3.12m(2.2m + 0.92m)의 코너 유효폭</strong>이 필요하지만, 기존 지도는 직선 폭만 검사합니다.</li>
+          </ul>
+        </div>
+        <div class="card card-warn">
+          <h3>❌ 한계 3: 차량 정차 후 '소방호스 연장' 작전 공백</h3>
+          <ul>
+            <li>골목이 좁아 소방차가 화점 120m 앞에서 멈춰야 할 때, <strong>어느 지점에 차를 세워야(Staging Point) 골목길 도보 거리가 가장 짧은지</strong> 알 수 없습니다.</li>
+            <li>현장 대원이 15m 규격 소방호스를 몇 본 챙겨서 어느 골목으로 뛰어가야 하는지 정량적 수치가 제공되지 않았습니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Visual SVG Diagram comparing Commercial Nav vs Smart Fireway -->
+      <div class="card-alt">
+        <h3>📊 시각적 비교: 일반 상용 내비게이션 vs 본 프로젝트 스마트 전술 판정 시스템</h3>
+        <svg viewBox="0 0 1100 210" style="width:100%; height:auto; margin-top:6px;">
+          <!-- Left: Commercial Nav -->
+          <rect x="10" y="10" width="520" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="30" y="38" fill="#f87171" font-size="15" font-weight="bold">일반 내비게이션 (폭원·회전반경 미고려 최단경로 안내)</text>
+          <circle cx="60" cy="145" r="10" fill="#10b981"/>
+          <text x="42" y="172" fill="#cbd5e1" font-size="12">출발지</text>
+          <line x1="70" y1="145" x2="250" y2="145" stroke="#94a3b8" stroke-width="6"/>
+          <line x1="250" y1="145" x2="250" y2="65" stroke="#ef4444" stroke-width="6" stroke-dasharray="6,4"/>
+          <line x1="250" y1="65" x2="460" y2="65" stroke="#ef4444" stroke-width="4"/>
+          <circle cx="250" cy="145" r="14" fill="none" stroke="#f97316" stroke-width="3"/>
+          <text x="155" y="122" fill="#fbbf24" font-size="12" font-weight="bold">⚡ 90° 코너 폭 2.4m (요구 3.12m 미달 → 고립!)</text>
+          <text x="275" y="90" fill="#f87171" font-size="12">협소 골목 (폭 1.8m) 진입 유도 → 후진 불능</text>
+          <circle cx="470" cy="65" r="10" fill="#ef4444"/>
+          <text x="455" y="90" fill="#f87171" font-size="12">화점</text>
+
+          <!-- Right: Smart Fireway System -->
+          <rect x="560" y="10" width="530" height="190" rx="10" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+          <text x="580" y="38" fill="#4ade80" font-size="15" font-weight="bold">본 시스템 (1차 안전 우회 차량진입 + 하차거점 + 2차 호스연장)</text>
+          <circle cx="605" cy="150" r="10" fill="#10b981"/>
+          <text x="585" y="176" fill="#cbd5e1" font-size="12">실제 출발점</text>
+          <!-- Safe Vehicle Route (Cyan) -->
+          <path d="M 615 150 L 740 150 L 790 110 L 910 110" fill="none" stroke="#00f0ff" stroke-width="6"/>
+          <rect x="712" y="156" width="58" height="20" rx="4" fill="#f59e0b"/>
+          <text x="720" y="170" fill="#090d16" font-size="11" font-weight="bold">안전경유1</text>
+          <text x="645" y="135" fill="#00f0ff" font-size="12" font-weight="bold">1차 차량 안전 진입 (폭≥2.2m &amp; 회전통과)</text>
+          <!-- Staging Point -->
+          <circle cx="910" cy="110" r="9" fill="#f97316" stroke="#fff" stroke-width="2"/>
+          <text x="860" y="136" fill="#fb923c" font-size="12" font-weight="bold">하차·부서거점 (Staging)</text>
+          <!-- 2nd Stage Hose Route (Red Dashed) -->
+          <path d="M 910 110 L 960 65 L 1045 65" fill="none" stroke="#ef4444" stroke-width="4" stroke-dasharray="7,5"/>
+          <text x="915" y="52" fill="#f87171" font-size="12" font-weight="bold">2차 호스 도보연장 (75m · 15m×5본)</text>
+          <circle cx="1050" cy="65" r="10" fill="#ef4444"/>
+          <text x="1035" y="90" fill="#f87171" font-size="12">화점</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 3: IMPLEMENTATION HISTORY ==================== -->
+    <section class="slide" data-slide="3">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 03 / 12 · Implementation Evolution</div>
+          <h2 class="slide-title">구현 이력 총람: 초기 수치지형도 프로토타입(v0.01)부터 Step 1 알고리즘 고도화까지</h2>
+        </div>
+        <div class="slide-subtitle">총 36단계 지도 엔진 진화 + 전 군 239개 마을 확장 + Step 1 물리·위상 정밀화 완성</div>
+      </div>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-title">
+            <span>Phase 1. 수치지형도 기하 연산 기반 도로 폭 추출 프로토타입 (<code class="inline-code">v0.01 ~ v0.14</code>)</span>
+            <span class="tag tag-blue">기초 알고리즘 확립</span>
+          </div>
+          <div class="tl-desc">
+            • 국토지리정보원 1:5,000 수치지형도(<code class="inline-code">A0010000</code> 도로경계, <code class="inline-code">A0020000</code> 도로중심선, <code class="inline-code">B0010000</code> 건물외곽선)를 활용해 도로 중심선 1m 간격 수직 법선(Normal Vector) 투사 및 좌·우 최단 교차거리(<code class="inline-code">W = d_left + d_right</code>) 자동 추출기 구현 (<code class="inline-code">src/width_extractor_v0.01~02.py</code>).
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-title">
+            <span>Phase 2. 도로 분절 병합(Defragmentation) · 15° 방향 그룹 · 아커만 회전반경 도입 (<code class="inline-code">v0.15 ~ v0.34</code>)</span>
+            <span class="tag tag-purple">위상 그래프 고도화</span>
+          </div>
+          <div class="tl-desc">
+            • 짧은 선분으로 파편화된 도로를 차수-2 정점(Degree-2 Node) 위상 병합(<code class="inline-code">src/defragment_graph_v0.01.py</code>)으로 연결하고, 교차로 15° 진입 방향 그룹화(<code class="inline-code">src/detect_intersections_v0.01~06.py</code>) 및 차량 축거 기반 아커만 회전반경 판정식 도입.
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-title">
+            <span>Phase 3. 위성영상 딥러닝 분할(<code class="inline-code">Mask2Former</code>) 결합 및 방식 B(239개 전 마을) 확장 (<code class="inline-code">v0.35 ~ Baseline</code>)</span>
+            <span class="tag tag-amber">AI 비전 융합 &amp; 전 군 확장</span>
+          </div>
+          <div class="tl-desc">
+            • VWorld 항공/위성 타일에 <code class="inline-code">Mask2Former</code> 도로 분할 모델을 적용하고, 로컬 수치지형도 없이 <strong>100% VWorld API + 건물 법선 협착 + 위성 AI</strong>만으로 의령군 13개 읍·면 239개 전 마을 그래프 자동 구축 (<code class="inline-code">src/build_villages_mode_b.py</code>).
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-title">
+            <span>Phase 4. 실시간 건축물대장 표제부 · 실제 출발점 도로 투영 · 선택형 TMAP 연동 및 마을 범위/입구 시각화</span>
+            <span class="tag tag-green">실전 지휘 관제 완성</span>
+          </div>
+          <div class="tl-desc">
+            • 교차점 강제 이동(Snap) 없이 사용자가 클릭한 실제 출발 지점 도로 투영 탐색, 국토부 건축물대장 표제부 실시간 연동, 안전 우회 경유지(<code class="inline-code">navVia</code>) TMAP/내비 딥링크 전달, 그리고 239개 마을별 <strong>마을 범위 사각형 및 <code class="inline-code">[마을 입구]</code> 마커</strong> 시각화 반영.
+          </div>
+        </div>
+
+        <div class="tl-item" style="border-color: var(--accent-cyan); background: linear-gradient(90deg, rgba(14,116,144,0.22), rgba(30,41,59,0.95));">
+          <div class="tl-title">
+            <span>★ Phase 5 (Step 1 고도화). 순수 VWorld 물리·기하·위상 3대 알고리즘 개선 (<code class="inline-code">experiment/step1</code>)</span>
+            <span class="tag tag-red">정확도 69.55% ➔ 84.04% (+14.48%p)</span>
+          </div>
+          <div class="tl-desc">
+            • <strong>정답 데이터 유입 0% (Zero Leakage 전수 감사 통과)</strong> 상태에서 순수 VWorld 데이터만으로 <strong>① 주거 코어 공간 필터링(외곽 논길 오탐 82% 제거)</strong>, <strong>② 2D C-Space 차체 회전 스윕폭 및 편측 담장 협착 보정(병목 적중 2.4배 상승)</strong>, <strong>③ 다중 진입 앵커 및 코리더 SoftMin/MRF 스무딩(도미노 오차단 해결)</strong>을 구현하여 전 차종 판정 성능을 획기적으로 개선.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 4: MODE B HYBRID WIDTH ENGINE ==================== -->
+    <section class="slide" data-slide="4">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 04 / 12 · Core Technology 01 (Base Engine)</div>
+          <h2 class="slide-title">배경 기술 ①: 왜 '방식 B (<code class="inline-code">vworld_api</code>)'인가? — 3중 하이브리드 도로 유효폭 산출</h2>
+        </div>
+        <div class="slide-subtitle">로컬 수치지형도(SHP) 없이 전국 어디서나 100% 공공 API + 위성 AI로 골목길 병목 실측</div>
+      </div>
+
+      <div class="easy-box">
+        <strong>💡 핵심 원리:</strong> 도로 대장 숫자 하나만 믿지 않고, <strong>① 도로 대장 기본 폭</strong>, <strong>② 양옆 건물 담장 사이의 실제 틈새 거리</strong>, <strong>③ 위성사진 AI가 하늘에서 보고 잰 실제 포장 폭</strong>의 3가지를 교차 검증하여 소방차가 실제로 지나갈 수 있는 <strong>유효폭(<code class="inline-code">mw</code>)과 코너 진입/진출폭(<code class="inline-code">ew</code>, <code class="inline-code">xw</code>)</strong>을 결정합니다.
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-step">
+          <span class="tag tag-blue">Source 1 · 공공 도로망 WFS</span>
+          <h3 style="margin-top:6px; font-size:14.5px;">VWorld 도로중심선 수집</h3>
+          <p style="font-size:12.5px; color:var(--text-sub); margin-top:4px;">
+            • 레이어: <code class="inline-code">LT_L_N3A0020000</code><br/>
+            • 마을 반경 600m 내 모든 도로 중심선 기하 선형 및 기본 폭원(<code class="inline-code">rvwd</code>), 도로등급(<code class="inline-code">scls</code>) 수집
+          </p>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step">
+          <span class="tag tag-amber">Source 2 · 건물 법선 협착(Pinch)</span>
+          <h3 style="margin-top:6px; font-size:14.5px;">건물 외곽선 수직 거리 실측</h3>
+          <p style="font-size:12.5px; color:var(--text-sub); margin-top:4px;">
+            • 레이어: <code class="inline-code">LT_C_SPBD</code> (도로명주소 건물)<br/>
+            • 도로 중심선에서 좌·우 수직 법선을 쏘아 건물 외벽까지의 최소 협착 폭(<code class="inline-code">spbd_w</code>) 정밀 계산
+          </p>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step">
+          <span class="tag tag-purple">Source 3 · 위성 AI 세그멘테이션</span>
+          <h3 style="margin-top:6px; font-size:14.5px;">Mask2Former 위성 영상 실측</h3>
+          <p style="font-size:12.5px; color:var(--text-sub); margin-top:4px;">
+            • 건물 밀집지 및 취약 골목 위성 타일(Zoom 19)을 선별하여 딥러닝 도로 분할 마스크에서 실제 도로 폭 추출
+          </p>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step card-highlight">
+          <span class="tag tag-green">Step 1 물리·위상 엔진 결합</span>
+          <h3 style="margin-top:6px; font-size:14.5px;">3대 알고리즘 보정 &amp; 그래프화</h3>
+          <p style="font-size:12.5px; color:var(--text-sub); margin-top:4px;">
+            • 주거코어 마스킹 + 2D C-Space 회전 스윕폭 + SoftMin/MRF 스무딩을 거쳐 최종 유효폭 확정
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📋 프로젝트 내 구현된 4가지 판정 아키텍처 비교 및 '방식 B + Step 1' 채택 근거</h3>
+        <table class="pres-table">
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>원천 데이터 요구사항</th>
+              <th>도로 폭원 및 코너 산출 방식</th>
+              <th>전국 자동 확장성</th>
+              <th>현행 시스템 적용 상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>기존 방식 (<code class="inline-code">old</code>)</strong></td>
+              <td>로컬 수치지형도 SHP 필수</td>
+              <td>단순 분절 링크별 법선 최소폭만 사용 (회전반경 미반영)</td>
+              <td>낮음 (수동 도엽 파일 필요)</td>
+              <td>백엔드 보존 (<code class="inline-code">demo_map_v0.36.py</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>방식 C (<code class="inline-code">defrag</code>)</strong></td>
+              <td>로컬 수치지형도 SHP 필수</td>
+              <td>차수-2 정점 분절 병합 + 수치지형도 폭원 + 회전반경</td>
+              <td>낮음 (수동 도엽 파일 필요)</td>
+              <td>백엔드 보존 (<code class="inline-code">defragment_graph_v0.01.py</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>방식 A (<code class="inline-code">or_fusion</code>)</strong></td>
+              <td>로컬 수치지형도 SHP + 위성 AI</td>
+              <td>수치지형도 폭원과 위성 Mask2Former 폭원 OR 융합</td>
+              <td>보통 (SHP 도엽 사전 확보 필요)</td>
+              <td>백엔드 보존 (<code class="inline-code">eval_answer_dataset.py</code>)</td>
+            </tr>
+            <tr class="row-best">
+              <td><strong>★ 방식 B + Step 1 (<code class="inline-code">vworld_api</code>)</strong></td>
+              <td><strong>로컬 SHP 불필요 (100% VWorld API)</strong></td>
+              <td><strong>VWorld 도로·건물 + 위성 <code class="inline-code">Mask2Former</code> + Step 1 (주거코어 필터·2D 스윕폭·SoftMin/MRF)</strong></td>
+              <td><strong>최상 (마을 이름만으로 전국 즉시 확장)</strong></td>
+              <td><strong>★ 주력 엔진 채택 (239개 전 마을 정확도 84.04% 달성)</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 5: STEP 1 ALGORITHM OVERVIEW (EASY TO UNDERSTAND) ==================== -->
+    <section class="slide" data-slide="5">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 05 / 12 · Step 1 Algorithm Upgrade (Overview)</div>
+          <h2 class="slide-title">Step 1 핵심 개선 한눈에 보기: 기존 방식 B의 3가지 착시를 어떻게 해결했는가?</h2>
+        </div>
+        <div class="slide-subtitle">전문 용어 없이 이해하는 Step 1 알고리즘 개선의 이유와 원리 (Baseline 69.55% ➔ Step 1 84.04%)</div>
+      </div>
+
+      <div class="easy-box">
+        <strong>💡 왜 Step 1 알고리즘 개선이 필요했을까요?</strong><br/>
+        초기 방식 B(Baseline)로 의령군 239개 마을(86,416개 도로 구간)을 채점해 보니, <strong>① 집이 없는 논두렁길까지 '진입불가'로 빨갛게 칠하는 가짜 경보(오탐 20,376건)</strong>와 <strong>② 한쪽 담벼락 골목이나 굽은 골목을 '진입가능'으로 잘못 판단하는 놓침 오류(미탐 5,937건)</strong>가 발견되었습니다. Step 1은 정답 데이터를 단 1건도 참조하지 않고 <strong>3가지 직관적인 물리·공간 원리</strong>만으로 이 문제를 해결했습니다.
+      </div>
+
+      <!-- Visual Before vs After SVG for the 3 Step 1 Improvements -->
+      <div class="card-alt">
+        <svg viewBox="0 0 1200 225" style="width:100%; height:auto;">
+          <!-- Box 1: Residential Core Filter -->
+          <rect x="10" y="8" width="380" height="208" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+          <text x="26" y="34" fill="#38bdf8" font-size="14.5" font-weight="bold">개선 ① 주거 코어 공간 필터링 (논두렁길 분리)</text>
+          <!-- Before -->
+          <rect x="24" y="46" width="168" height="122" rx="6" fill="#0f172a" stroke="#ef4444" stroke-dasharray="4,3"/>
+          <text x="34" y="64" fill="#f87171" font-size="11.5" font-weight="bold">[기존] 반경 600m 무조건 판정</text>
+          <rect x="75" y="92" width="18" height="16" fill="#94a3b8"/>
+          <rect x="98" y="95" width="18" height="16" fill="#94a3b8"/>
+          <line x1="32" y1="80" x2="180" y2="80" stroke="#ef4444" stroke-width="3"/>
+          <line x1="32" y1="138" x2="180" y2="138" stroke="#ef4444" stroke-width="3"/>
+          <text x="34" y="156" fill="#fca5a5" font-size="11">집 없는 논길까지 전부 '진입불가'!</text>
+          <!-- After -->
+          <rect x="206" y="46" width="170" height="122" rx="6" fill="#0f172a" stroke="#22c55e"/>
+          <text x="216" y="64" fill="#4ade80" font-size="11.5" font-weight="bold">[Step 1] 건물 밀집 주거코어만!</text>
+          <circle cx="290" cy="104" r="34" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-dasharray="3,3"/>
+          <rect x="272" y="94" width="16" height="15" fill="#e2e8f0"/>
+          <rect x="294" y="96" width="16" height="15" fill="#e2e8f0"/>
+          <line x1="216" y1="140" x2="364" y2="140" stroke="#64748b" stroke-width="2" stroke-dasharray="3,3"/>
+          <text x="216" y="156" fill="#86efac" font-size="11">외곽 논길 제외 → 오탐 82% 삭제!</text>
+          <text x="26" y="196" fill="#e2e8f0" font-size="12">👉 <tspan fill="#38bdf8" font-weight="bold">"소방차는 집이 있는 마을 안길로 출동한다!"</tspan></text>
+
+          <!-- Box 2: 2D C-Space Swept Path -->
+          <rect x="410" y="8" width="380" height="208" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="426" y="34" fill="#fbbf24" font-size="14.5" font-weight="bold">개선 ② 2D 차체 회전 스윕폭 &amp; 편측 담장 보정</text>
+          <!-- Before -->
+          <rect x="424" y="46" width="168" height="122" rx="6" fill="#0f172a" stroke="#ef4444" stroke-dasharray="4,3"/>
+          <text x="434" y="64" fill="#f87171" font-size="11.5" font-weight="bold">[기존] 1차원 직선 폭만 측정</text>
+          <path d="M 440 132 Q 505 70 572 132" fill="none" stroke="#22c55e" stroke-width="4"/>
+          <text x="434" y="156" fill="#fca5a5" font-size="11">굽은 길·한쪽 담벼락을 통과로 착각!</text>
+          <!-- After -->
+          <rect x="606" y="46" width="170" height="122" rx="6" fill="#0f172a" stroke="#22c55e"/>
+          <text x="616" y="64" fill="#4ade80" font-size="11.5" font-weight="bold">[Step 1] 차체 회전 궤적(Swept)</text>
+          <path d="M 622 132 Q 688 68 756 132" fill="none" stroke="rgba(249,115,22,0.35)" stroke-width="18"/>
+          <path d="M 622 132 Q 688 68 756 132" fill="none" stroke="#ef4444" stroke-width="3"/>
+          <rect x="670" y="82" width="38" height="18" transform="rotate(-18 689 91)" fill="#f97316" rx="3"/>
+          <text x="616" y="156" fill="#86efac" font-size="11">내륜차+외륜차+편측담장 정밀 포착!</text>
+          <text x="426" y="196" fill="#e2e8f0" font-size="12">👉 <tspan fill="#fbbf24" font-weight="bold">"긴 차가 휘어진 길을 돌 땐 더 넓은 통로가 필요하다!"</tspan></text>
+
+          <!-- Box 3: SoftMin / MRF & Multi-Anchor -->
+          <rect x="810" y="8" width="380" height="208" rx="10" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+          <text x="826" y="34" fill="#c084fc" font-size="14.5" font-weight="bold">개선 ③ 골목 흐름 스무딩(SoftMin) &amp; 다중 입구</text>
+          <!-- Before -->
+          <rect x="824" y="46" width="168" height="122" rx="6" fill="#0f172a" stroke="#ef4444" stroke-dasharray="4,3"/>
+          <text x="834" y="64" fill="#f87171" font-size="11.5" font-weight="bold">[기존] 그림자 1곳 = 전체 차단</text>
+          <line x1="836" y1="108" x2="976" y2="108" stroke="#ef4444" stroke-width="6"/>
+          <circle cx="885" cy="108" r="8" fill="#fbbf24"/>
+          <text x="848" y="92" fill="#fde047" font-size="10.5">나무그림자 1곳(1.9m)</text>
+          <text x="834" y="156" fill="#fca5a5" font-size="11">뒤쪽 멀쩡한 골목까지 도미노 사망!</text>
+          <!-- After -->
+          <rect x="1006" y="46" width="170" height="122" rx="6" fill="#0f172a" stroke="#22c55e"/>
+          <text x="1016" y="64" fill="#4ade80" font-size="11.5" font-weight="bold">[Step 1] 전후 20~40m 연속 보정</text>
+          <line x1="1018" y1="108" x2="1160" y2="108" stroke="#22c55e" stroke-width="6"/>
+          <circle cx="1024" cy="108" r="6" fill="#00f0ff"/>
+          <circle cx="1154" cy="108" r="6" fill="#00f0ff"/>
+          <text x="1025" y="92" fill="#7dd3fc" font-size="10.5">입구1 + 입구2 양방향 진입</text>
+          <text x="1016" y="156" fill="#86efac" font-size="11">순간 노이즈 흡수 &amp; 다중입구 개방!</text>
+          <text x="826" y="196" fill="#e2e8f0" font-size="12">👉 <tspan fill="#c084fc" font-weight="bold">"나무 그림자 한 점에 속지 말고 앞뒤 골목 흐름을 보자!"</tspan></text>
+        </svg>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>🏡 개선 ① 주거 코어 공간 필터링</h3>
+          <div class="analogy-pill">
+            <strong>쉬운 비유:</strong> 배달 기사가 집들이 모여 있는 '마을 안길'만 신경 쓰지, 마을 밖 허허벌판 '논두렁길'은 가지 않는 것과 같습니다.
+          </div>
+          <p>
+            건물이 밀집된 <strong>실제 주거 영역(반경 30~50m 내 건물 밀도 기준)</strong>과 집이 없는 <strong>외곽 농로·임도(<code class="inline-code">exterior_agri</code>)</strong>를 공간 통계로 자동 구분하여, 비주거 논길에서 발생하던 <strong>가짜 위험 경보(오탐 1.7만 건)</strong>를 깨끗이 걷어냈습니다.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>📐 개선 ② 2D 차체 회전 스윕폭 &amp; 편측 담장</h3>
+          <div class="analogy-pill green">
+            <strong>쉬운 비유:</strong> 긴 버스가 휘어진 골목을 돌 때 뒷바퀴는 안쪽을 파고들고 앞모서리는 바깥 담장을 스치는 현상을 반영했습니다.
+          </div>
+          <p>
+            도로의 <strong>굽은 정도(곡률반경)와 차량 축거·앞오버행</strong>을 계산해 차체가 실제로 휩쓸고 지나가는 <strong>2차원 스윕 폭(<code class="inline-code">W_swept</code>)</strong>을 구하고, <strong>한쪽에만 담벼락이 붙은 골목(편측 협착)과 처마 돌출(0.35m)</strong>까지 놓치지 않고 잡아냅니다.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>🔗 개선 ③ 골목 코리더 스무딩 &amp; 다중 입구</h3>
+          <div class="analogy-pill purple">
+            <strong>쉬운 비유:</strong> 사진 한 장에 나뭇가지 그림자가 찍혔다고 해서 3m짜리 도로가 갑자기 1.5m로 줄어들지 않는 원리입니다.
+          </div>
+          <p>
+            가장 좁은 값 하나(<code class="inline-code">min</code>)만 쓰던 방식 대신 <strong>하위 15% 분위수(<code class="inline-code">P15</code>) + 앞뒤 20m·40m 이웃 골목 가중 평균(MRF)</strong>으로 순간적인 그림자 오차를 완화하고, 마을로 들어오는 <strong>모든 큰길 진입점(≥2.8m)</strong>을 동시에 열어두었습니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 6: STEP 1 ALGORITHM DEEP DIVE ==================== -->
+    <section class="slide" data-slide="6">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 06 / 12 · Step 1 Algorithm Deep-Dive</div>
+          <h2 class="slide-title">Step 1 3대 알고리즘 작동 원리 상세: 수식과 코드가 실제로 하는 일</h2>
+        </div>
+        <div class="slide-subtitle">정답 데이터 학습 0% · 오직 물리 법칙(기구학)과 공간 기하학만으로 동작하는 투명한 화이트박스 엔진</div>
+      </div>
+
+      <div class="grid-3">
+        <!-- Detail 1 -->
+        <div class="card card-highlight">
+          <span class="tag tag-blue">Step 1 - 알고리즘 ①</span>
+          <h3 style="margin-top:6px;">주거 코어 공간 필터링 (<code class="inline-code">M_core</code>)</h3>
+          <div class="ba-grid">
+            <div class="ba-box ba-before">
+              <strong>기존:</strong> 반경 600m 내 모든 길(논길·산길 포함)을 무조건 평가 → 오탐 20,738건
+            </div>
+            <div class="ba-box ba-after">
+              <strong>개선:</strong> 건물 밀도 기반 주거 코어만 평가 → 단독 적용만으로 <strong>오탐 3,611건(-82.3%)</strong>
+            </div>
+          </div>
+          <p style="margin-bottom:6px;"><strong>[누구나 이해하는 3단계 판별 규칙]</strong></p>
+          <ol>
+            <li><strong>주변에 집이 있는가? (<code class="inline-code">res_dens_50</code>):</strong> 도로 주변 50m 안에 실제 건물(<code class="inline-code">LT_C_SPBD</code>)이 있는 비율이 <strong>52% 이상</strong>인가?</li>
+            <li><strong>양옆으로 집이 둘러싸여 있는가? (<code class="inline-code">both_dens_30</code>):</strong> 도로 양쪽 30m 이내에 건물이 마주 보는 골목 비율이 <strong>22% 이상</strong>인가?</li>
+            <li><strong>마을 중심 생활권인가? (<code class="inline-code">dist_core</code>):</strong> 건물 밀집 중심점으로부터 <strong>240m 이내</strong>인가?</li>
+          </ol>
+          <pre class="code-block" style="margin-top:8px;">// build_villages_mode_b.py (L807~L924)
+is_core = (res_dens_50 >= 0.52)
+       || (both_dens_30 >= 0.22 &amp;&amp; dist_core &lt;= 240m)
+// 조건 미달 시 '외곽 비주거 농로(exterior_agri)'로 분리!</pre>
+        </div>
+
+        <!-- Detail 2 -->
+        <div class="card card-highlight">
+          <span class="tag tag-amber">Step 1 - 알고리즘 ②</span>
+          <h3 style="margin-top:6px;">2D 차체 회전 스윕폭 (<code class="inline-code">calc_swept_width</code>)</h3>
+          <div class="ba-grid">
+            <div class="ba-box ba-before">
+              <strong>기존:</strong> 직선 도로 폭만 보고 굽은 골목·한쪽 담벼락을 통과 처리 → 미탐 다수
+            </div>
+            <div class="ba-box ba-after">
+              <strong>개선:</strong> 차체 스윕 폭 + 편측 담장 차감 → 실제 병목 적중(TP) <strong>1,445→3,497건(2.4배)</strong>
+            </div>
+          </div>
+          <p style="margin-bottom:6px;"><strong>[물리적 차감 4요소 — 왜 직선 폭에서 폭을 깎는가?]</strong></p>
+          <ul>
+            <li><strong>① 뒷바퀴 안쪽 쏠림 (내륜차 $\Delta_{\text{inner}}$):</strong> 곡률반경 $R$인 굽은 길을 돌 때 축거($L_{\text{wb}}=3.75\text{m}$) 때문에 뒷바퀴가 안쪽 담장을 파고드는 폭 차감.</li>
+            <li><strong>② 앞범퍼 바깥 스윙 (외륜차 $\Delta_{\text{outer}}$):</strong> 앞 오버행($F_{\text{oh}}=1.35\text{m}$) 모서리가 바깥쪽 담장을 긁는 폭 차감.</li>
+            <li><strong>③ 한쪽 담벼락 골목 (<code class="inline-code">single_side_pinch</code>):</strong> 반대편 건물이 없어도 한쪽 건물이 도로 중심에서 <strong>3.6m 이내</strong>에 붙어 있으면 처마·담장 여유폭(0.35m) 차감.</li>
+          </ul>
+          <pre class="code-block" style="margin-top:8px;">// 굽은 골목에서 소방차가 실제 쓸 수 있는 유효폭
+W_swept = W_raw - (내륜차 + 외륜차 + 교차각여유 + 안전여유폭)
+// 직선폭이 2.6m여도 급커브에선 W_swept가 2.0m로 줄어 차단!</pre>
+        </div>
+
+        <!-- Detail 3 -->
+        <div class="card card-highlight">
+          <span class="tag tag-purple">Step 1 - 알고리즘 ③</span>
+          <h3 style="margin-top:6px;">코리더 SoftMin/MRF &amp; 다중 진입점</h3>
+          <div class="ba-grid">
+            <div class="ba-box ba-before">
+              <strong>기존:</strong> 1m라도 노이즈가 있으면 <code class="inline-code">min()</code>으로 골목 전체 차단 + 입구 1개만 허용
+            </div>
+            <div class="ba-box ba-after">
+              <strong>개선:</strong> P15 SoftMin + 20m/40m 연속 스무딩 + 다중 입구 → <strong>최종 F1 34.54% 달성</strong>
+            </div>
+          </div>
+          <p style="margin-bottom:6px;"><strong>[도미노 오차단을 막는 3단계 안전장치]</strong></p>
+          <ol>
+            <li><strong>하위 15% 분위수(<code class="inline-code">P15</code>) + SoftMin 풀링:</strong> 측정값 중 극단적 이상치 1개를 버리고 하위 15% 지점과 부드러운 가중 평균($\beta=1.2$)을 결합합니다.</li>
+            <li><strong>골목 연속성 스무딩 (MRF 확산):</strong> 골목 폭은 갑자기 변하지 않으므로 <strong>내 구간(52%) + 20m 이웃(32%) + 40m 이웃(16%)</strong>을 블렌딩해 그림자 노이즈를 복원합니다.</li>
+            <li><strong>다중 진입 앵커 (<code class="inline-code">Multi-Entry</code>):</strong> 폭 2.8m 이상 외부 도로와 만나는 모든 마을 입구를 진입 거점으로 개방합니다.</li>
+          </ol>
+          <pre class="code-block" style="margin-top:8px;">// 단일 노이즈 복원 MRF 스무딩 공식 (L941~L968)
+W_corridor = 0.52 * W_self + 0.32 * W_20m + 0.16 * W_40m</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 7: STEP 1 EVALUATION & ABLATION ==================== -->
+    <section class="slide" data-slide="7">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 07 / 12 · Step 1 Quantitative Verification</div>
+          <h2 class="slide-title">Step 1 정량 검증 성적표: 단계별 Ablation 및 5대 전 차종 성능 비교</h2>
+        </div>
+        <div class="slide-subtitle">의령군 13개 읍·면 239개 전수 마을 (86,416개 매칭 구간) · 정답 데이터 유입 0% 순수 VWorld 그래프 직결 채점</div>
+      </div>
+
+      <div class="card">
+        <h3>📈 1. Step 1 알고리즘을 하나씩 추가할 때 성능이 어떻게 올라가는가? (Ablation Study)</h3>
+        <table class="pres-table">
+          <thead>
+            <tr>
+              <th>단계 / 순수 VWorld 그래프 적용 구분</th>
+              <th>전체 정확도 (Accuracy)</th>
+              <th>정밀도 (Precision)</th>
+              <th>재현율 (Recall)</th>
+              <th>F1-Score</th>
+              <th>실제 병목 적중 (TP)</th>
+              <th>가짜 경보 오탐 (FP)</th>
+              <th>마을 구간수 오차 (MAE)</th>
+              <th>핵심 개선 효과 요약</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Baseline (기존 방식 B · 거점 단일 경로 + 1D 직선폭)</strong></td>
+              <td>69.55%</td>
+              <td>11.16%</td>
+              <td>30.12%</td>
+              <td>16.28%</td>
+              <td>2,559건</td>
+              <td>20,376건</td>
+              <td>70.4개</td>
+              <td>외곽 논길 과잉 차단으로 오탐(FP) 과다</td>
+            </tr>
+            <tr>
+              <td><strong>+ [개선 ①] 주거 코어 공간 필터링 단독 적용</strong></td>
+              <td>87.66%</td>
+              <td>28.58%</td>
+              <td>17.01%</td>
+              <td>21.33%</td>
+              <td>1,445건</td>
+              <td><strong>3,611건</strong></td>
+              <td><strong>27.1개</strong></td>
+              <td>외곽 비주거 농로 오탐 <strong>-82.3% 즉시 제거</strong></td>
+            </tr>
+            <tr>
+              <td><strong>+ [개선 ① + ③] 다중 진입점 + 코리더 SoftMin/MRF</strong></td>
+              <td>85.84%</td>
+              <td><strong>30.57%</strong></td>
+              <td>34.63%</td>
+              <td>32.47%</td>
+              <td>2,942건</td>
+              <td>6,681건</td>
+              <td>30.2개</td>
+              <td>도미노 오차단 해소 및 골목 연속성 복원</td>
+            </tr>
+            <tr>
+              <td><strong>+ [개선 ① + ②] 2D C-Space 회전 스윕폭 + 편측 담장 보정</strong></td>
+              <td>84.50%</td>
+              <td>29.41%</td>
+              <td>41.16%</td>
+              <td>34.31%</td>
+              <td>3,497건</td>
+              <td>8,394건</td>
+              <td>35.7개</td>
+              <td>굽은 골목·한쪽 담장 병목 적중(TP) <strong>2.4배 상승</strong></td>
+            </tr>
+            <tr class="row-best">
+              <td><strong>★ Step 1 최종 통합 (개선 ① + ② + ③ 순수 VWorld 그래프)</strong></td>
+              <td><strong>84.04% (+14.48%p)</strong></td>
+              <td><strong>28.93% (2.6배)</strong></td>
+              <td><strong>42.84% (+12.72%p)</strong></td>
+              <td><strong>34.54% (2.12배)</strong></td>
+              <td><strong>3,640건 (+42.2%)</strong></td>
+              <td><strong>8,940건 (-56.1%)</strong></td>
+              <td><strong>37.4개 (-46.9%)</strong></td>
+              <td><strong>정확도·재현율·F1 전 지표 균형 최상 달성</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>🚒 2. 5대 소방차량 차종별 Step 1 순수 그래프 성적 비교</h3>
+          <table class="pres-table">
+            <thead>
+              <tr>
+                <th>평가 대상 차종</th>
+                <th>기준폭</th>
+                <th>기존 정확도</th>
+                <th>Step 1 정확도</th>
+                <th>기존 F1</th>
+                <th>Step 1 F1 (향상배수)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>🚑 구급차 불가</strong></td>
+                <td>2.0m</td>
+                <td>77.10%</td>
+                <td><strong>88.19% (+11.1%p)</strong></td>
+                <td>2.45%</td>
+                <td><strong>11.91% (4.85배)</strong></td>
+              </tr>
+              <tr class="row-best">
+                <td><strong>🚒 소형펌프차 불가</strong></td>
+                <td>2.2m</td>
+                <td>69.94%</td>
+                <td><strong>85.21% (+15.3%p)</strong></td>
+                <td>11.96%</td>
+                <td><strong>31.68% (2.65배)</strong></td>
+              </tr>
+              <tr class="row-best">
+                <td><strong>🗺 도면 진입곤란(종합)</strong></td>
+                <td>2.2m</td>
+                <td>69.22%</td>
+                <td><strong>84.04% (+14.8%p)</strong></td>
+                <td>16.56%</td>
+                <td><strong>34.54% (2.09배)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>🚛 물탱크차 불가</strong></td>
+                <td>2.5m</td>
+                <td>66.15%</td>
+                <td><strong>82.90% (+16.8%p)</strong></td>
+                <td>19.70%</td>
+                <td><strong>32.71% (1.66배)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>🏗 굴절사다리차 불가</strong></td>
+                <td>2.8m</td>
+                <td>60.52%</td>
+                <td><strong>81.87% (+21.3%p)</strong></td>
+                <td>23.89%</td>
+                <td><strong>34.73% (1.45배)</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card card-green">
+          <h3>🛡 3. 13개 전 읍·면 고른 향상 &amp; 무결성 감사(Audit) 완료</h3>
+          <ul>
+            <li><strong>13개 모든 읍·면에서 예외 없이 정확도 대폭 상승:</strong>
+              <ul>
+                <li><strong>정곡면:</strong> 65.5% ➔ <strong>87.3% (+21.7%p)</strong> · 마을 O/X 16/16개(100%) 일치</li>
+                <li><strong>봉수면:</strong> 68.1% ➔ <strong>88.7% (+20.6%p)</strong> · 최고 정확도 달성</li>
+                <li><strong>낙서면:</strong> 63.6% ➔ <strong>83.3% (+19.7%p)</strong> · 소형펌프 88.7% 일치</li>
+                <li><strong>유곡면:</strong> 64.0% ➔ <strong>83.4% (+19.4%p)</strong> / <strong>지정면:</strong> 66.8% ➔ <strong>85.5% (+18.7%p)</strong></li>
+              </ul>
+            </li>
+            <li style="margin-top:6px;"><strong>엄격한 데이터 무결성 전수 감사 (Zero-Leakage Audit):</strong><br/>
+              독립 감사 에이전트가 <code class="inline-code">build_villages_mode_b.py</code> 전 라인(1~1,332행) 및 산출물 GPKG/JSON을 전수 감사하여, <strong>정답 엑셀의 측정 피처나 라벨 학습이 단 1건도 포함되지 않은 100% 순수 공공 VWorld 그래프 결과</strong>임을 검증 완료했습니다.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 8: ACKERMANN TURNING & VEHICLE SPECS ==================== -->
+    <section class="slide" data-slide="8">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 08 / 12 · Core Technology 02</div>
+          <h2 class="slide-title">배경 기술 ②: 소방차량 4종 물리 제원 및 교차로 아커만(Ackermann) 회전반경 판정</h2>
+        </div>
+        <div class="slide-subtitle">직선 도로 스윕 폭 통과 여부 + 교차로 진입 방향(15° 그룹) + 회전 각도별 코너 소요폭 정밀 계산</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>📐 1. 교차로 아커만 회전반경 코너 통과 판정 공식</h3>
+          <p style="margin-bottom:8px;">
+            교차로에서 이전 도로 간선(<code class="inline-code">prevEdge</code>)에서 다음 도로 간선(<code class="inline-code">edge</code>)으로 진행 방향이 꺾일 때, 회전각 $\theta$ ($\theta \ge 20^\circ$)에 따라 차체가 휩쓰는 <strong>추가 코너 가산폭 $\Delta W(\theta)$</strong>를 산출합니다:
+          </p>
+          <pre class="code-block">θ = angleDiff(prevEdge.inBearing, nextEdge.outBearing)
+if (θ >= 20°):
+  effRad = min(θ, 120°)
+  extraW = spec.extra90M × sin(effRad)
+  requiredCornerWidth = threshold + extraW
+  actualCornerWidth   = min(prevEdge.exitWidth, nextEdge.entryWidth)
+
+  if (actualCornerWidth &lt; requiredCornerWidth):
+    return BLOCKED_TURN_RADIUS  // 주황색 회전반경 부족 차단!</pre>
+          <ul style="margin-top:10px;">
+            <li><strong>직진 시 ($\theta &lt; 20^\circ$):</strong> 구간 유효폭(<code class="inline-code">mw</code>)이 차량 기준 폭원(<code class="inline-code">threshold</code>) 이상이면 통과.</li>
+            <li><strong>90° 직각 회전 시:</strong> 소형펌프차(2.2m) 기준 <code class="inline-code">2.20m + 0.92m = 3.12m</code>의 코너 유효폭이 확보되어야 통과 가능!</li>
+            <li><strong>15° 진입 방향 그룹 검사 (<code class="inline-code">approaches</code>):</strong> 교차로 진입 시 ±15° 이내 방향 진입로의 협착 폭까지 함께 검사하여 입구 병목 차단.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🚒 2. 탑재된 소방차량 4종 물리 제원 (<code class="inline-code">VEHICLE_SPECS</code>)</h3>
+          <table class="pres-table" style="margin-bottom:12px;">
+            <thead>
+              <tr>
+                <th>차종 구분</th>
+                <th>실제 차폭</th>
+                <th>판정 기준폭</th>
+                <th>전장 / 축거</th>
+                <th>최소회전반경</th>
+                <th>90° 회전 가산폭</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>구급차 / 소형지휘차</strong></td>
+                <td>1.99m</td>
+                <td><span class="tag tag-blue">2.0m</span></td>
+                <td>5.25m / 3.27m</td>
+                <td>5.8m</td>
+                <td><strong>+0.65m</strong> (코너 2.65m)</td>
+              </tr>
+              <tr class="row-best">
+                <td><strong>★ 소형펌프차 (농촌주력)</strong></td>
+                <td>2.19m</td>
+                <td><span class="tag tag-green">2.2m (기본)</span></td>
+                <td>6.78m / 3.75m</td>
+                <td>6.8m</td>
+                <td><strong>+0.92m</strong> (코너 3.12m)</td>
+              </tr>
+              <tr>
+                <td><strong>중형펌프차 / 물탱크차</strong></td>
+                <td>2.49m</td>
+                <td><span class="tag tag-amber">2.5m</span></td>
+                <td>7.80m / 4.35m</td>
+                <td>8.2m</td>
+                <td><strong>+1.12m</strong> (코너 3.62m)</td>
+              </tr>
+              <tr>
+                <td><strong>대형펌프차 / 굴절·고가차</strong></td>
+                <td>2.49m</td>
+                <td><span class="tag tag-red">2.8m</span></td>
+                <td>8.50m / 4.60m</td>
+                <td>9.5m</td>
+                <td><strong>+1.12m</strong> (코너 3.92m)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="easy-box" style="font-size:12.5px;">
+            <strong>🎨 지도 위 도로 색상 코딩 (차종 탭 클릭 시 0.1초 내 실시간 재판정):</strong><br/>
+            • <strong style="color:#4ade80;">초록색 실선:</strong> 현재 선택한 소방차가 폭원 + 코너 회전반경을 모두 통과하여 도달 가능한 구간<br/>
+            • <strong style="color:#fb923c;">주황색 굵은선:</strong> 도로 폭은 넓으나 교차로 <strong>회전반경(코너 유효폭)이 부족</strong>해 꺾어 들어갈 수 없는 구간<br/>
+            • <strong style="color:#f87171;">빨간색 실선/점선:</strong> 도로 폭원 미달 구간(실선) 또는 앞선 병목에 막혀 고립·단절된 구간(점선)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 9: EXACT START & 2-STAGE DIJKSTRA ==================== -->
+    <section class="slide" data-slide="9">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 09 / 12 · Core Technology 03</div>
+          <h2 class="slide-title">배경 기술 ③: 실제 출발 지점 도로 투영 &amp; 2단계(차량+호스) 다익스트라 탐색</h2>
+        </div>
+        <div class="slide-subtitle">교차점 강제 이동(Snap) 폐지 · 가상 간선 분할(<code class="inline-code">__USER_START__</code>) · 마을 입구 마커 즉시 출발 연동</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card card-highlight">
+          <h3>📍 1. 실제 선택 지점 출발 탐색 (<code class="inline-code">projectPointToRoad</code>) &amp; 마을 입구 연동</h3>
+          <p style="margin-bottom:8px;">
+            기존 그래프 라우팅은 사용자가 도로 중간을 클릭해도 가장 가까운 교차점(Node)으로 출발점을 강제 이동시키는 한계가 있었습니다. 현행 시스템은 이를 전면 폐지하고 <strong>사용자가 클릭한 실제 좌표(<code class="inline-code">[startLat, startLng]</code>)에서 정확히 출발</strong>합니다.
+          </p>
+          <ul>
+            <li><strong>통행 가능 도로 우선 수선 투영:</strong> 클릭 지점 반경 45m 내 차량 기준 폭원(<code class="inline-code">threshold</code>) 이상인 도로 선분 위에 수선의 발(<code class="inline-code">projPt</code>)을 내립니다.</li>
+            <li><strong>양방향 부분 선형 가상 간선(<code class="inline-code">virtualEdges</code>) 생성:</strong> 투영된 도로 링크를 분할하여 <code class="inline-code">__USER_START__</code> 정점에서 양 끝 교차점으로 이어지는 2개의 가상 간선(실제 부분 거리 및 부분 폴리라인 보유)을 실시간 생성합니다.</li>
+            <li><strong><code class="inline-code">[마을 입구]</code> 마커 즉시 출발 지원:</strong> 각 마을의 주 진입 시점에 표시된 주황색 <strong><code class="inline-code">마을 입구</code> 배지를 우클릭(또는 경로탐색 중 클릭)</strong>하면 즉시 해당 입구가 출발지로 고정됩니다.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🔥 2. 2단계(1차 차량 + 2차 호스) 다익스트라 알고리즘 (<code class="inline-code">findMissionRoute</code>)</h3>
+          <ol>
+            <li>
+              <strong>Stage 1 — 1차 소방차 진입 다익스트라 (<code class="inline-code">runVehicleDijkstra</code>):</strong><br/>
+              실제 출발점(<code class="inline-code">__USER_START__</code>)에서 시작하여 <code class="inline-code">evaluateEdgeTransition</code>(폭원 + 15° 진입각 + 아커만 회전반경)을 통과하는 간선만 따라 모든 도달 가능 정점의 최단 주행 거리를 계산합니다.
+            </li>
+            <li>
+              <strong>직접 진입 가능 시:</strong> 화점 최근접 정점이 차량 도달 가능 집합에 포함되면 즉시 <strong>차량 직접 진입 가능(청록색 실선)</strong>으로 판정합니다.
+            </li>
+            <li>
+              <strong>Stage 2 — 2차 소방호스 도보 연장 다익스트라:</strong><br/>
+              차량이 화점까지 직접 진입할 수 없을 때, 1차에서 차량이 도달 가능한 모든 정점들을 시작 후보로 두고 전체 골목길 그래프(<code class="inline-code">allAdj</code>) 위에서 아래 복합 비용을 최소화하는 <strong>최적 하차·부서 거점(Staging Point)</strong>을 찾습니다:
+              <pre class="code-block" style="margin-top:6px;">Score = (도보 호스 연장 거리 × 1.0) + (차량 주행 거리 × 0.05)
+필요 15m 소방호스 본수 = ceil(호스 연장 거리 / 15.0)  (예비 +1본 별도 표기)</pre>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="card-alt">
+        <h3>⏱ 3. 실전 출동 소요 시간 정밀 추정 모델 (<code class="inline-code">SPEED_PARAMS</code>)</h3>
+        <div class="grid-3" style="margin-top:8px;">
+          <div style="background:#0f172a; padding:10px 14px; border-radius:8px; border:1px solid #334155;">
+            <strong style="color:var(--accent-cyan);">① 마을 도로 차량 주행 시간</strong><br/>
+            <span style="font-size:12.5px; color:var(--text-sub);">폭 4m 이상: <strong>25 km/h</strong> · 폭 3~4m: <strong>18 km/h</strong> · 협소 골목(3m 미만): <strong>12 km/h</strong> 구간별 차등 적산</span>
+          </div>
+          <div style="background:#0f172a; padding:10px 14px; border-radius:8px; border:1px solid #334155;">
+            <strong style="color:var(--accent-orange);">② 대원 도보 진입 시간</strong><br/>
+            <span style="font-size:12.5px; color:var(--text-sub);">하차 거점(Staging Point)에서 화점까지 방화복·장비 착용 도보 속도 <strong>1.0 m/s (3.6 km/h)</strong> 적용</span>
+          </div>
+          <div style="background:#0f172a; padding:10px 14px; border-radius:8px; border:1px solid #334155;">
+            <strong style="color:var(--accent-red);">③ 소방호스 결합·전개 시간</strong><br/>
+            <span style="font-size:12.5px; color:var(--text-sub);">15m 규격 소방호스 <strong>1본당 20초</strong>의 결합·연장 소요 시간 가산 → 총 예상 임무 시간 산출</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 10: TMAP & NAVIGATION INTEGRATION ==================== -->
+    <section class="slide" data-slide="10">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 10 / 12 · Core Technology 04</div>
+          <h2 class="slide-title">배경 기술 ④: 안전 우회 경유지(<code class="inline-code">navVia</code>) 추출 및 선택형 TMAP · 내비게이션 연동</h2>
+        </div>
+        <div class="slide-subtitle">자체 안전 경로의 우회 거점을 추출하여 상용 내비게이션이 협소 골목으로 안내하는 현상을 원천 차단</div>
+      </div>
+
+      <div class="easy-box">
+        <strong>💡 왜 자체 경로 탐색 후 '안전 경유지'를 뽑아서 T맵에 넘겨줄까요?</strong><br/>
+        T맵에 출발지와 목적지(화점)만 넘기면, T맵은 소방차 폭·회전반경을 모르기 때문에 <strong>다시 좁은 지름길 골목으로 경로를 안내</strong>해 버립니다. 이를 막기 위해 본 시스템은 자체 알고리즘이 찾은 안전 경로에서 <strong>반드시 거쳐 가야 하는 안전 우회 교차점(최대 5곳)을 경유지(<code class="inline-code">passList</code> / <code class="inline-code">rV1~rV5</code>)로 추출</strong>하여 T맵이 소방차 안전 경로를 그대로 따라가도록 강제합니다.
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>🧭 Step 1. 안전 경유지 자동 추출 (<code class="inline-code">extractNavVia</code>)</h3>
+          <ul>
+            <li><strong>우회 지점 탐지:</strong> 자체 안전 경로(<code class="inline-code">safeNodeIds</code>)와 제약 없는 일반 최단 경로(<code class="inline-code">shortestUnconstrainedNodeIds</code>)를 비교해, 경로가 갈라지는 핵심 우회 정점을 그리디 방식으로 최대 5개 추출합니다.</li>
+            <li><strong>실제 출발점 첫 교차점 보존:</strong> <code class="inline-code">__USER_START__</code>에서 출발할 때 최초 진입 교차점을 첫 번째 경유 후보로 포함하여 출발 진행 방향을 고정합니다.</li>
+            <li><strong>굴곡 도로 폴리라인 보간:</strong> 중간 교차점이 없는 단일 굴곡 링크에서도 주행 거리 20m 이상이면 선형 위 안내 경유점을 자동 샘플링합니다.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🗺 Step 2. 사용자 선택형 TMAP API 연동 (<code class="inline-code">POST /api/route</code>)</h3>
+          <ul>
+            <li><strong>기본 동작 (TMAP 미호출):</strong> 화점 선택 시에는 외부 API 호출 없이 자체 그래프 엔진으로 즉시 경로를 표시합니다.</li>
+            <li><strong>선택 시에만 동작 (<code class="inline-code">#btn-tmap-recalc</code>):</strong> 사용자가 <strong><code class="inline-code">🗺 T맵 API 경로 연동</code></strong> 버튼을 클릭할 때만 <code class="inline-code">[출발지, ...안전경유지, 하차거점]</code> 시퀀스를 백엔드 <code class="inline-code">/api/route</code>로 전송합니다.</li>
+            <li><strong>T맵 <code class="inline-code">passList</code> 호출 &amp; 이중 폴백:</strong> SK OpenAPI TMAP 자동차 경로안내(<code class="inline-code">passList</code> 최대 5곳 경유)를 호출하고, 키 미설정/오프라인 시 OSRM으로 자동 폴백합니다.</li>
+          </ul>
+        </div>
+
+        <div class="card card-highlight">
+          <h3>📱 Step 3. 내비 3사 길안내 딥링크 (<code class="inline-code">updateNavigationDeeplinks</code>)</h3>
+          <ul>
+            <li><strong>출발지 강제 고정 (현재 위치 오류 방지):</strong> 사용자가 선택한 실제 출발지 좌표(또는 의령소방서)를 명시적으로 전달하여 '현재 내 위치'로 잘못 잡히지 않습니다.</li>
+            <li><strong>TMAP (<code class="inline-code">tmap://route</code>):</strong> 공식 <code class="inline-code">invokeRoute</code> 규격(<code class="inline-code">rStName/rStX/rStY</code>, <code class="inline-code">rV1..rV5</code>, <code class="inline-code">rGoName/rGoX/rGoY</code>)과 호환 키(<code class="inline-code">startx/via1x/goalx</code>) 동시 전달.</li>
+            <li><strong>네이버지도 (<code class="inline-code">nmap://route/car</code>) &amp; 카카오맵 (<code class="inline-code">kakaomap://route</code>):</strong> 출발지(<code class="inline-code">slat/slng</code>, <code class="inline-code">sp</code>) + 경유지(<code class="inline-code">v1..v5</code>, <code class="inline-code">vp</code>) + 도착지 완비.</li>
+          </ul>
+        </div>
+      </div>
+
+      <pre class="code-block">// 실제 생성되는 TMAP 길안내 딥링크 구조 (선택 출발지 + 안전 우회 경유지 + 소방차 하차거점 완비)
+tmap://route?rStName=선택출발지&amp;rStX=128.243839&amp;rStY=35.397022&amp;startname=선택출발지&amp;startx=128.243839&amp;starty=35.397022
+  &amp;rGoName=소방차하차거점(X0003)&amp;rGoX=128.244840&amp;rGoY=35.399480&amp;goalname=소방차하차거점(X0003)&amp;goalx=128.244840&amp;goaly=35.399480
+  &amp;rV1Name=안전경유1(X0000)&amp;rV1X=128.244566&amp;rV1Y=35.398545&amp;via1name=안전경유1(X0000)&amp;via1x=128.244566&amp;via1y=35.398545&amp;reqCoordType=WGS84&amp;resCoordType=WGS84</pre>
+    </section>
+
+    <!-- ==================== SLIDE 11: BUILDING LEDGER & BRIEFING ==================== -->
+    <section class="slide" data-slide="11">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 11 / 12 · Core Technology 05</div>
+          <h2 class="slide-title">배경 기술 ⑤: 실시간 건축물대장 표제부 연계 및 현장 지휘 브리핑</h2>
+        </div>
+        <div class="slide-subtitle">하드코딩된 가상 건물 정보 전면 제거 · 국토부 표제부 실시간 합성 · 규칙 기반 + AI 전술 브리핑</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>🏢 1. 실시간 건축물대장 표제부 3단 연계 파이프라인 (<code class="inline-code">GET /api/building</code>)</h3>
+          <p style="margin-bottom:8px;">
+            화점 클릭 시 반경 60m 이내 가장 가까운 실제 건축물 폴리곤을 찾아 다음 3개 공공 데이터 소스를 실시간 결합합니다 (서버 미구동 환경에서는 브라우저 VWorld JSONP로 자동 폴백):
+          </p>
+          <ol>
+            <li><strong>VWorld 역지오코딩 &amp; 도로명주소 건물 (<code class="inline-code">LT_C_SPBD</code>):</strong> 도로명주소, 지번주소, 건물관리번호(19자리 PNU 추출), 건물 외곽 폴리곤과 클릭 지점 간 실제 이격거리(m) 산출.</li>
+            <li><strong>국토부 건축물정보 공간레이어 (<code class="inline-code">LT_C_BLDGINFO</code>):</strong> 30종 주용도 코드(<code class="inline-code">01000</code> 단독주택, <code class="inline-code">11000</code> 노유자시설, <code class="inline-code">18000</code> 창고시설 등) 및 28종 구조 코드(<code class="inline-code">11</code> 벽돌구조, <code class="inline-code">51</code> 일반목구조, <code class="inline-code">32</code> 경량철골구조 등) 한글 해독, 지상/지하 층수, 높이, 연면적·건축면적·대지면적, 건폐율·용적률, 사용승인일 조회.</li>
+            <li><strong>공공데이터포털 건축물대장 표제부 (<code class="inline-code">getBrTitleInfo</code>):</strong> 지붕 구조, 주용도/기타용도 등 상세 표제부 속성 보강.</li>
+          </ol>
+          <div class="easy-box" style="margin-top:10px; font-size:12.3px;">
+            <strong>🔍 투명한 등재 상태 판별:</strong> 가짜 기본값(Fallback String)을 절대 넣지 않으며, 실제 조회 결과에 따라 <strong>① 건축물대장 표제부 등재 확인</strong>, <strong>② 표제부 미등재 (미등기·가설건축물 등 현장 확인)</strong>, <strong>③ 반경 60m 내 등록 건축물 없음</strong>을 명확히 구분해 표시합니다.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🎙 2. 건축물 특성 기반 소방 주의사항 &amp; 2단계 지휘 브리핑</h3>
+          <p style="margin-bottom:8px;">
+            표제부에서 확인된 건물 구조·용도·연식을 분석하여 소방 전술 주의사항(<code class="inline-code">tacticalNotes</code>)을 자동 생성합니다:
+          </p>
+          <ul>
+            <li><strong>목구조 (<code class="inline-code">51~59</code>):</strong> 연소 확대가 빠름, 초기 대량 방수 및 인접 건물 방어 필요</li>
+            <li><strong>샌드위치패널 / 경량철골 (<code class="inline-code">31~39</code>):</strong> 급격한 연소·열변형에 의한 지붕 붕괴 위험, 내부 진입 신중</li>
+            <li><strong>슬레이트 / 기와 지붕:</strong> 가열 시 균열 및 낙하물 주의</li>
+            <li><strong>30년 이상 노후 건축물 (1996년 이전 사용승인):</strong> 구조체 약화 주의</li>
+            <li><strong>노유자시설 / 축사·창고:</strong> 거동불편자 최우선 인명 검색 / 내부 가연물 주의</li>
+          </ul>
+          <pre class="code-block" style="margin-top:10px;">[출동차량] 소형펌프차(농촌주력) (기준폭 2.2m · 최소회전반경 6.8m)
+[출발거점] 선택 출발지점(35.39702, 128.24384)
+[안전경유] 협소·회전불가 구간 우회 경유지 1개소 (경유1:X0000) T맵/내비 연동
+[진입제한] 교차로 88° 회전반경 부족 (코너 유효폭 2.4m &lt; 요구 3.12m)
+[1차 차량접근] 선택 출발지점에서 하차 거점(X0003)까지 428m 진입 후 안전 부서
+[2차 호스연장] 하차 거점에서 화점까지 72m 구간 15m 소방호스 최소 5본(예비포함 6본) 도보 연장
+[급수대책] 거점소화전-D0002 (288m) 중계 보급</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 12: CURRENT UI, DELIVERABLES & VERIFICATION ==================== -->
+    <section class="slide" data-slide="12">
+      <div class="slide-header">
+        <div>
+          <div class="slide-step">Slide 12 / 12 · Current System Shape, Deliverables &amp; Execution Guide</div>
+          <h2 class="slide-title">현행 시스템 관제 화면 · 산출물 아키텍처 · 즉시 실행 가이드</h2>
+        </div>
+        <div class="slide-subtitle">네이버 지도형 통합 좌측 레일/드로어 + 마을 범위 사각형·마을입구 표시 + 서버/Standalone 이중 지원</div>
+      </div>
+
+      <!-- Visual UI Wireframe -->
+      <div class="ui-wireframe">
+        <div class="ui-wf-header">
+          <div><strong>🚒 119 스마트 진입로 판정</strong> | 의령군 13개 읍·면 · 239개 전 마을 (Step 1 알고리즘 고도화 탑재)</div>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span class="tag tag-blue">1. 권역 선택 (18개)</span>
+            <span class="tag tag-blue">2. 전체 마을 선택/검색 (239개)</span>
+            <span class="tag tag-green">3. 사용방법 3단계 가이드</span>
+            <span class="tag tag-amber">4. 네이버/다크 테마 전환</span>
+          </div>
+        </div>
+        <div class="ui-wf-body">
+          <div class="ui-wf-left">
+            <div style="font-weight:700; color:var(--accent-blue); margin-bottom:6px;">[좌측 레일 &amp; 드로어] 4대 기능 탭</div>
+            <p style="color:var(--text-sub); margin-bottom:8px;">
+              • <strong>🚒 길찾기:</strong> 4종 소방차 탭 선택, <code class="inline-code">[경로탐색]</code>, 1차 차량/2차 호스 요약, T맵·네이버·카카오 길안내 연동<br/>
+              • <strong>🏢 화점브리핑:</strong> 실시간 건축물대장 표제부 &amp; AI 지휘 브리핑<br/>
+              • <strong>📊 지역현황:</strong> 도로 연장·통과/차단 통계 &amp; 읍·면 마을 칩<br/>
+              • <strong>🗂 레이어:</strong> 마을 범위 사각형·마을 입구, 도로망, 건물, 소화전, 진단 레이어 토글
+            </p>
+          </div>
+
+          <div class="ui-wf-map">
+            <div style="background:rgba(2,132,199,0.9); color:#fff; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:700; text-align:center;">
+              상단 안내 배너: 1/2단계 [출발지 선택] 실제 출발 지점 클릭 ➔ 2/2단계 [화점 선택] 목표 건물/지점 클릭
+            </div>
+            <div style="text-align:center; padding:12px 10px;">
+              <div style="font-size:14px; font-weight:800; color:#fff; margin-bottom:6px;">[중앙 VWorld 위성/하이브리드 대화형 지도]</div>
+              <div style="font-size:12.2px; color:var(--text-sub);">
+                🟧 <strong>주황 점선 사각형 &amp; <code class="inline-code">[마을 입구]</code> 배지:</strong> 선택 마을 분석 범위 및 진입 입구 (우클릭 시 출발지 즉시 지정)<br/>
+                🟢 <strong>초록 마커:</strong> 사용자 실제 선택 출발점 (교차점 강제 스냅 없음)<br/>
+                🔵 <strong>청록색 굵은 실선:</strong> 1차 소방차 안전 진입 경로 (<code class="inline-code">vehicleRouteCoords</code>)<br/>
+                🟠 <strong>경유1·경유2 배지 &amp; 하차거점:</strong> 자동 우회 경유지(<code class="inline-code">navVia</code>) 및 호스전개 거점(<code class="inline-code">stagingPoint</code>)<br/>
+                🔴 <strong>빨간 점선 &amp; 화점 마커:</strong> 2차 소방호스 도보 연장 경로 (<code class="inline-code">hoseRouteCoords</code>)
+              </div>
+            </div>
+            <div style="background:rgba(15,23,42,0.85); padding:5px 10px; border-radius:5px; font-size:11.5px; color:var(--text-muted); text-align:center;">
+              차종별 제원 자동 반영: 구급차(2.0m) · 소형펌프(2.2m, +0.92m) · 중형/물탱크(2.5m, +1.12m) · 대형/굴절(2.8m, +1.12m)
+            </div>
+          </div>
+
+          <div class="ui-wf-right">
+            <div style="font-weight:700; color:var(--accent-cyan);">📂 핵심 산출물 및 실행 방법</div>
+            <p style="color:var(--text-sub); font-size:11.8px;">
+              • <strong>단독 실행 번들 (서버 불필요):</strong><br/>
+              &nbsp;&nbsp;- <code class="inline-code">demo/integrated_ui_mockup.html</code><br/>
+              &nbsp;&nbsp;- <code class="inline-code">web/index_standalone.html</code><br/>
+              &nbsp;&nbsp;- <code class="inline-code">experiment/step1_worktree/step1_standalone.html</code><br/>
+              • <strong>표준 웹 &amp; 로컬 API 서버 기동:</strong><br/>
+              &nbsp;&nbsp;- <code class="inline-code">python src/web_server.py --port 8080</code><br/>
+              • <strong>데이터 재생성 파이프라인:</strong><br/>
+              &nbsp;&nbsp;1) <code class="inline-code">python src/build_villages_mode_b.py</code><br/>
+              &nbsp;&nbsp;2) <code class="inline-code">python src/export_web_graphs.py</code><br/>
+              &nbsp;&nbsp;3) <code class="inline-code">python src/build_standalone_web.py</code>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-row">
+        <div class="flow-step">
+          <strong style="color:var(--accent-cyan);">① 마을 선택 &amp; 범위·입구 확인</strong>
+          <p style="font-size:12px; color:var(--text-sub);">상단 239개 마을 드롭다운/검색 시 해당 마을 범위 사각형과 <code class="inline-code">[마을 입구]</code>로 즉시 줌인</p>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step">
+          <strong style="color:var(--accent-green);">② 출발 지점 선택 (또는 입구 우클릭)</strong>
+          <p style="font-size:12px; color:var(--text-sub);"><code class="inline-code">[경로탐색]</code> 클릭 후 출발지 클릭 또는 <code class="inline-code">[마을 입구]</code> 우클릭으로 실제 출발점 고정</p>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step">
+          <strong style="color:var(--accent-red);">③ 화점(목표 건물) 클릭</strong>
+          <p style="font-size:12px; color:var(--text-sub);">Step 1 도로망 위에서 1차 차량 경로 + 안전 경유지 + 2차 호스 경로 + 실시간 건축물대장 산출</p>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step">
+          <strong style="color:var(--accent-amber);">④ T맵 API 연동 / 길안내 호출</strong>
+          <p style="font-size:12px; color:var(--text-sub);"><code class="inline-code">T맵 API 경로 연동</code> 또는 내비 3사 딥링크로 출발·안전경유·하차거점 원클릭 전송</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Slide Navigation Bar -->
+  <footer class="pres-footer">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button type="button" id="btn-prev" class="btn">◀ 이전 슬라이드</button>
+      <button type="button" id="btn-next" class="btn btn-primary">다음 슬라이드 ▶</button>
+      <span id="slide-counter" style="font-size:12.5px; color:var(--text-muted); margin-left:6px;">1 / 12</span>
+    </div>
+    <div class="dot-nav" id="dot-nav"></div>
+    <div style="font-size:12px; color:var(--text-muted);">
+      키보드 <code class="inline-code">←</code> <code class="inline-code">→</code> 또는 <code class="inline-code">Space</code> 이동 · 상단 버튼으로 스크롤 전체보기/인쇄 가능
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const total = slides.length;
+      let current = 0;
+      let scrollMode = false;
+
+      const counterEl = document.getElementById('slide-counter');
+      const dotNavEl = document.getElementById('dot-nav');
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      const btnToggleMode = document.getElementById('btn-toggle-mode');
+
+      function renderDots() {
+        dotNavEl.innerHTML = '';
+        for (let i = 0; i < total; i++) {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'dot-btn' + (i === current ? ' active' : '');
+          b.textContent = String(i + 1);
+          b.addEventListener('click', () => goToSlide(i));
+          dotNavEl.appendChild(b);
+        }
+      }
+
+      function goToSlide(idx) {
+        current = Math.max(0, Math.min(total - 1, idx));
+        slides.forEach((s, i) => {
+          s.classList.toggle('active', i === current);
+        });
+        if (counterEl) counterEl.textContent = `${current + 1} / ${total}`;
+        renderDots();
+      }
+
+      btnPrev.addEventListener('click', () => goToSlide(current - 1));
+      btnNext.addEventListener('click', () => goToSlide(current + 1));
+
+      btnToggleMode.addEventListener('click', () => {
+        scrollMode = !scrollMode;
+        document.body.classList.toggle('scroll-mode', scrollMode);
+        btnToggleMode.textContent = scrollMode ? '🖥 슬라이드 발표모드 전환' : '📄 스크롤 전체보기 전환';
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (scrollMode) return;
+        if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+          e.preventDefault();
+          goToSlide(current + 1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          e.preventDefault();
+          goToSlide(current - 1);
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          goToSlide(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          goToSlide(total - 1);
+        }
+      });
+
+      goToSlide(0);
+    })();
+  </script>
+</body>
+</html>
