@@ -120,6 +120,50 @@ def rc10(id, subs):
     for f in ['gsap.min.js', 'PretendardVariable.woff2']: shutil.copy(os.path.join(G.LIB, f), dst)
     m(id)
 
+TOOLS = os.environ.get('TOOLS', os.path.join(os.path.dirname(OUT), 'tools'))   # 도구 화면 캡처(tool1·tool3·before·after.png)
+
+def frame(img, w, h, label=''):
+    """다크 브라우저 창 안에 캡처 화면"""
+    return (f'<div style="width:{w}px;height:{h}px;border-radius:22px;overflow:hidden;background:#1d1a19;border:2px solid #3a3533;box-shadow:0 30px 80px rgba(0,0,0,.55)">'
+            f'<div style="height:46px;display:flex;align-items:center;gap:10px;padding:0 20px;background:#262221;border-bottom:1px solid #3a3533">'
+            '<i style="width:14px;height:14px;border-radius:50%;background:#ff5a1f"></i><i style="width:14px;height:14px;border-radius:50%;background:#55504c"></i><i style="width:14px;height:14px;border-radius:50%;background:#55504c"></i>'
+            f'<span style="margin-left:14px;font-size:20px;color:#8a847e">{label}</span></div>'
+            f'<img src="{img}" style="display:block;width:100%;height:{h-48}px;object-fit:cover;object-position:top;background:#fff"/></div>')
+
+def shot(id, tag, sub, ghost, title, steps, img, label, key):
+    """왼쪽 단계 + 오른쪽 실제 도구 화면 (국토부 실습 도구)"""
+    b = G.B(7); G.header(b, tag, sub, ghost, title, 'mask')
+    for i, (t, d) in enumerate(steps):
+        last = i == len(steps) - 1
+        b.add(f'a st st{i}', f'left:110px;top:{300 + i * 128}px;width:560px;height:110px;display:flex;align-items:center;gap:26px',
+              f'<div style="flex:none;width:76px;height:76px;border-radius:50%;border:2.5px solid {"#ff5a1f" if last else "#55504c"};display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:{"#ff5a1f" if last else "#f4f4f2"}">{i+1}</div>'
+              f'<div><div style="font-size:38px;font-weight:800">{t}</div><div style="font-size:24px;color:#a59f98;margin-top:4px">{d}</div></div>')
+    b.add('a shot', 'left:720px;top:290px', frame(img, 1090, 690, label))
+    js = G.HEAD_JS['mask'] + 'tl.from(".st",{opacity:0,x:-60,duration:.55,stagger:.25,ease:"power3.out"},.7).from(".shot",{opacity:0,x:120,scale:.94,duration:1.0,ease:"power3.out"},.9);'
+    js += f'tl.to(".st{len(steps)-1}",{{x:12,duration:.4,ease:"power2.out"}},2.4);'
+    G.write(id, 7, b, js, assets=[os.path.join(TOOLS, img)])
+    m(id)
+
+def beforeafter(id):
+    b = G.B(7); G.header(b, 'PART 4 · 도구 1', '말 한 줄로 바뀐 그래프', 'After.', '“색을 고를 수 있게 해 줘” — 그 다음 화면', 'chars')
+    b.add('a ba0', 'left:110px;top:300px', '<div style="font-size:30px;font-weight:800;letter-spacing:.25em;color:#8a847e;margin-bottom:16px">BEFORE</div>' + frame('before.png', 820, 560, '팔레트 고르기'))
+    b.add('a ba1', 'left:990px;top:300px', '<div style="font-size:30px;font-weight:800;letter-spacing:.25em;color:#ff5a1f;margin-bottom:16px">AFTER</div>' + frame('after.png', 820, 560, '보고서용 그래프'))
+    b.add('a arw', 'left:917px;top:610px;width:76px;height:76px;border-radius:50%;background:#ff5a1f;color:#111;font-size:44px;font-weight:900;display:flex;align-items:center;justify-content:center;z-index:5', '→')
+    b.add('a cap', 'left:110px;top:950px;font-size:32px;color:#a59f98', G.bold('코드는 한 줄도 안 썼습니다 — **말로 고쳐 달라고** 했을 뿐'))
+    js = G.HEAD_JS['chars'] + 'tl.from(".ba0",{opacity:0,x:-80,duration:.8,ease:"power3.out"},.7).from(".arw",{opacity:0,scale:0,duration:.4,ease:"back.out(2)"},1.5).from(".ba1",{opacity:0,x:80,duration:.8,ease:"power3.out"},1.7).from(".cap",{opacity:0,y:20,duration:.6},2.6);'
+    G.write(id, 7, b, js, assets=[os.path.join(TOOLS, 'before.png'), os.path.join(TOOLS, 'after.png')])
+    m(id)
+
+def prompts(id):
+    b = G.B(8); G.header(b, 'PART 4 · 혼자서 해 보기', '집에서·내 폰으로 이 순서대로', 'Try.', '이렇게 다섯 번 말하면 도구가 됩니다', 'blur')
+    ps = ['엑셀 올리면 다양한 그래프 그려 주는 HTML 만들어 줘', '가로·세로·원형 그래프 추가해 줘', '그래프 색 선택 기능 추가해 줘', '그래프 배경 바꾸는 버튼 넣어 줘', '마우스 올리면 수치 뜨게 해 줘']
+    for i, t in enumerate(ps):
+        b.add(f'bub say say{i}', f'left:{110 + (i % 2) * 60}px;top:{300 + i * 118}px;font-size:40px', f'<b style="color:#ff5a1f;margin-right:22px">{i+1:02d}</b>“{t}”')
+    b.add('a nt', 'left:1300px;top:300px;width:510px;font-size:30px;line-height:1.55;color:#a59f98', G.bold('한 번에 다 말하지 않아도 됩니다.<br><br>**하나 만들고 → 하나씩 더하기**<br><br>안 되면 “안 돼, 고쳐 줘” 한 마디'))
+    js = G.HEAD_JS['blur'] + 'tl.from(".say",{opacity:0,y:30,scale:.92,transformOrigin:"left bottom",duration:.5,stagger:.4,ease:"back.out(1.8)"},.8).from(".nt",{opacity:0,x:40,duration:.7},3.0);'
+    G.write(id, 8, b, js)
+    m(id)
+
 def page(id, n):
     """국토부 실습 PPT(9.7판) 원본 장을 그림으로 그대로"""
     ORDER.append((id, 'i%d' % n))
@@ -198,17 +242,41 @@ def build():
     # ── PART 4 말로 만든 업무 도구
     G.intro('pd_in', 4, '말로 만든<br>업무 도구', '코딩은 모릅니다 — 업무가 불편해서 말로 만들었습니다', ['엑셀 → 그래프', '취합 검증', '민원 답변', '오늘 이 화면'], 1, 'blur')
     m('pd_in')
-    page('mo06', 6); page('mo07', 7); page('mo08', 8); page('mo09', 9); page('mo10', 10)
+    G.cards('mo06', 'PART 4 · 왜 만들었나', '매달 같은 일', 'Again.', '매달 반복되는 엑셀 취합, 바꾸고 싶지 않으신가요?',
+            [('17곳', '양식이 제각각', '기관마다 **다른 양식**\n열 순서·이름도 다름'), ('3시간', '복사·붙여넣기', '**단순 반복**에\n오후가 사라짐'), ('매달', '또 처음부터', '**똑같은 작업**을\n다음 달에 또')],
+            hi=1, key='불편함이 곧 **만들 거리**입니다', fx='rise', head='mask', kfx='type', numsize=100)
+    m('mo06')
+    G.cards('mo07', 'PART 4 · 현실의 벽', '공공기관에서 AI를 쓰려면', 'Wall.', '좋은 건 아는데, 우리 사무실에선 막힙니다',
+            [('01', '개인정보', '외부 AI에\n**업로드 불가**'), ('02', '업무망', '내부망에서\n**접속 차단**'), ('03', '설치 승인', '새 프로그램은\n**승인이 필요**')],
+            hi=1, key='그래서 **다른 길**을 찾았습니다', fx='flip', head='chars', kfx='sweep', numsize=100)
+    m('mo07')
+    G.cards('mo08', 'PART 4 · 왜 HTML인가', 'AI를 못 쓰는 환경이라서', 'HTML.', 'AI를 못 쓰는 환경이라서, HTML',
+            [('01', '설치 없이', '인터넷 창만 있으면\n**바로 실행**'), ('02', '파일 하나', '메신저·메일로\n**부서와 공유**'), ('03', '내 PC 안에서', '자료가 밖으로 안 나가고\n**안전하게 계산**')],
+            hi=2, key='AI는 **만들 때만**, 쓰는 건 **내 PC 안에서**', fx='wipe', head='mask', kfx='type', numsize=100)
+    m('mo08')
+    G.cards('mo09', 'PART 4 · HTML의 새로운 활용', '화면 + 기능 = 작은 프로그램', 'Build.', '웹 화면에 계산 기능을 더하면, 작은 프로그램',
+            [('화면', '인터넷 문서', '글·표·그림이 보이는\n**웹 화면**'), ('+ 기능', '계산·버튼', '버튼 누르면\n**계산·정리**'), ('= 도구', '작은 프로그램', '문법은 몰라도\n**말로 주문**')],
+            hi=2, key='코딩 대신 **“이렇게 만들어 줘”**', fx='zoom', head='blur', kfx='pop', numsize=100)
+    m('mo09')
+    G.cards('mo10', 'PART 4 · 활용 범위', '어디까지 쓰면 좋을까', 'Scope.', '개인과 팀의 반복 업무에 쓰는 것이 가장 좋습니다',
+            [('O', '적합', '팀 **반복 작업**\n자료 **취합·정리**\n보고서용 **그래프**'), ('X', '부적합', '**여러 명 동시 접속** 시스템\n**공식 시스템**은 정보화부서로')],
+            hi=0, key='작게, 내 업무부터 — **큰 시스템은 정보화부서**와', fx='split', head='mask', kfx='sweep', numsize=110)
+    m('mo10')
     G.cards('tools', 'PART 4 · 말로 만든 업무 도구', '강사가 업무에 쓰려고 만든 것', 'Made.', '업무가 불편해서, 말로 만들었습니다',
             [('01', '엑셀 → 그래프', '엑셀을 넣으면\n**보고서용 그래프**\n국토부 실습 도구'), ('02', '취합 검증', '여러 곳 취합 파일의\n**틀린 숫자** 찾기\n국토부 실습 도구'),
              ('03', '민원 답변', '**AI 기반 소방 민원\n답변 자동화**\n수상작'), ('04', '오늘 이 화면', '움직이는 강의 화면도\n**말로 주문**했습니다')],
             hi=1, key='지금부터 **실제 화면**으로 보여 드립니다', fx='wipe', head='mask', kfx='type', numsize=80)
     m('tools')
-    page('mo12', 12); page('mo20', 20)
+    shot('mo12', 'PART 4 · 도구 1', '엑셀 데이터 시각화', 'Chart.', '엑셀만 넣으면, 보고서용 그래프',
+         [('엑셀 올리기', '파일을 끌어다 놓기'), ('항목 고르기', '보여 줄 열 선택'), ('그래프 만들기', '막대·선·원형'), ('그림 저장', 'PNG → 한글에 붙이기')],
+         'tool1.png', '도구1_시각화 자료만들기.html', '')
+    beforeafter('mo20')
     big('demo1', '지금부터 제 노트북에서', '직접', '보여 드립니다', 'Demo.', ['엑셀 올리기', '그래프 고르기', 'PNG 저장', '한글에 붙이기'], dur=5)
-    page('mo30', 30)
+    shot('mo30', 'PART 4 · 도구 3', '제출자료 취합·검증기', 'Merge.', '여러 곳에서 온 파일, 한 번에 모으고 검사',
+         [('파일 여러 개', '한꺼번에 선택'), ('오류 검사', '빈칸·틀린 숫자 표시'), ('자동 합치기', '양식 맞춰 병합'), ('완성본 저장', '엑셀로 내려받기')],
+         'tool3.png', '도구3_취합검증기.html', '')
     big('demo2', '여러 곳에서 온 취합 파일,', '틀린 숫자를', '찾아 줍니다', 'Check.', ['파일 여러 개', '오류 검증', '자동 병합', '완성본 저장'], dur=5)
-    page('mo45', 45)
+    prompts('mo45')
 
     # ── PART 5 우리 사정은 우리가 안다
     G.intro('pe_in', 5, '우리 사정은<br>우리가 안다', '사무실 PC에서 안 열리죠 — 저도 그렇습니다', ['막힌 사이트', '넣으면 안 되는 것', '정부 방향', '확인은 사람이'], 1, 'spin')
