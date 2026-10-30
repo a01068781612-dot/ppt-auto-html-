@@ -57,7 +57,7 @@ def big(id, small, line1, line2, ghost, chips=None, dur=6):
     m(id)
 
 
-PHONE = os.environ.get('PHONE', os.path.join(os.path.dirname(OUT), 'phone'))   # Flow 폰 화면(fp0~fp5.png)
+PHONE = os.environ.get('PHONE', os.path.join(os.path.dirname(OUT), 'phone2'))   # Flow 폰 화면(k0~k4.png, 강사 녹화에서 뽑음)
 
 def doc(id):
     """OCR 실습용 — 강사가 폰으로 찍을 4줄 보고서 (흰 종이)"""
@@ -79,8 +79,8 @@ def steps2(id):
     """사진 만들기 → 고치기 2단계 (강사가 먼저, 같이 따라 하기)"""
     b = G.B(7); G.header(b, 'PART 2 · 미션 2', '강사가 먼저 → 같이 따라 하기', 'Create.', '만들고, 고칩니다 — 말 두 마디면 됩니다', 'mask')
     for i, (lab, t, say, note) in enumerate([
-        ('STEP 1', '만들기', '조선 시대 방에서 세종대왕이 책을 읽고 있는 사진을 만들어 줘', '사진이 없어도 **글로 사진**을 만듭니다'),
-        ('STEP 2', '고치기', '책 대신 노트북으로 일하는 모습으로 바꿔 줘', '마음에 안 들면 **이어서 말하면** 고쳐집니다')]):
+        ('STEP 1', '만들기', '세종대왕이 책을 읽는 사진', '사진이 없어도 **글로 사진**을 만듭니다'),
+        ('STEP 2', '고치기', '책 읽는 상황 말고 노트북하는 상황으로 교체', '마음에 안 들면 **이어서 말하면** 고쳐집니다')]):
         x = 110 + i * 870
         b.add(f'card cd cd{i}' + (' hi' if i == 1 else ''), f'left:{x}px;top:300px;width:830px;height:600px',
               f'<div class="in a" style="left:44px;top:40px;font-size:26px;font-weight:800;letter-spacing:.25em;color:#ff5a1f">{lab}</div>'
@@ -95,9 +95,9 @@ def steps2(id):
 
 def phones(id):
     """Flow 폰 화면 5단계 (Play 스토어 실제 화면 + Google Play 공식 앱 스크린샷)"""
-    items = [('fp0.png', '설치', 'Play 스토어<br>「Google Flow」 설치'), ('fp1.png', '새로 만들기', '구글 로그인 →<br><b>+ New</b>'),
-             ('fp2.png', '말로 만들기', '<b>Image</b> 고르고<br>만들 장면을 입력'), ('fp3.png', '내 사진 올리기', '<b>+</b> → 갤러리에서<br>미션 2 사진'),
-             ('fp5.png', '영상으로', '<b>Animate</b> → 영상<br><b>Download</b> → 카톡')]
+    items = [('k0.png', '설치', 'Play 스토어<br>「Google Flow」 설치'), ('k1.png', '시작', '구글 로그인 →<br><b>+ 신규</b>'),
+             ('k2.png', '말로 이미지', '<b>이미지</b> 고르고<br>만들 장면 입력'), ('k3.png', '영상으로', '사진 고르고<br><b>애니메이션</b>으로 입력'),
+             ('k4.png', '완성', '영상 재생 →<br><b>다운로드</b> → 카톡')]
     b = G.B(8); G.header(b, 'PART 2 · 미션 3', '폰에서 이렇게 — Google Flow', 'Flow.', '설치부터 이미지·영상까지, 폰 화면으로', 'chars')
     for i, (img, t, cap) in enumerate(items):
         x = 110 + i * 344
@@ -105,7 +105,7 @@ def phones(id):
               f'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="width:46px;height:46px;border-radius:50%;background:{"#ff5a1f" if i==4 else "#3a3533"};color:{"#111" if i==4 else "#f4f4f2"};font-size:26px;font-weight:900;display:flex;align-items:center;justify-content:center">{i+1}</span><span style="font-size:32px;font-weight:800">{t}</span></div>'
               f'<div style="width:320px;height:520px;border-radius:28px;overflow:hidden;background:#fff;border:6px solid #2a2523"><img src="{img}" style="width:100%;height:100%;object-fit:cover;object-position:top"/></div>'
               f'<div style="margin-top:14px;font-size:24px;line-height:1.4;color:#d6d2c9">{cap}</div>')
-    b.add('a src', 'left:110px;top:1040px;font-size:18px;color:#8a847e', '화면: Google Play 「Google Flow」 페이지 · 앱 공식 스크린샷(영문 화면) — 실제 앱은 한국어로 보일 수 있음 · 아이폰은 앱이 없으면 flow.google.com')
+    b.add('a src', 'left:110px;top:1040px;font-size:18px;color:#8a847e', '화면: 강사 갤럭시 실제 녹화(26.10.30) · 아이폰은 앱이 없으면 flow.google.com')
     js = G.HEAD_JS['chars'] + 'tl.from(".ph",{opacity:0,y:80,duration:.6,stagger:.35,ease:"power3.out"},.7).from(".src",{opacity:0,duration:.5},2.6);'
     G.write(id, 8, b, js, assets=[os.path.join(PHONE, it[0]) for it in items])
     m(id)
@@ -168,6 +168,20 @@ def prompts(id):
     G.write(id, 8, b, js)
     m(id)
 
+ART = os.environ.get('ART', os.path.join(os.path.dirname(OUT), 'art'))   # 기사 캡처(cap1·cap2·photo3.jpg) — 10.20 장 마지막 화면에서 잘라 냄
+
+def art10(id, src, subs, imgs):
+    """10.20 워크숍 기사 장면(art/pN)을 가져와 기사 원문과 맞게 문구를 고치고 렌더"""
+    dst = os.path.join(OUT, id); os.makedirs(dst, exist_ok=True)
+    h = open(os.path.join(M1020, 'art', src, 'index.html')).read()
+    for a, b in subs:
+        assert a in h, (id, a); h = h.replace(a, b)
+    open(dst + '/index.html', 'w').write(h)
+    for f in ['hyperframes.json', 'meta.json', 'package.json', 'bg.png']: shutil.copy(os.path.join(G.HERE, f), dst)
+    for f in ['gsap.min.js', 'PretendardVariable.woff2']: shutil.copy(os.path.join(G.LIB, f), dst)
+    for a, b in imgs: shutil.copy(os.path.join(ART, a), os.path.join(dst, b))
+    m(id)
+
 def page(id, n):
     """국토부 실습 PPT(9.7판) 원본 장을 그림으로 그대로"""
     ORDER.append((id, 'i%d' % n))
@@ -193,13 +207,22 @@ def build():
     G.intro('pa_in', 1, '정부가 인정한<br>AI 인재', 'AI를 잘 쓰는 공무원, 이제 정부가 공식으로 인정합니다', ['AI 챔피언', '승진·포상', '다른 기관', '그리고 오늘'], 3, 'right')
     m('pa_in')
     G.cards('champ', 'PART 1 · 정부가 인정한 AI 인재', '행정안전부 AI 챔피언', 'Champion.', 'AI 챔피언 — 정부가 인증하는 AI 인재',
-            [('01', '무엇', '**행정안전부**가\nAI를 업무에 잘 쓰는\n**공무원을 인증**합니다'), ('02', '등급', '**그린 → 블루 → 블랙**\n최고 등급은\n**BLACK**'),
-             ('03', '혜택', '**5급 조기승진**\n성과심사 가점\n포상금 · 연수 지원'), ('04', '목표', '2030년까지\n**2만 명**\n(전체 공무원 약 2%)')],
+            [('01', '무엇', '**행정안전부**가 운영하는\n**AI 챔피언 인증제**'), ('02', '등급', '**그린 → 블루 → 블랙**\n3단계, 최고 등급은\n**BLACK**'),
+             ('03', '인사', '경기도: **블루·블랙**에\n**실적 가산점 0.5점**\n승진에 반영'), ('04', '정부 방향', 'AI 고숙련자\n**5급 조기승진 가점**\n2030년 **전문인재 2만 명**')],
             hi=1, key='AI 역량이 이제 **공식 경력**이 됩니다', fx='rise', head='blur', kfx='sweep', numsize=80)
     m('champ')
-    slot('p_art1', '기사 — AI 잘 쓰는 공무원에 승진·포상 인센티브', '10.20 워크숍 PPT 43장 · 파이낸셜뉴스 — 5급 조기승진 성과심사 가점')
-    slot('p_art2', '기사 — 경기도 AI 챔피언 실적 가산점', '10.20 워크숍 PPT 44장')
-    slot('p_art3', '기사 — 병무청장, AI 챔피언 간담회', '10.20 워크숍 PPT 45장 (사진)')
+    # 기사 3건 — 문구는 기사 원문 기준 (26.10.30 확인: 파이낸셜뉴스 26.9.8 · 인천일보 26.9.30 · 병무청 간담회 26.9.30)
+    art10('p_art1', 'p1', [('PART 2 · 01', 'PART 1 · 01'),
+        ('2030년까지 AI 챔피언 양성 — 전체 공무원의 약 2%', '2030년까지 AI 직접 개발·현장 적용 전문인재 육성'),
+        ('5급 조기승진 심사에 블랙 가점', '5급 조기승진 심사에 AI 고숙련자 가점'),
+        ('특별성과 포상금 · 연수·학습비 지원', '특별성과 포상금 · 연수·학습 지원'),
+        ('AI 정부 실험실 200명 → 6,000명', 'AI 정부 실험실 동시접속 200명 → 6,000명')], [('cap1.jpg', 'cap.jpg')])
+    art10('p_art2', 'p2', [('PART 2 · 02', 'PART 1 · 02'),
+        ("'실제로 만들 줄 아는 인재'를 우대", '승진에 반영되는 인사 가점')], [('cap2.jpg', 'cap.jpg')])
+    art10('p_art3', 'p3', [('PART 2 · 03', 'PART 1 · 03'),
+        ('직원의 아이디어가 기관의 과제로', '현장 의견을 실제 업무 개선으로'),
+        ('반복 문서 작업을 AI로 줄여 민원과 적극행정에 더 집중하겠습니다', '반복적인 문서·자료 작업에 AI를 활용하니 처리 시간이 크게 줄었다 — 참석 직원'),
+        ('<b>출처</b>신아일보', '<b>출처</b>신아일보 · 2026. 9. 30')], [('photo3.jpg', 'photo.jpg')])
     big('reveal_black', '그 최고 등급 BLACK,', '오늘 이 자리에', '서 있습니다', 'Black.', ['119종합상황실', '수상 7건', '27곳 출강·자문', '여러분과 같은 공무원'])
     slot('p_prof1', '강사 소개 1', '10.20 워크숍 PPT 4장 (사진·지표·수상)')
     slot('p_prof2', '강사 소개 2', '10.20 워크숍 PPT 5장 (강의·자격·언론)')
@@ -219,13 +242,13 @@ def build():
     m('ocr_flow')
     clip('v_gemini')
     G.mission('m_photo', 2, '사진을 만들고\n고쳐 봅니다', 'Gemini', ['Gemini에 **글로 사진** 만들기', '나온 사진을 **말로 고치기**', '마음에 들면 **저장**'],
-              ['세종대왕이 방에서 책을 읽는 사진', '책 대신 노트북으로 일하게 바꿔 줘', '배경을 진주성 야경으로 바꿔 줘'],
-              '저장한 사진은\n**미션 3에서 영상으로** 만듭니다', 'scale')
+              ['세종대왕이 책을 읽는 사진', '책 읽는 상황 말고 노트북하는 상황으로 교체', '낚시하는 상황으로 교체'],
+              '방금 영상에서 **강사가 쓴 문장 그대로**\n따라 쓰면 됩니다', 'scale')
     m('m_photo')
     steps2('photo_steps')
     clip('v_flow')
-    G.mission('m_flow', 3, '설치부터\n영상까지', 'Google Flow', ['Play 스토어 **「Google Flow」 설치**', '**+ New** → Image로 **말로 만들기**', '**미션 2 사진** 올려 **Animate**(영상)'],
-              ['한옥 마루에 앉은 세종대왕 그림', '세종대왕이 웃으며 손을 흔들게', '카메라가 천천히 다가가게'],
+    G.mission('m_flow', 3, '설치부터\n영상까지', 'Google Flow', ['Play 스토어 **「Google Flow」 설치**', '**+ 신규** → **이미지**로 말로 만들기', '사진 골라 **애니메이션**(영상)'],
+              ['경복궁 건설 과정을 처음부터 끝까지 이미지로 만들어 줘', '각 사진을 첫 프레임으로 경복궁 짓는 과정을 영상으로', '경남 서부청사를 짓는 과정을 미니어처 스타일로'],
               '무료 — 하루 쓸 수 있는 양이 정해져 있음\n아이폰은 앱이 없으면 **flow.google.com**', 'left')
     m('m_flow')
     phones('flow_phone')

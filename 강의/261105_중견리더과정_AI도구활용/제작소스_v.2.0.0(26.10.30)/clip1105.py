@@ -11,12 +11,14 @@ CLIPS = {
    # (시작초, 끝초, 배속)
    segs=[(0, 16, 2), (16, 56, 2.5), (56, 72, 6), (72, 96, 1.2), (96, 128, 2.5), (128, 136, 6), (136, 162, 1.2), (162, 174, 2.5), (174, 190, 6), (190, 200.6, 1)],
    steps=[(0, 'Gemini 앱 열기', 'Play 스토어 → 「Google Gemini」'), (16, '말로 사진 만들기', '“세종대왕이 책을 읽는 사진”'),
-          (96, '말로 고치기', '“책 대신 노트북으로 작업하는 상황으로”'), (162, '한 번 더', '“낚시하는 상황으로 교체”')]),
+          (96, '말로 고치기', '“책 읽는 상황 말고 노트북하는 상황으로 교체”'), (162, '한 번 더', '“낚시하는 상황으로 교체”')]),
  'v_flow': dict(
    file='Screen_Recording_20261030_210531_Flow.mp4', tag='PART 2 · 강사 시연', title='Flow로<br>이미지 → 영상',
+   # 계정 선택 화면(이메일 목록)은 가림: (시작초, 끝초, x, y, w, h) 원본 화면 기준
+   hide=[(45.3, 50.0, 0, 0, 1080, 2340), (43.5, 56.0, 0, 1760, 1080, 220)],
    segs=[(0, 80, 2.5), (80, 136, 3), (136, 170, 8), (170, 200, 1.5), (200, 270, 3), (270, 350, 10), (350, 372, 1), (372, 430, 3), (430, 455, 8), (455, 470, 1.5), (470, 485, 3), (485, 555, 10), (555, 569, 1)],
-   steps=[(0, 'Flow 앱 설치', 'Play 스토어 → 「Google Flow」'), (80, '말로 이미지 6장', '“경복궁 건설 과정을 처음부터 끝까지 3x2로”'),
-          (200, '사진을 영상으로', '“각 사진을 첫 프레임으로 영상화”'), (372, '우리 청사로', '“경남 서부청사를 짓는 과정, 미니어처 스타일”')]),
+   steps=[(0, 'Flow 앱 설치', 'Play 스토어 → 「Google Flow」'), (80, '말로 이미지 만들기', '“경복궁 건설 과정을 처음부터 끝까지 이미지로 만들어 줘”'),
+          (200, '사진을 영상으로', '“각 사진을 첫 프레임으로 경복궁 짓는 과정을 영상으로”'), (372, '우리 청사로', '“경남 서부청사를 짓는 과정을 미니어처 스타일로”')]),
 }
 
 PX, PY, PH = 1310, 60, 960          # 폰 화면 위치·높이
@@ -66,8 +68,9 @@ for id, c in CLIPS.items():
     lst = []
     for i, (a, b, k) in enumerate(segs):
         sf = f'{d}/seg{i}.mp4'; lst.append(sf)
+        hide = ''.join(f"drawbox={x}:{y}:{w}:{h}:color=0x1d1a19@1:t=fill:enable='between(t,{h0-a:.2f},{h1-a:.2f})'," for h0, h1, x, y, w, h in c.get('hide', []) if h1 > a and h0 < b)
         subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-ss', str(a), '-to', str(b), '-i', os.path.join(SRC, c['file']), '-an',
-                        '-vf', f'setpts=PTS/{k},scale={PW}:{PH},fps=30', '-c:v', 'libx264', '-crf', '16', '-preset', 'veryfast', sf], check=True)
+                        '-vf', f'{hide}setpts=PTS/{k},scale={PW}:{PH},fps=30', '-c:v', 'libx264', '-crf', '16', '-preset', 'veryfast', sf], check=True)
     open(f'{d}/seg.txt', 'w').write(''.join(f"file '{x}'\n" for x in lst))
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', f'{d}/seg.txt', '-c', 'copy', f'{d}/phone.mp4'], check=True)
     f = '[0:v][1:v]alphamerge[ph];'
