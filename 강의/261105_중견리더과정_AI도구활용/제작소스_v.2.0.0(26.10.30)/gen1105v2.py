@@ -26,6 +26,10 @@ def v(id, title, src):
     slot(id, title, src)
     ORDER[-1] = (id, 'v')
 
+def clip(id):
+    """강사 폰 화면 녹화 영상 — clip1105.py가 <출력>/<id>/out.mp4로 만듦"""
+    ORDER.append((id, 'm'))
+
 def slot(id, title, src):
     """📌 10.20 PPT에서 가져올 장 — 미리보기용 자리표시 장면"""
     b = G.B(3)
@@ -213,13 +217,13 @@ def build():
              ('03', '노트북 Gemini', '같은 계정이면\n**대화가 그대로**'), ('04', '한글에 붙이기', '복사 → **한글(HWP)**\n붙여 넣기 끝')],
             hi=3, key='종이 한 장, **다시 칠 필요 없습니다**', fx='left', head='chars', kfx='type', numsize=80)
     m('ocr_flow')
-    v('v_gemini', '🎬 Gemini 사진 편집 소개 영상', '새 영상 — 강사가 내려받은 파일로 교체 (후보 링크는 진행요약)')
+    clip('v_gemini')
     G.mission('m_photo', 2, '사진을 만들고\n고쳐 봅니다', 'Gemini', ['Gemini에 **글로 사진** 만들기', '나온 사진을 **말로 고치기**', '마음에 들면 **저장**'],
               ['세종대왕이 방에서 책을 읽는 사진', '책 대신 노트북으로 일하게 바꿔 줘', '배경을 진주성 야경으로 바꿔 줘'],
               '저장한 사진은\n**미션 3에서 영상으로** 만듭니다', 'scale')
     m('m_photo')
     steps2('photo_steps')
-    v('v_flow', '🎬 Google Flow 사진 → 영상 소개 영상', '새 영상 — 강사가 내려받은 파일로 교체 (후보 링크는 진행요약)')
+    clip('v_flow')
     G.mission('m_flow', 3, '설치부터\n영상까지', 'Google Flow', ['Play 스토어 **「Google Flow」 설치**', '**+ New** → Image로 **말로 만들기**', '**미션 2 사진** 올려 **Animate**(영상)'],
               ['한옥 마루에 앉은 세종대왕 그림', '세종대왕이 웃으며 손을 흔들게', '카메라가 천천히 다가가게'],
               '무료 — 하루 쓸 수 있는 양이 정해져 있음\n아이폰은 앱이 없으면 **flow.google.com**', 'left')

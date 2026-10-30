@@ -7,7 +7,7 @@ const { execFileSync } = require("child_process");
 const pptxgen = require("pptxgenjs");
 
 const HF = process.env.HF, HF1 = process.env.HF1, W1020 = process.env.W1020;
-const KAKAO_URL = process.env.KAKAO_URL || "";
+const KAKAO_URL = process.env.KAKAO_URL || "https://open.kakao.com/o/gKwfMOUi";   // 강사 오픈채팅 (드라이브 서부청사/영상 자료 QR)
 const OUT = process.argv[2];
 const TMP = path.join(path.dirname(path.resolve(OUT)), "_media"); fs.mkdirSync(TMP, { recursive: true });
 const X = px => px / 144, F = px => px / 2;
@@ -40,9 +40,9 @@ const NOTES = {
   photo_steps: "같이 해 보기 — STEP 1 세종대왕이 방에서 책 읽는 사진 만들기 → STEP 2 책 대신 노트북으로 일하게 고치기 (강사 폰 화면 띄워 실제로)",
   flow_phone: "Flow 폰 화면 5단계 — 설치 → + New → Image로 만들기 → 내 사진 올리기 → Animate·Download. 아이폰은 앱 없으면 flow.google.com",
   ocr_flow: "강사 실시간 시연 — 폰 Gemini 촬영 → 노트북 gemini.google.com(같은 계정) → 복사 → 한글 붙여 넣기. 예비: 멀티 컨트롤 복사·붙여 넣기",
-  v_gemini: "🎬 Gemini 사진 편집 소개 영상 자리 — 강사가 내려받은 영상으로 교체",
+  v_gemini: "🎬 강사 폰 시연 녹화 (약 1분 40초, 소리 없음 — 설명하면서) — Gemini 앱 → 세종대왕이 책 읽는 사진 → 노트북으로 → 낚시하는 상황으로. 기다리는 시간은 빠르게 넘김",
   m_photo: "미션 2 사진 — 글로 만들기 → 말로 고치기 → 저장(미션 3에서 씀) → 단톡방",
-  v_flow: "🎬 Flow 소개 영상 자리 — 강사가 내려받은 영상으로 교체",
+  v_flow: "🎬 강사 폰 시연 녹화 (약 3분, 소리 없음) — Flow 설치 → 경복궁 건설 과정 이미지 3x2 → 각 사진을 첫 프레임으로 영상 → 경남 서부청사 미니어처. 생성 대기는 빠르게 넘김",
   m_flow: "미션 3 Flow — 앱 설치 → + New → Image로 만들기 → 미션 2 사진 올려 Animate → 만드는 동안 쉬는 시간",
   break: "쉬는 시간 — 영상 완성되면 단톡방에",
   flow_show: "Flow 결과 보기 — 단톡방 영상 몇 편 화면으로, 잘 된 요청문 나누기",
