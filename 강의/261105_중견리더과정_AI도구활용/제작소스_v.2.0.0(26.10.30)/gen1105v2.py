@@ -6,8 +6,25 @@ import gen1105 as G
 OUT = G.OUT
 ORDER = []   # (id, 종류) 종류: m=모션 새로 · r=v.1 장면 재사용 · p=📌 자리표시
 
+V1 = os.environ.get('HF1', os.path.join(os.path.dirname(OUT), 'hf1105'))   # v.1 렌더 폴더
+
 def m(id): ORDER.append((id, 'm'))
-def r(id): ORDER.append((id, 'r'))
+def r(id): ORDER.append((id, 'r'))   # v.1 렌더(out.mp4) 그대로
+
+def rc(id, subs):
+    """v.1 장면을 복사해 문구만 바꾸고 다시 렌더"""
+    src = os.path.join(V1, id); dst = os.path.join(OUT, id)
+    shutil.copytree(src, dst, dirs_exist_ok=True, ignore=shutil.ignore_patterns('out.mp4', 'last.png'))
+    h = open(dst + '/index.html').read()
+    for a, b in subs:
+        assert a in h, (id, a); h = h.replace(a, b)
+    open(dst + '/index.html', 'w').write(h)
+    m(id)
+
+def v(id, title, src):
+    """🎬 새 소개 영상 자리 (강사가 내려받아 주면 교체)"""
+    slot(id, title, src)
+    ORDER[-1] = (id, 'v')
 
 def slot(id, title, src):
     """📌 10.20 PPT에서 가져올 장 — 미리보기용 자리표시 장면"""
@@ -56,9 +73,9 @@ def build():
     G.intro('pa_in', 1, '정부가 인정한<br>AI 인재', 'AI를 잘 쓰는 공무원, 이제 정부가 공식으로 인정합니다', ['AI 챔피언', '승진·포상', '다른 기관', '그리고 오늘'], 3, 'right')
     m('pa_in')
     G.cards('champ', 'PART 1 · 정부가 인정한 AI 인재', '행정안전부 AI 챔피언', 'Champion.', 'AI 챔피언 — 정부가 인증하는 AI 인재',
-            [('01', '누가', '**AI를 업무에 잘 쓰는\n공무원**을 찾아\n정부가 인증합니다'), ('02', '어떻게', '역량에 따라\n**등급**을 매깁니다\n최고 등급은 **BLACK**'),
-             ('03', '무엇이', '**승진·포상**에\n반영되기 시작했습니다')],
-            hi=2, key='AI 역량이 이제 **공식 경력**이 됩니다', fx='rise', head='blur', kfx='sweep')
+            [('01', '무엇', '**행정안전부**가\nAI를 업무에 잘 쓰는\n**공무원을 인증**합니다'), ('02', '등급', '**그린 → 블루 → 블랙**\n최고 등급은\n**BLACK**'),
+             ('03', '혜택', '**5급 조기승진**\n성과심사 가점\n포상금 · 연수 지원'), ('04', '목표', '2030년까지\n**2만 명**\n(전체 공무원 약 2%)')],
+            hi=1, key='AI 역량이 이제 **공식 경력**이 됩니다', fx='rise', head='blur', kfx='sweep', numsize=80)
     m('champ')
     slot('p_art1', '기사 — AI 잘 쓰는 공무원에 승진·포상 인센티브', '10.20 워크숍 PPT 43장 · 파이낸셜뉴스 — 5급 조기승진 성과심사 가점')
     slot('p_art2', '기사 — 경기도 AI 챔피언 실적 가산점', '10.20 워크숍 PPT 44장')
@@ -79,10 +96,12 @@ def build():
              ('03', '노트북 Gemini', '같은 계정이면\n**대화가 그대로**'), ('04', '한글에 붙이기', '복사 → **한글(HWP)**\n붙여 넣기 끝')],
             hi=3, key='종이 한 장, **다시 칠 필요 없습니다**', fx='left', head='chars', kfx='type', numsize=80)
     m('ocr_flow')
+    v('v_gemini', '🎬 Gemini 사진 편집 소개 영상', '새 영상 — 강사가 내려받은 파일로 교체 (후보 링크는 진행요약)')
     G.mission('m_photo', 2, '사진을\n바꿔 봅니다', 'Gemini', ['Gemini에서 **+ → 사진** 고르기', '**셀카** 또는 앨범 속 사진', '바꾸고 싶은 모습을 **말로**'],
               ['배경을 진주성 야경으로 바꿔 줘', '흑백 사진을 컬러로 복원해 줘', '행사 포스터로 만들어 줘'],
               '다 되면 **저장** →\n**미션 3에서 영상으로** 만듭니다', 'scale')
     m('m_photo')
+    v('v_flow', '🎬 Google Flow 사진 → 영상 소개 영상', '새 영상 — 강사가 내려받은 파일로 교체 (후보 링크는 진행요약)')
     G.mission('m_flow', 3, '그 사진이\n영상이 됩니다', 'Google Flow', ['**Flow 앱** 설치 (안 되면 labs.google/flow)', '구글 로그인 → **+ 새로 만들기**', '**미션 2 사진** 올리고 움직임을 말로'],
               ['사람이 웃으며 손을 흔들게', '눈이 내리고 하늘을 올려다보게', '카메라가 천천히 다가가게'],
               '무료 — 하루 **빠른 영상 2편** 정도\n만드는 동안 **쉬는 시간**', 'left')
@@ -95,7 +114,7 @@ def build():
     m('pc_in')
     slot('p_n01', '📰 AI 에이전트 기사', '10.20 워크숍 PPT 9장')
     slot('p_c01', '🎬 AI 에이전트란 · 코딩알려주는누나', '10.20 워크숍 PPT 10장 (영상)')
-    r('sum01'); r('ladder'); r('compare')
+    rc('sum01', [('PART 4 · 정리', 'PART 3 · 정리')]); rc('ladder', [('PART 4 · 신문물', 'PART 3 · 신문물')]); rc('compare', [('PART 4 · 신문물', 'PART 3 · 신문물')])
 
     # ── PART 4 말로 만든 업무 도구
     G.intro('pd_in', 4, '말로 만든<br>업무 도구', '코딩은 모릅니다 — 업무가 불편해서 말로 만들었습니다', ['엑셀 → 그래프', '취합 검증', '민원 답변', '오늘 이 화면'], 1, 'blur')
@@ -119,7 +138,8 @@ def build():
             [('C', '기밀', '외부 AI에\n**절대 넣지 않음**'), ('S', '민감', '엄격한 통제 안에서만\n**기관 지침 확인**'), ('O', '공개', '승인된 생성형 AI로\n**활용 가능**')],
             hi=2, key='정확한 적용은 **소속 기관 지침**을 확인하세요', fx='flip', head='chars', kfx='type', numsize=110)
     m('n2sf')
-    r('m4ans')
+    rc('m4', [('PART 2 · 미션 4', 'PART 5 · 확인은 사람이')])
+    rc('m4ans', [('PART 2 · 미션 4', 'PART 5 · 확인은 사람이')])
 
     # ── 마무리
     r('act')
