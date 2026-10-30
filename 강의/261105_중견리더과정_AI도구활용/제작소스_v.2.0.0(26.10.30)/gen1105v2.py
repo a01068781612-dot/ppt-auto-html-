@@ -53,6 +53,78 @@ def big(id, small, line1, line2, ghost, chips=None, dur=6):
     m(id)
 
 
+PHONE = os.environ.get('PHONE', os.path.join(os.path.dirname(OUT), 'phone'))   # Flow 폰 화면(fp0~fp5.png)
+
+def doc(id):
+    """OCR 실습용 — 강사가 폰으로 찍을 4줄 보고서 (흰 종이)"""
+    b = G.B(4)
+    b.add('tag t-tag', '', '<b>PART 2 · 미션 1  </b><span>폰으로 이 화면을 찍어 보세요</span>')
+    b.add('a paper', 'left:260px;top:150px;width:1400px;height:820px;background:#fbfaf7;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6);padding:80px 110px;color:#111;font-family:"Pretendard",sans-serif',
+          '<div style="text-align:center;font-size:52px;font-weight:800;letter-spacing:-.01em">AI 활용 업무 개선 추진 계획(안)</div>'
+          '<div style="margin:22px 0 46px;border-top:3px solid #111;border-bottom:1px solid #111;height:7px"></div>'
+          '<div style="font-size:38px;line-height:1.95;font-weight:500">'
+          '1. 추진 배경: 반복 문서 작업 증가로 직원 업무 부담 가중<br>'
+          '2. 추진 내용: 생성형 AI로 보고서 초안·자료 정리 시범 운영<br>'
+          '3. 추진 일정: 2026. 11. ~ 12.(2개월), 부서별 1개 업무 선정<br>'
+          '4. 기대 효과: 문서 작성 시간 30% 단축, 민원 응대에 집중</div>'
+          '<div style="position:absolute;right:110px;bottom:60px;font-size:26px;color:#666">※ 실습용 예시 문서</div>')
+    G.write(id, 4, b, 'tl.from(".t-tag",{opacity:0,duration:.5},0).from(".paper",{opacity:0,y:60,rotation:-1.5,duration:1.0,ease:"power3.out"},.2);')
+    m(id)
+
+def steps2(id):
+    """사진 만들기 → 고치기 2단계 (강사가 먼저, 같이 따라 하기)"""
+    b = G.B(7); G.header(b, 'PART 2 · 미션 2', '강사가 먼저 → 같이 따라 하기', 'Create.', '만들고, 고칩니다 — 말 두 마디면 됩니다', 'mask')
+    for i, (lab, t, say, note) in enumerate([
+        ('STEP 1', '만들기', '조선 시대 방에서 세종대왕이 책을 읽고 있는 사진을 만들어 줘', '사진이 없어도 **글로 사진**을 만듭니다'),
+        ('STEP 2', '고치기', '책 대신 노트북으로 일하는 모습으로 바꿔 줘', '마음에 안 들면 **이어서 말하면** 고쳐집니다')]):
+        x = 110 + i * 870
+        b.add(f'card cd cd{i}' + (' hi' if i == 1 else ''), f'left:{x}px;top:300px;width:830px;height:600px',
+              f'<div class="in a" style="left:44px;top:40px;font-size:26px;font-weight:800;letter-spacing:.25em;color:#ff5a1f">{lab}</div>'
+              f'<div class="in a blk" style="left:44px;top:84px;font-size:72px">{t}</div>'
+              f'<div class="in a" style="left:44px;top:220px;width:742px;background:#2a2523;border:1.5px solid #4a4340;border-radius:26px 26px 26px 6px;padding:30px 34px;font-size:36px;font-weight:700;line-height:1.45">“{say}”</div>'
+              f'<div class="in a" style="left:44px;bottom:44px;width:742px;font-size:30px;color:#a59f98;line-height:1.4">{G.bold(note)}</div>')
+    b.add('a arw', 'left:917px;top:568px;width:76px;height:76px;border-radius:50%;background:#ff5a1f;color:#111;font-size:44px;font-weight:900;display:flex;align-items:center;justify-content:center;z-index:5', '→')
+    js = G.HEAD_JS['mask'] + 'tl.from(".cd0",{opacity:0,x:-80,duration:.7,ease:"power3.out"},.6).from(".arw",{opacity:0,scale:0,duration:.4,ease:"back.out(2)"},1.4).from(".cd1",{opacity:0,x:80,duration:.7,ease:"power3.out"},1.6).from(".cd .in",{opacity:0,y:16,duration:.4,stagger:.1},.9)'
+    js += '.to(".cd.hi",{boxShadow:"0 0 0 10px rgba(255,90,31,.18), 0 30px 70px rgba(255,90,31,.25)",y:-10,duration:.6},3.0);'
+    G.write(id, 7, b, js)
+    m(id)
+
+def phones(id):
+    """Flow 폰 화면 5단계 (Play 스토어 실제 화면 + Google Play 공식 앱 스크린샷)"""
+    items = [('fp0.png', '설치', 'Play 스토어<br>「Google Flow」 설치'), ('fp1.png', '새로 만들기', '구글 로그인 →<br><b>+ New</b>'),
+             ('fp2.png', '말로 만들기', '<b>Image</b> 고르고<br>만들 장면을 입력'), ('fp3.png', '내 사진 올리기', '<b>+</b> → 갤러리에서<br>미션 2 사진'),
+             ('fp5.png', '영상으로', '<b>Animate</b> → 영상<br><b>Download</b> → 카톡')]
+    b = G.B(8); G.header(b, 'PART 2 · 미션 3', '폰에서 이렇게 — Google Flow', 'Flow.', '설치부터 이미지·영상까지, 폰 화면으로', 'chars')
+    for i, (img, t, cap) in enumerate(items):
+        x = 110 + i * 344
+        b.add(f'a ph ph{i}', f'left:{x}px;top:270px;width:320px',
+              f'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="width:46px;height:46px;border-radius:50%;background:{"#ff5a1f" if i==4 else "#3a3533"};color:{"#111" if i==4 else "#f4f4f2"};font-size:26px;font-weight:900;display:flex;align-items:center;justify-content:center">{i+1}</span><span style="font-size:32px;font-weight:800">{t}</span></div>'
+              f'<div style="width:320px;height:520px;border-radius:28px;overflow:hidden;background:#fff;border:6px solid #2a2523"><img src="{img}" style="width:100%;height:100%;object-fit:cover;object-position:top"/></div>'
+              f'<div style="margin-top:14px;font-size:24px;line-height:1.4;color:#d6d2c9">{cap}</div>')
+    b.add('a src', 'left:110px;top:1040px;font-size:18px;color:#8a847e', '화면: Google Play 「Google Flow」 페이지 · 앱 공식 스크린샷(영문 화면) — 실제 앱은 한국어로 보일 수 있음 · 아이폰은 앱이 없으면 flow.google.com')
+    js = G.HEAD_JS['chars'] + 'tl.from(".ph",{opacity:0,y:80,duration:.6,stagger:.35,ease:"power3.out"},.7).from(".src",{opacity:0,duration:.5},2.6);'
+    G.write(id, 8, b, js, assets=[os.path.join(PHONE, it[0]) for it in items])
+    m(id)
+
+
+M1020 = os.environ.get('M1020', '')   # 10.20 워크숍 motion_html 폴더 (정리 장면 원본)
+
+def rc10(id, subs):
+    """10.20 워크숍 장면 HTML(텍스트만 git에 있음)을 가져와 문구만 바꾸고 렌더"""
+    dst = os.path.join(OUT, id); os.makedirs(dst, exist_ok=True)
+    h = open(os.path.join(M1020, 'st', id, 'index.html')).read()
+    for a, b in subs:
+        assert a in h, (id, a); h = h.replace(a, b)
+    open(dst + '/index.html', 'w').write(h)
+    for f in ['hyperframes.json', 'meta.json', 'package.json', 'bg.png']: shutil.copy(os.path.join(G.HERE, f), dst)
+    for f in ['gsap.min.js', 'PretendardVariable.woff2']: shutil.copy(os.path.join(G.LIB, f), dst)
+    m(id)
+
+def page(id, n):
+    """국토부 실습 PPT(9.7판) 원본 장을 그림으로 그대로"""
+    ORDER.append((id, 'i%d' % n))
+
+
 def build():
     # ── 오프닝
     r('cover')
@@ -91,21 +163,24 @@ def build():
               ['사진 속 글자를 텍스트로만 줘', '표로 정리해 줘', '세 줄로 요약해 줘'],
               '종이로 온 공문·취합 표\n**다시 타자 치지 마세요**', 'up')
     m('m_ocr')
+    doc('ocr_doc')
     G.cards('ocr_flow', 'PART 2 · 미션 1', '강사 시연', 'Copy.', '폰에서 찍고, 노트북 한글에 붙입니다',
             [('01', '폰으로 찍기', 'Gemini 카메라로\n**종이 공문** 촬영'), ('02', '텍스트만', '“글자를\n**텍스트로만 줘**”'),
              ('03', '노트북 Gemini', '같은 계정이면\n**대화가 그대로**'), ('04', '한글에 붙이기', '복사 → **한글(HWP)**\n붙여 넣기 끝')],
             hi=3, key='종이 한 장, **다시 칠 필요 없습니다**', fx='left', head='chars', kfx='type', numsize=80)
     m('ocr_flow')
     v('v_gemini', '🎬 Gemini 사진 편집 소개 영상', '새 영상 — 강사가 내려받은 파일로 교체 (후보 링크는 진행요약)')
-    G.mission('m_photo', 2, '사진을\n바꿔 봅니다', 'Gemini', ['Gemini에서 **+ → 사진** 고르기', '**셀카** 또는 앨범 속 사진', '바꾸고 싶은 모습을 **말로**'],
-              ['배경을 진주성 야경으로 바꿔 줘', '흑백 사진을 컬러로 복원해 줘', '행사 포스터로 만들어 줘'],
-              '다 되면 **저장** →\n**미션 3에서 영상으로** 만듭니다', 'scale')
+    G.mission('m_photo', 2, '사진을 만들고\n고쳐 봅니다', 'Gemini', ['Gemini에 **글로 사진** 만들기', '나온 사진을 **말로 고치기**', '마음에 들면 **저장**'],
+              ['세종대왕이 방에서 책을 읽는 사진', '책 대신 노트북으로 일하게 바꿔 줘', '배경을 진주성 야경으로 바꿔 줘'],
+              '저장한 사진은\n**미션 3에서 영상으로** 만듭니다', 'scale')
     m('m_photo')
+    steps2('photo_steps')
     v('v_flow', '🎬 Google Flow 사진 → 영상 소개 영상', '새 영상 — 강사가 내려받은 파일로 교체 (후보 링크는 진행요약)')
-    G.mission('m_flow', 3, '그 사진이\n영상이 됩니다', 'Google Flow', ['**Flow 앱** 설치 (안 되면 labs.google/flow)', '구글 로그인 → **+ 새로 만들기**', '**미션 2 사진** 올리고 움직임을 말로'],
-              ['사람이 웃으며 손을 흔들게', '눈이 내리고 하늘을 올려다보게', '카메라가 천천히 다가가게'],
-              '무료 — 하루 **빠른 영상 2편** 정도\n만드는 동안 **쉬는 시간**', 'left')
+    G.mission('m_flow', 3, '설치부터\n영상까지', 'Google Flow', ['Play 스토어 **「Google Flow」 설치**', '**+ New** → Image로 **말로 만들기**', '**미션 2 사진** 올려 **Animate**(영상)'],
+              ['한옥 마루에 앉은 세종대왕 그림', '세종대왕이 웃으며 손을 흔들게', '카메라가 천천히 다가가게'],
+              '무료 — 하루 쓸 수 있는 양이 정해져 있음\n아이폰은 앱이 없으면 **flow.google.com**', 'left')
     m('m_flow')
+    phones('flow_phone')
     r('break')
     big('flow_show', '쉬는 동안 만들어진', '여러분의 영상,', '같이 봅니다', 'Video.', ['단톡방', '몇 편 골라', '화면으로', '요청문 나누기'], dur=5)
 
@@ -114,16 +189,26 @@ def build():
     m('pc_in')
     slot('p_n01', '📰 AI 에이전트 기사', '10.20 워크숍 PPT 9장')
     slot('p_c01', '🎬 AI 에이전트란 · 코딩알려주는누나', '10.20 워크숍 PPT 10장 (영상)')
-    rc('sum01', [('PART 4 · 정리', 'PART 3 · 정리')]); rc('ladder', [('PART 4 · 신문물', 'PART 3 · 신문물')]); rc('compare', [('PART 4 · 신문물', 'PART 3 · 신문물')])
+    rc('sum01', [('PART 4 · 정리', 'PART 3 · 정리')]); rc('ladder', [('PART 4 · 신문물', 'PART 3 · 신문물')])
+    for n, t in (('06', 'Aside'), ('07', 'Muse'), ('08', 'Dots')):
+        slot('p_n' + n, f'📰 {t} 기사', '10.20 워크숍 PPT'); slot('p_c' + n, f'🎬 {t} 영상', '10.20 워크숍 PPT')
+        rc10('sum' + n, [('PART 1 · 정리', 'PART 3 · 정리')])
+    rc('compare', [('PART 4 · 신문물', 'PART 3 · 신문물')])
 
     # ── PART 4 말로 만든 업무 도구
     G.intro('pd_in', 4, '말로 만든<br>업무 도구', '코딩은 모릅니다 — 업무가 불편해서 말로 만들었습니다', ['엑셀 → 그래프', '취합 검증', '민원 답변', '오늘 이 화면'], 1, 'blur')
     m('pd_in')
+    page('mo06', 6); page('mo07', 7); page('mo08', 8); page('mo09', 9); page('mo10', 10)
     G.cards('tools', 'PART 4 · 말로 만든 업무 도구', '강사가 업무에 쓰려고 만든 것', 'Made.', '업무가 불편해서, 말로 만들었습니다',
             [('01', '엑셀 → 그래프', '엑셀을 넣으면\n**보고서용 그래프**\n국토부 실습 도구'), ('02', '취합 검증', '여러 곳 취합 파일의\n**틀린 숫자** 찾기\n국토부 실습 도구'),
              ('03', '민원 답변', '**AI 기반 소방 민원\n답변 자동화**\n수상작'), ('04', '오늘 이 화면', '움직이는 강의 화면도\n**말로 주문**했습니다')],
             hi=1, key='지금부터 **실제 화면**으로 보여 드립니다', fx='wipe', head='mask', kfx='type', numsize=80)
     m('tools')
+    page('mo12', 12); page('mo20', 20)
+    big('demo1', '지금부터 제 노트북에서', '직접', '보여 드립니다', 'Demo.', ['엑셀 올리기', '그래프 고르기', 'PNG 저장', '한글에 붙이기'], dur=5)
+    page('mo30', 30)
+    big('demo2', '여러 곳에서 온 취합 파일,', '틀린 숫자를', '찾아 줍니다', 'Check.', ['파일 여러 개', '오류 검증', '자동 병합', '완성본 저장'], dur=5)
+    page('mo45', 45)
 
     # ── PART 5 우리 사정은 우리가 안다
     G.intro('pe_in', 5, '우리 사정은<br>우리가 안다', '사무실 PC에서 안 열리죠 — 저도 그렇습니다', ['막힌 사이트', '넣으면 안 되는 것', '정부 방향', '확인은 사람이'], 1, 'spin')

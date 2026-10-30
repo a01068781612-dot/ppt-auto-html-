@@ -17,8 +17,9 @@ const b64 = f => "image/png;base64," + fs.readFileSync(f).toString("base64");
 const order = JSON.parse(fs.readFileSync(path.join(HF, "order.json"), "utf8"));
 
 // 10.20 워크숍 PPT에서 가져올 장 (장 번호)
-const W = { p_vintro: 2, p_intro: 3, p_prof1: 4, p_prof2: 5, p_n01: 9, p_c01: 10, p_art1: 43, p_art2: 44, p_art3: 45, p_promo: 50 };
-const FULLVIDEO = new Set(["p_intro", "p_c01", "p_promo"]);   // 영상 장 = 검은 바탕 전체화면
+const W = { p_vintro: 2, p_intro: 3, p_prof1: 4, p_prof2: 5, p_n01: 9, p_c01: 10, p_n06: 25, p_c06: 26, p_n07: 31, p_c07: 32, p_n08: 34, p_c08: 35, p_art1: 43, p_art2: 44, p_art3: 45, p_promo: 50 };
+const MOLIT = process.env.MOLIT;   // 국토부 실습 PPT 장 그림 폴더 (mo06-006.png …)
+const FULLVIDEO = new Set(["p_intro", "p_c01", "p_c06", "p_c07", "p_c08", "p_promo"]);   // 영상 장 = 검은 바탕 전체화면
 
 const NOTES = {
   cover: "표지 — 제23기 중견리더과정 · 공무원을 위한 AI 도구 활용법",
@@ -35,16 +36,29 @@ const NOTES = {
   p_prof1: "강사 소개 1", p_prof2: "강사 소개 2 — 자세한 자료는 ssca1612.pages.dev",
   pb_in: "PART 2 — 폰을 꺼내 주세요. 막히면 옆 사람과",
   m_ocr: "미션 1 OCR — 교육생: Gemini 카메라로 공문 찍기 → “텍스트로만 줘” → 복사 → 단톡방에 붙이기",
+  ocr_doc: "OCR 실습 문서 — 강사가 폰으로 이 화면을 찍음(교육생도 같이). 그다음 노트북 Gemini 창으로",
+  photo_steps: "같이 해 보기 — STEP 1 세종대왕이 방에서 책 읽는 사진 만들기 → STEP 2 책 대신 노트북으로 일하게 고치기 (강사 폰 화면 띄워 실제로)",
+  flow_phone: "Flow 폰 화면 5단계 — 설치 → + New → Image로 만들기 → 내 사진 올리기 → Animate·Download. 아이폰은 앱 없으면 flow.google.com",
   ocr_flow: "강사 실시간 시연 — 폰 Gemini 촬영 → 노트북 gemini.google.com(같은 계정) → 복사 → 한글 붙여 넣기. 예비: 멀티 컨트롤 복사·붙여 넣기",
   v_gemini: "🎬 Gemini 사진 편집 소개 영상 자리 — 강사가 내려받은 영상으로 교체",
-  m_photo: "미션 2 사진 — 배경 바꾸기·흑백 복원·포스터. 다 되면 저장(미션 3에서 씀) → 단톡방",
+  m_photo: "미션 2 사진 — 글로 만들기 → 말로 고치기 → 저장(미션 3에서 씀) → 단톡방",
   v_flow: "🎬 Flow 소개 영상 자리 — 강사가 내려받은 영상으로 교체",
-  m_flow: "미션 3 Flow — 앱 설치(안 되면 labs.google/flow) → 로그인 → 새로 만들기 → 미션 2 사진 + 움직임 → 빠른 품질 → 만드는 동안 쉬는 시간",
+  m_flow: "미션 3 Flow — 앱 설치 → + New → Image로 만들기 → 미션 2 사진 올려 Animate → 만드는 동안 쉬는 시간",
   break: "쉬는 시간 — 영상 완성되면 단톡방에",
   flow_show: "Flow 결과 보기 — 단톡방 영상 몇 편 화면으로, 잘 된 요청문 나누기",
   pc_in: "PART 3 — 방금 쉬는 동안에도 AI가 일했습니다",
   p_n01: "📰 AI 에이전트 기사", p_c01: "🎬 AI 에이전트란 · 코딩알려주는누나",
-  sum01: "정리 — 프로그램에 두뇌가 생겼습니다", ladder: "신문물 지도 1분", compare: "우리 일에 빗대면 — 시간 없으면 넘김",
+  sum01: "정리 — 프로그램에 두뇌가 생겼습니다",
+  p_n06: "📰 Aside — 웹을 직접 움직이는 AI (한국인 청년 3명 창업)", p_c06: "🎬 Aside · 서퍼스", sum06: "정리 — Aside",
+  p_n07: "📰 Muse — 생활을 대신하는 AI", p_c07: "🎬 Muse · Play with AI Lab", sum07: "정리 — Muse",
+  p_n08: "📰 Dots — 24시간 일하는 비서", p_c08: "🎬 Dots 쇼츠", sum08: "정리 — Dots",
+  mo06: "국토부 실습 원본 — 반복되는 엑셀 취합", mo07: "AI 도입의 현실적 벽 — 개인정보 외부 업로드 불가 · 업무망 접속 차단 · 프로그램 설치 승인. “우리 사무실 얘기죠?”",
+  mo08: "왜 HTML인가 — AI를 못 쓰는 환경이라서 HTML: 인터넷 창만 있으면 실행, 파일 하나로 공유, 내 PC 안에서 계산",
+  mo09: "HTML의 새로운 활용 — 화면 + 계산 기능 = 작은 프로그램", mo10: "올바른 활용 범위 — 팀 반복 업무는 적합, 다수 동시 접속·공식 시스템은 부적합",
+  mo12: "도구 1 엑셀 시각화 — 엑셀 등록 → 항목 선택 → 차트 생성 → 이미지 저장", mo20: "Before vs After",
+  demo1: "▶ 노트북 전환: 1.도구1_시각화 자료만들기.html + 4.test1 엑셀 → 그래프 3개 PNG → 한글 표에 붙이기",
+  mo30: "도구 3 취합·검증기 — 여러 기관 다른 양식 → 오류 검증 → 자동 병합",
+  demo2: "▶ 노트북 전환: 3.도구3_취합검증기.html + test 파일 여러 개", mo45: "혼자서 해 보기 — 이렇게 말하면 만들어 줍니다 (요청문 예시)", ladder: "신문물 지도 1분", compare: "우리 일에 빗대면 — 시간 없으면 넘김",
   pd_in: "PART 4 — 코딩은 모릅니다. 업무가 불편해서 말로 만들었습니다",
   tools: "업무 도구 소개 → 노트북으로 전환해 국토부 도구 1·3 실제 시연. (선택) 「작업」 모드",
   pe_in: "PART 5 — 사무실 PC에서 안 열리죠. 저도 그렇습니다",
@@ -58,9 +72,9 @@ const NOTES = {
 };
 const SEC = id => (["cover", "p_vintro", "p_intro", "room", "toc2"].includes(id) ? "오프닝" :
   ["pa_in", "champ", "p_art1", "p_art2", "p_art3", "reveal_black", "p_prof1", "p_prof2"].includes(id) ? "PART 1 정부가 인정한 AI 인재" :
-  ["pb_in", "m_ocr", "ocr_flow", "v_gemini", "m_photo", "v_flow", "m_flow", "break", "flow_show"].includes(id) ? "PART 2 폰으로 해 보기" :
-  ["pc_in", "p_n01", "p_c01", "sum01", "ladder", "compare"].includes(id) ? "PART 3 요즘 AI 트렌드" :
-  ["pd_in", "tools"].includes(id) ? "PART 4 말로 만든 업무 도구" :
+  ["pb_in", "m_ocr", "ocr_doc", "ocr_flow", "v_gemini", "m_photo", "photo_steps", "v_flow", "m_flow", "flow_phone", "break", "flow_show"].includes(id) ? "PART 2 폰으로 해 보기" :
+  ["pc_in", "p_n01", "p_c01", "sum01", "ladder", "p_n06", "p_c06", "sum06", "p_n07", "p_c07", "sum07", "p_n08", "p_c08", "sum08", "compare"].includes(id) ? "PART 3 요즘 AI 트렌드" :
+  ["pd_in", "mo06", "mo07", "mo08", "mo09", "mo10", "tools", "mo12", "mo20", "demo1", "mo30", "demo2", "mo45"].includes(id) ? "PART 4 말로 만든 업무 도구" :
   ["pe_in", "blocked", "safe2", "n2sf", "m4", "m4ans"].includes(id) ? "PART 5 우리 사정은 우리가 안다" : "마무리");
 
 const dur = f => Math.round(parseFloat(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f]).toString()) * 1000);
@@ -102,6 +116,13 @@ for (const [id, kind] of order) {
     s.addText(note.replace(/ 자리.*$/, ""), { x: X(190), y: X(310), w: X(1540), h: X(200), fontSize: F(76), bold: true, color: COL.fg, fontFace: "Pretendard", margin: 0, valign: "top" });
     s.addText("강사님이 내려받은 영상 파일을 이 장에 넣어 주세요 (전체 화면 · 자동 재생)", { x: X(190), y: X(600), w: X(1540), h: X(100), fontSize: F(34), color: COL.cap, fontFace: "Pretendard", margin: 0 });
     s.addNotes(note); LOG.push(`${N}\t${id}\t📌 새 영상 자리`); continue;
+  }
+  if (kind[0] === "i") {
+    const n = parseInt(kind.slice(1)), f = path.join(MOLIT, `mo${String(n).padStart(2, "0")}-${String(n).padStart(3, "0")}.png`);
+    const s = pres.addSlide({ masterName: "MOTION", sectionTitle: sec });
+    s.background = { color: "FFFFFF" };
+    s.addImage({ path: f, x: 0, y: 0, w: 13.333, h: 7.5 });
+    s.addNotes(note + " (국토부 AI 실습교육 원본 " + n + "장)"); LOG.push(`${N}\t${id}\t국토부 ${n}장`); continue;
   }
   let mp4, poster, name;
   if (kind === "p") {
