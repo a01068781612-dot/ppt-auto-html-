@@ -182,6 +182,131 @@ def art10(id, src, subs, imgs):
     for a, b in imgs: shutil.copy(os.path.join(ART, a), os.path.join(dst, b))
     m(id)
 
+APPS = os.environ.get('APPS', os.path.join(os.path.dirname(OUT), 'apps'))   # Play 스토어 앱 아이콘·공식 스크린샷 (<앱>_icon.png, <앱>_s0~3.png)
+
+def phone_img(img, w, h, rot=0, extra=''):
+    return (f'<div style="width:{w}px;height:{h}px;border-radius:30px;overflow:hidden;border:6px solid #2a2523;background:#fff;'
+            f'box-shadow:0 30px 80px rgba(0,0,0,.6);transform:rotate({rot}deg);{extra}"><img src="{img}" style="width:100%;height:100%;object-fit:cover;object-position:top"/></div>')
+
+def what_html(id):
+    """HTML이 뭔가요 — 파일 하나 → 더블클릭 → 인터넷 창에 도구가 뜸"""
+    b = G.B(7); G.header(b, 'PART 4 · HTML이 뭔가요?', '어렵지 않습니다', 'HTML.', '인터넷 창으로 여는 「파일 하나」', 'mask')
+    b.add('a f1', 'left:150px;top:360px;width:330px;height:420px;border-radius:24px;background:#1d1a19;border:2px solid #3a3533;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px',
+          '<div style="width:150px;height:190px;border-radius:14px;background:#f4f4f2;position:relative;display:flex;align-items:flex-end;justify-content:center;padding-bottom:22px;box-sizing:border-box">'
+          '<div style="position:absolute;right:0;top:0;width:44px;height:44px;background:#c9c4bd;border-bottom-left-radius:12px"></div>'
+          '<span style="font-size:34px;font-weight:900;color:#ff5a1f">.html</span></div>'
+          '<div style="font-size:30px;font-weight:800">도구1_시각화.html</div><div style="font-size:24px;color:#a59f98">메일·메신저로 받은 파일 하나</div>')
+    b.add('a ar1', 'left:520px;top:520px;font-size:70px;font-weight:900;color:#ff5a1f', '→')
+    b.add('a f2', 'left:620px;top:470px;width:200px;text-align:center', '<div style="font-size:84px">🖱️</div><div style="font-size:30px;font-weight:800;margin-top:10px">더블클릭</div>')
+    b.add('a ar2', 'left:850px;top:520px;font-size:70px;font-weight:900;color:#ff5a1f', '→')
+    b.add('a f3', 'left:960px;top:330px', frame('tool1.png', 850, 520, '크롬·엣지 — 인터넷 창'))
+    b.add('a nt', 'left:150px;top:900px;width:1660px;font-size:34px;font-weight:700',
+          G.bold('설치도, 서버도, 인터넷 연결도 필요 없습니다 — **인터넷 창(크롬·엣지)이 있는 PC면 어디서나** 열립니다'))
+    js = G.HEAD_JS['mask'] + ('tl.from(".f1",{opacity:0,y:60,duration:.7,ease:"power3.out"},.7).from(".ar1",{opacity:0,x:-30,duration:.4},1.3)'
+          '.from(".f2",{opacity:0,scale:.5,duration:.5,ease:"back.out(2)"},1.5).from(".ar2",{opacity:0,x:-30,duration:.4},1.9)'
+          '.from(".f3",{opacity:0,scale:.9,y:40,duration:.8,ease:"power3.out"},2.1).from(".nt",{opacity:0,y:20,duration:.6},3.0);')
+    G.write(id, 7, b, js, assets=[os.path.join(TOOLS, 'tool1.png')])
+    m(id)
+
+def fullshot(id, tag, label, img, cap):
+    """도구 결과 화면을 크게 — 화면 비율에 맞춰 가운데"""
+    from PIL import Image as _I
+    iw, ih = _I.open(os.path.join(TOOLS, img)).size
+    h = 860; w = min(1700, int((h - 48) * iw / ih))
+    b = G.B(6)
+    b.add('tag t-tag', '', f'<b>{tag}  </b><span>{cap}</span>')
+    b.add('a fs', f'left:{(1920 - w) // 2}px;top:160px', frame(img, w, h, label))
+    js = 'tl.from(".t-tag",{opacity:0,x:-30,duration:.5},0).from(".fs",{opacity:0,y:50,scale:.97,duration:.9,ease:"power3.out"},.2);'
+    G.write(id, 6, b, js, assets=[os.path.join(TOOLS, img)])
+    m(id)
+
+def app(id, key, name, maker, when, steps, free, warn, shots, ghost):
+    """PART 5 앱 소개 — 왼쪽 설명, 오른쪽 실제 앱 화면 2장"""
+    b = G.B(8)
+    b.add('tag t-tag', '', f'<b>PART 5 · AI 앱 서랍  </b><span>{maker}</span>')
+    b.add('ghost t-ghost', 'right:110px;top:62px;font-size:110px;text-align:right', ghost)
+    b.add('a ic', 'left:110px;top:140px', f'<img src="{key}_icon.png" style="width:120px;height:120px;border-radius:28px;display:block"/>')
+    b.add('sq', '', ''); b.items[-1] = b.items[-1].replace('class="sq clip"', 'data-sq=".nm" class="sq clip"')
+    b.add('a nm blk', 'left:260px;top:150px;font-size:78px;line-height:1.1;white-space:nowrap', name)
+    b.add('a wh', 'left:110px;top:310px;width:960px;font-size:38px;font-weight:700;line-height:1.4', G.bold(when))
+    for i, st in enumerate(steps):
+        b.add(f'a st st{i}', f'left:110px;top:{470 + i * 100}px;width:960px;height:84px;display:flex;align-items:center;gap:24px',
+              f'<div style="flex:none;width:64px;height:64px;border-radius:50%;border:2.5px solid {"#ff5a1f" if i == len(steps)-1 else "#55504c"};display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:{"#ff5a1f" if i == len(steps)-1 else "#f4f4f2"}">{i+1}</div>'
+              f'<div style="font-size:34px;font-weight:700">{G.bold(st)}</div>')
+    b.add('a fr', 'left:110px;top:800px;display:flex;gap:16px;align-items:center',
+          f'<span class="pill" style="background:#ff5a1f;color:#111;font-size:26px;font-weight:800;padding:10px 22px;border-radius:40px">무료</span><span style="font-size:28px;color:#d6d2c9">{free}</span>')
+    b.add('a wn', 'left:110px;top:880px;width:960px;font-size:26px;color:#a59f98;line-height:1.4', '⚠ ' + G.bold(warn))
+    b.add('a p1', 'left:1150px;top:170px', phone_img(f'{key}_s{shots[0]}.png', 330, 640, -3))
+    b.add('a p2', 'left:1470px;top:250px', phone_img(f'{key}_s{shots[1]}.png', 330, 640, 3))
+    b.add('a src', 'left:1150px;top:960px;font-size:18px;color:#8a847e', '화면: Google Play 공식 스크린샷')
+    js = ('tl.from(".t-tag",{opacity:0,x:-30,duration:.5},0).from(".t-ghost",{opacity:0,x:80,duration:1.1},.2)'
+          '.from(".ic",{opacity:0,scale:.3,rotation:-20,duration:.6,ease:"back.out(2)"},.2).from(".nm",{opacity:0,x:-40,duration:.7,ease:"power3.out"},.35)'
+          '.from(".wh",{opacity:0,y:20,duration:.6},.8).from(".st",{opacity:0,x:-40,duration:.5,stagger:.25},1.2)'
+          '.from(".fr,.wn",{opacity:0,y:20,duration:.5,stagger:.15},2.2)'
+          '.from(".p1",{opacity:0,y:120,duration:.8,ease:"power3.out"},.6).from(".p2",{opacity:0,y:120,duration:.8,ease:"power3.out"},.85).from(".src",{opacity:0,duration:.5},1.6);')
+    G.write(id, 8, b, js, assets=[os.path.join(APPS, f'{key}_icon.png')] + [os.path.join(APPS, f'{key}_s{i}.png') for i in shots])
+    m(id)
+
+APPLIST = [('clova', '클로바노트', '회의 기록', '회의·면담 녹음 → 글 → 요약'), ('voicenote', '갤럭시 녹음', '녹음 바로 요약', '설치 없이 기본 앱'),
+           ('notebook', 'Gemini Notebook', '자료 정리 · PPT', '지침·보고서 PDF → 요약·슬라이드'), ('perplexity', '퍼플렉시티', '근거 찾기', '출처 링크 달린 답')]
+
+def appmap(id):
+    """상황별 앱 지도"""
+    b = G.B(7); G.header(b, 'PART 5 · AI 앱 서랍', '상황별로 하나씩', 'Apps.', '이럴 땐, 이 앱', 'chars')
+    for i, (k, nm, sit, desc) in enumerate(APPLIST):
+        x = 110 + (i % 2) * 870; y = 300 + (i // 2) * 330
+        b.add(f'card cd cd{i}', f'left:{x}px;top:{y}px;width:830px;height:290px',
+              f'<div class="in a" style="left:40px;top:36px;font-size:26px;font-weight:800;letter-spacing:.2em;color:#ff5a1f">{sit}</div>'
+              f'<img class="in a" src="{k}_icon.png" style="left:40px;top:90px;width:140px;height:140px;border-radius:32px"/>'
+              f'<div class="in a" style="left:210px;top:100px;font-size:58px;font-weight:900;white-space:nowrap">{nm}</div>'
+              f'<div class="in a" style="left:210px;top:182px;font-size:30px;color:#a59f98">{desc}</div>')
+    js = G.HEAD_JS['chars'] + G.CARD_FX['zoom'] + G.INNER_FX
+    G.write(id, 7, b, js, assets=[os.path.join(APPS, f'{k}_icon.png') for k, *_ in APPLIST])
+    m(id)
+
+def applinks(id):
+    """단톡방·QR — 바로 설치"""
+    import qrcode
+    urls = {'clova': 'com.naver.clova.minute', 'voicenote': 'com.sec.android.app.voicenote', 'notebook': 'com.google.android.apps.labs.language.tailwind', 'perplexity': 'ai.perplexity.app.android'}
+    b = G.B(6); G.header(b, 'PART 5 · AI 앱 서랍', '폰 카메라로 찍으면 설치 화면', 'Install.', '지금 바로 깔아 두세요', 'mask')
+    assets = []
+    for i, (k, nm, sit, desc) in enumerate(APPLIST):
+        q = qrcode.make(f'https://play.google.com/store/apps/details?id={urls[k]}', border=1, box_size=10).convert('RGB').resize((300, 300))
+        f = os.path.join(OUT, id + f'_{k}_qr.png'); q.save(f); assets.append(f)
+        x = 110 + i * 435
+        b.add(f'card cd cd{i}', f'left:{x}px;top:300px;width:400px;height:560px',
+              f'<img class="in a" src="{k}_icon.png" style="left:40px;top:34px;width:80px;height:80px;border-radius:20px"/>'
+              f'<div class="in a" style="left:136px;top:44px;font-size:34px;font-weight:900;white-space:nowrap">{nm}</div>'
+              f'<div class="in a" style="left:136px;top:90px;font-size:22px;color:#ff5a1f;font-weight:700">{sit}</div>'
+              f'<img class="in a" src="{id}_{k}_qr.png" style="left:50px;top:150px;width:300px;height:300px;border-radius:12px"/>'
+              f'<div class="in a" style="left:40px;top:478px;width:320px;font-size:22px;color:#a59f98;text-align:center">Play 스토어</div>')
+    b.add('a nt', 'left:110px;top:900px;font-size:30px;font-weight:700', G.bold('링크는 **단톡방에도** 올려 드립니다 · 아이폰은 App Store에서 같은 이름으로'))
+    js = G.HEAD_JS['mask'] + G.CARD_FX['rise'] + G.INNER_FX + 'tl.from(".nt",{opacity:0,y:20,duration:.5},2.0);'
+    G.write(id, 6, b, js, assets=[os.path.join(APPS, f'{k}_icon.png') for k, *_ in APPLIST] + assets)
+    for f in assets: os.remove(f)
+    m(id)
+
+def three_only():
+    """신문물 지도·비교표에서 Hermes·Jev를 빼고 오늘 소개하는 Aside·Muse·Dots만"""
+    import re as _re
+    f = os.path.join(OUT, 'ladder', 'index.html'); h = open(f).read()
+    h = _re.sub(r'<div class="step s1 clip".*?</div>\n', '', h); h = _re.sub(r'<div class="step s3 clip".*?</div>\n', '', h)
+    for cls, (left, top, hh, num) in {'s2': (110, 560, 380, '01'), 's4': (690, 440, 500, '02'), 's5 last': (1270, 320, 620, '03')}.items():
+        h = _re.sub(rf'(<div class="step {cls} clip" style=")left:\d+px;top:\d+px;height:\d+px(".*?<b>)\d+(</b>)',
+                    lambda m: f'{m.group(1)}left:{left}px;top:{top}px;height:{hh}px;width:540px{m.group(2)}{num}{m.group(3)}', h, count=1)
+    open(f, 'w').write(h)
+    f = os.path.join(OUT, 'compare', 'index.html'); h = open(f).read()
+    h = h.replace('<span class="ch">다</span><span class="ch">섯</span>', '<span class="ch">세</span>')
+    rows = _re.findall(r'<div class="a tr( last)? clip" style="left:110px;top:\d+px;.*?\n', h)
+    lines = [l for l in h.split('\n') if 'class="a tr' in l]
+    keep = [l for l in lines if '>Aside<' in l or '>Muse<' in l or '>Dots<' in l]
+    for l in lines:
+        if l not in keep: h = h.replace(l + '\n', '')
+    for i, l in enumerate(keep):
+        nl = _re.sub(r'top:\d+px;width:1700px;height:124px', f'top:{360 + i * 170}px;width:1700px;height:170px', l, count=1).replace('height:124px', 'height:170px')
+        h = h.replace(l, nl)
+    open(f, 'w').write(h)
+
 def page(id, n):
     """국토부 실습 PPT(9.7판) 원본 장을 그림으로 그대로"""
     ORDER.append((id, 'i%d' % n))
@@ -260,66 +385,70 @@ def build():
     m('pc_in')
     slot('p_n01', '📰 AI 에이전트 기사', '10.20 워크숍 PPT 9장')
     slot('p_c01', '🎬 AI 에이전트란 · 코딩알려주는누나', '10.20 워크숍 PPT 10장 (영상)')
-    rc('sum01', [('PART 4 · 정리', 'PART 3 · 정리')]); rc('ladder', [('PART 4 · 신문물', 'PART 3 · 신문물')])
+    rc('sum01', [('PART 4 · 정리', 'PART 3 · 정리')]); rc('ladder', [('PART 4 · 신문물', 'PART 3 · 신문물'), ('시간 순서로 본 다섯 가지 신문물', '오늘 볼 신문물 세 가지')])
     for n, t in (('06', 'Aside'), ('07', 'Muse'), ('08', 'Dots')):
         slot('p_n' + n, f'📰 {t} 기사', '10.20 워크숍 PPT'); slot('p_c' + n, f'🎬 {t} 영상', '10.20 워크숍 PPT')
-        rc10('sum' + n, [('PART 1 · 정리', 'PART 3 · 정리')])
-    rc('compare', [('PART 4 · 신문물', 'PART 3 · 신문물')])
+        rc10('sum' + n, [('PART 1 · 정리', 'PART 3 · 정리'), ({'06': '② Aside', '07': '④ Muse', '08': '⑤ Dots'}[n], {'06': '① Aside', '07': '② Muse', '08': '③ Dots'}[n])])
+    rc('compare', [('PART 4 · 신문물', 'PART 3 · 신문물')]); three_only()
 
     # ── PART 4 말로 만든 업무 도구
     G.intro('pd_in', 4, '말로 만든<br>업무 도구', '코딩은 모릅니다 — 업무가 불편해서 말로 만들었습니다', ['엑셀 → 그래프', '취합 검증', '민원 답변', '오늘 이 화면'], 1, 'blur')
     m('pd_in')
-    G.cards('mo06', 'PART 4 · 왜 만들었나', '매달 같은 일', 'Again.', '매달 반복되는 엑셀 취합, 바꾸고 싶지 않으신가요?',
-            [('17곳', '양식이 제각각', '기관마다 **다른 양식**\n열 순서·이름도 다름'), ('3시간', '복사·붙여넣기', '**단순 반복**에\n오후가 사라짐'), ('매달', '또 처음부터', '**똑같은 작업**을\n다음 달에 또')],
-            hi=1, key='불편함이 곧 **만들 거리**입니다', fx='rise', head='mask', kfx='type', numsize=100)
-    m('mo06')
     G.cards('mo07', 'PART 4 · 현실의 벽', '공공기관에서 AI를 쓰려면', 'Wall.', '좋은 건 아는데, 우리 사무실에선 막힙니다',
             [('01', '개인정보', '외부 AI에\n**업로드 불가**'), ('02', '업무망', '내부망에서\n**접속 차단**'), ('03', '설치 승인', '새 프로그램은\n**승인이 필요**')],
-            hi=1, key='그래서 **다른 길**을 찾았습니다', fx='flip', head='chars', kfx='sweep', numsize=100)
+            hi=1, key='좋은 건 알아도, **우리 사무실에선 못 씁니다**', fx='flip', head='chars', kfx='sweep', numsize=100)
     m('mo07')
-    G.cards('mo08', 'PART 4 · 왜 HTML인가', 'AI를 못 쓰는 환경이라서', 'HTML.', 'AI를 못 쓰는 환경이라서, HTML',
+    G.cards('mo06', 'PART 4 · 왜 만들었나', '매달 같은 일', 'Again.', '매달 반복되는 엑셀 취합, 바꾸고 싶지 않으신가요?',
+            [('17곳', '양식이 제각각', '기관마다 **다른 양식**\n열 순서·이름도 다름'), ('3시간', '복사·붙여넣기', '**단순 반복**에\n오후가 사라짐'), ('매달', '또 처음부터', '**똑같은 작업**을\n다음 달에 또')],
+            hi=1, key='그래서 **말로 도구를 만들었습니다**', fx='rise', head='mask', kfx='type', numsize=100)
+    m('mo06')
+    what_html('html_what')
+    G.cards('mo08', 'PART 4 · HTML 특징', 'AI를 못 쓰는 환경이라서', 'Why.', 'HTML 특징 세 가지',
             [('01', '설치 없이', '인터넷 창만 있으면\n**바로 실행**'), ('02', '파일 하나', '메신저·메일로\n**부서와 공유**'), ('03', '내 PC 안에서', '자료가 밖으로 안 나가고\n**안전하게 계산**')],
             hi=2, key='AI는 **만들 때만**, 쓰는 건 **내 PC 안에서**', fx='wipe', head='mask', kfx='type', numsize=100)
     m('mo08')
-    G.cards('mo09', 'PART 4 · HTML의 새로운 활용', '화면 + 기능 = 작은 프로그램', 'Build.', '웹 화면에 계산 기능을 더하면, 작은 프로그램',
-            [('화면', '인터넷 문서', '글·표·그림이 보이는\n**웹 화면**'), ('+ 기능', '계산·버튼', '버튼 누르면\n**계산·정리**'), ('= 도구', '작은 프로그램', '문법은 몰라도\n**말로 주문**')],
-            hi=2, key='코딩 대신 **“이렇게 만들어 줘”**', fx='zoom', head='blur', kfx='pop', numsize=100)
-    m('mo09')
-    G.cards('mo10', 'PART 4 · 활용 범위', '어디까지 쓰면 좋을까', 'Scope.', '개인과 팀의 반복 업무에 쓰는 것이 가장 좋습니다',
-            [('O', '적합', '팀 **반복 작업**\n자료 **취합·정리**\n보고서용 **그래프**'), ('X', '부적합', '**여러 명 동시 접속** 시스템\n**공식 시스템**은 정보화부서로')],
-            hi=0, key='작게, 내 업무부터 — **큰 시스템은 정보화부서**와', fx='split', head='mask', kfx='sweep', numsize=110)
-    m('mo10')
     G.cards('tools', 'PART 4 · 말로 만든 업무 도구', '강사가 업무에 쓰려고 만든 것', 'Made.', '업무가 불편해서, 말로 만들었습니다',
             [('01', '엑셀 → 그래프', '엑셀을 넣으면\n**보고서용 그래프**\n국토부 실습 도구'), ('02', '취합 검증', '여러 곳 취합 파일의\n**틀린 숫자** 찾기\n국토부 실습 도구'),
              ('03', '민원 답변', '**AI 기반 소방 민원\n답변 자동화**\n수상작'), ('04', '오늘 이 화면', '움직이는 강의 화면도\n**말로 주문**했습니다')],
             hi=1, key='지금부터 **실제 화면**으로 보여 드립니다', fx='wipe', head='mask', kfx='type', numsize=80)
     m('tools')
-    shot('mo12', 'PART 4 · 도구 1', '엑셀 데이터 시각화', 'Chart.', '엑셀만 넣으면, 보고서용 그래프',
-         [('엑셀 올리기', '파일을 끌어다 놓기'), ('항목 고르기', '보여 줄 열 선택'), ('그래프 만들기', '막대·선·원형'), ('그림 저장', 'PNG → 한글에 붙이기')],
-         'tool1.png', '도구1_시각화 자료만들기.html', '')
-    beforeafter('mo20')
+    G.cards('t1_intro', 'PART 4 · 도구 1', '시각화 자료 만들기', 'Chart.', '엑셀만 넣으면, 보고서용 그래프',
+            [('01', '엑셀 넣기', '취합한 엑셀을\n**끌어다 놓기**'), ('02', '그래프 자동', '항목을 고르면\n**막대·선·원형**'), ('03', '한글에 붙이기', '**PNG로 저장**해\n보고서에 바로')],
+            hi=1, key='국토부 실습 자료를 넣으면 — **다음 화면처럼** 나옵니다', fx='rise', head='mask', kfx='type', numsize=100)
+    m('t1_intro')
+    fullshot('t1_full', 'PART 4 · 도구 1 결과', '도구1_시각화 자료만들기.html — test1 부산지방국토관리청.xlsx', 'tool1R.png', '국토부 실습 엑셀을 넣은 실제 화면')
     big('demo1', '지금부터 제 노트북에서', '직접', '보여 드립니다', 'Demo.', ['엑셀 올리기', '그래프 고르기', 'PNG 저장', '한글에 붙이기'], dur=5)
-    shot('mo30', 'PART 4 · 도구 3', '제출자료 취합·검증기', 'Merge.', '여러 곳에서 온 파일, 한 번에 모으고 검사',
-         [('파일 여러 개', '한꺼번에 선택'), ('오류 검사', '빈칸·틀린 숫자 표시'), ('자동 합치기', '양식 맞춰 병합'), ('완성본 저장', '엑셀로 내려받기')],
-         'tool3.png', '도구3_취합검증기.html', '')
+    G.cards('t3_intro', 'PART 4 · 도구 3', '제출자료 취합·검증기', 'Merge.', '여러 곳에서 온 파일, 한 번에 모으고 검사',
+            [('01', '파일 여러 개', '기관별 엑셀을\n**한꺼번에 선택**'), ('02', '틀린 곳 찾기', '빈칸·형식 오류·중복\n**자동 표시**'), ('03', '한 파일로', '기준 양식에 맞춰\n**자동 합치기**')],
+            hi=1, key='3개 기관 파일을 넣으면 — **다음 화면처럼** 나옵니다', fx='wipe', head='mask', kfx='type', numsize=100)
+    m('t3_intro')
+    fullshot('t3_full', 'PART 4 · 도구 3 결과', '도구3_취합검증기.html — test1·2·3 (부산·대전·익산청)', 'tool3R.png', '파일 3개 · 47행 · 확인 필요 7행')
     big('demo2', '여러 곳에서 온 취합 파일,', '틀린 숫자를', '찾아 줍니다', 'Check.', ['파일 여러 개', '오류 검증', '자동 병합', '완성본 저장'], dur=5)
-    prompts('mo45')
 
-    # ── PART 5 우리 사정은 우리가 안다
-    G.intro('pe_in', 5, '우리 사정은<br>우리가 안다', '사무실 PC에서 안 열리죠 — 저도 그렇습니다', ['막힌 사이트', '넣으면 안 되는 것', '정부 방향', '확인은 사람이'], 1, 'spin')
+    # ── PART 5 중견리더의 AI 앱 서랍 (무료 조건은 26.10 기준 — 강의 전 다시 확인)
+    G.intro('pe_in', 5, '중견리더의<br>AI 앱 서랍', '폰에 깔아 두면, 내일부터 일이 줄어듭니다', ['회의 기록', '녹음 요약', '자료 정리 · PPT', '근거 찾기'], 0, 'spin')
     m('pe_in')
-    big('blocked', '사무실 PC에서 챗GPT,', '열리시나요?', '', 'Blocked.', ['업무망·인터넷망 분리', '생성형 AI 차단', '그래서 오늘은 폰으로', '폰이라도 지킬 것'], dur=5)
-    G.cards('safe2', 'PART 5 · 정보보안', '우리 서류로 보면', 'Safe.', '넣어도 되는 것, 넣으면 안 되는 것',
-            [('O', '넣어도 됩니다', '이미 배포한 **보도자료**\n공개된 **법령·지침**\n홈페이지 **공지**'),
+    appmap('app_map')
+    app('app_clova', 'clova', '클로바노트', 'NAVER', '회의·면담·교육 녹음 → **글로 바꾸고 요약·다음 할 일**까지',
+        ['회의 시작할 때 **녹음** 누르기', '끝나면 자동으로 **글 + 화자 구분**', '**AI 요약** → 결정 사항·할 일'],
+        '개인 월 300분 (동의 시 600분) · AI 요약 월 15회', '**내부 회의·민원 면담**은 기관 지침 먼저 — 공개 회의·교육·내 메모부터', [1, 2], 'Note.')
+    app('app_voicenote', 'voicenote', '갤럭시 녹음', 'Samsung · 기본 앱', '설치 없이 — 갤럭시 **기본 녹음 앱**에서 바로 **글 변환·요약**',
+        ['기본 **음성 녹음** 앱으로 녹음', '**텍스트 변환** 누르기', '**요약** 누르면 핵심만'],
+        '기본 앱 (Galaxy AI 지원 기종 — S24 이후)', '변환 글은 **틀릴 수 있음** — 이름·숫자는 다시 확인', [1, 3], 'Record.')
+    app('app_notebook', 'notebook', 'Gemini Notebook', 'Google · 구 NotebookLM', '지침·보고서 **PDF 여러 개를 올리면** 요약·질문 답·**슬라이드(PPTX)**까지',
+        ['**+ 새 노트북** → 자료 올리기', '“핵심 5줄로” — **자료 안에서만** 답', '**슬라이드** 만들기 → PPTX로'],
+        'Gemini 앱 메뉴 「Notebooks」에서', '올리는 자료는 **공개된 지침·법령·보도자료**만', [1, 2], 'Notebook.')
+    app('app_perplexity', 'perplexity', '퍼플렉시티', 'Perplexity', '질문하면 **출처 링크가 달린 답** — “근거 어디 있어?”에 강함',
+        ['궁금한 것을 **말로 질문**', '답 아래 **출처 번호** 확인', '원문 링크로 **직접 확인**'],
+        '기본 검색 무료', '출처가 있어도 **원문은 내가 한 번 더**', [1, 2], 'Search.')
+    G.cards('app_safe', 'PART 5 · AI 앱 서랍', '앱 공통', 'Safe.', '넣기 전에, 한 번만 생각하세요',
+            [('O', '넣어도 됩니다', '이미 배포한 **보도자료**\n공개된 **법령·지침**\n**내 메모**·교육 녹음'),
              ('X', '넣으면 안 됩니다', '**민원인** 이름·연락처\n**내부 보고서** 원문\n**결재 전** 계획·예산')],
-            hi=1, key='꼭 필요하면 **가명 · 요약**으로 바꿔서', fx='split', head='blur', kfx='sweep', numsize=110)
-    m('safe2')
-    G.cards('n2sf', 'PART 5 · 정부 방향', '국가망보안체계(N2SF)', 'Grade.', '‘쓰지 마라’에서 ‘등급 보고 써라’로',
-            [('C', '기밀', '외부 AI에\n**절대 넣지 않음**'), ('S', '민감', '엄격한 통제 안에서만\n**기관 지침 확인**'), ('O', '공개', '승인된 생성형 AI로\n**활용 가능**')],
-            hi=2, key='정확한 적용은 **소속 기관 지침**을 확인하세요', fx='flip', head='chars', kfx='type', numsize=110)
-    m('n2sf')
+            hi=1, key='앱이 정리해 줘도, **확인은 사람이** 합니다', fx='split', head='blur', kfx='sweep', numsize=110)
+    m('app_safe')
     rc('m4', [('PART 2 · 미션 4', 'PART 5 · 확인은 사람이')])
     rc('m4ans', [('PART 2 · 미션 4', 'PART 5 · 확인은 사람이')])
+    applinks('app_links')
 
     # ── 마무리
     r('act')
