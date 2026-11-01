@@ -77,7 +77,7 @@ def doc(id):
 
 def steps2(id):
     """사진 만들기 → 고치기 2단계 (강사가 먼저, 같이 따라 하기)"""
-    b = G.B(7); G.header(b, 'PART 2 · 미션 2', '강사가 먼저 → 같이 따라 하기', 'Create.', '만들고, 고칩니다 — 말 두 마디면 됩니다', 'mask')
+    b = G.B(7); G.header(b, 'PART 2 · 미션 2', '강사가 먼저 → 같이 따라 하기', 'Create.', '만들고, 고칩니다 — 글 두 줄이면 됩니다', 'mask')
     for i, (lab, t, say, note) in enumerate([
         ('STEP 1', '만들기', '세종대왕이 책을 읽는 사진', '사진이 없어도 **글로 사진**을 만듭니다'),
         ('STEP 2', '고치기', '책 읽는 상황 말고 노트북하는 상황으로 교체', '마음에 안 들면 **이어서 말하면** 고쳐집니다')]):
@@ -96,7 +96,7 @@ def steps2(id):
 def phones(id):
     """Flow 폰 화면 5단계 (Play 스토어 실제 화면 + Google Play 공식 앱 스크린샷)"""
     items = [('k0.png', '설치', 'Play 스토어<br>「Google Flow」 설치'), ('k1.png', '시작', '구글 로그인 →<br><b>+ 신규</b>'),
-             ('k2.png', '말로 이미지', '<b>이미지</b> x4 고르고<br>“조선시대 … 학자들”'), ('k3.png', '영상으로', '사진 고르고 <b>애니메이션</b><br>“신이 나서 흥이 나는…”'),
+             ('k2.png', '글로 이미지', '<b>이미지</b> x4 고르고<br>“조선시대 … 학자들”'), ('k3.png', '영상으로', '사진 고르고 <b>애니메이션</b><br>“신이 나서 흥이 나는…”'),
              ('k4.png', '완성', '영상 재생 →<br><b>다운로드</b> 720p')]
     b = G.B(8); G.header(b, 'PART 2 · 미션 3', '폰에서 이렇게 — Google Flow', 'Flow.', '설치부터 이미지·영상까지, 폰 화면으로', 'chars')
     for i, (img, t, cap) in enumerate(items):
@@ -312,13 +312,13 @@ UPD = os.environ.get('UPD', os.path.join(os.path.dirname(os.path.dirname(OUT)), 
 def flow_photos(id):
     """Flow로 만든 결과 사진 5장"""
     fs = sorted(f for f in os.listdir(UPD) if f.endswith('.jpg'))
-    b = G.B(7); G.header(b, 'PART 2 · 미션 3', 'Google Flow로 만든 결과', 'Flow.', '말 한 줄로 만든 사진', 'mask')
+    b = G.B(7); G.header(b, 'PART 2 · 미션 3', 'Google Flow로 만든 결과', 'Flow.', '글 한 줄로 만든 사진', 'mask')
     pos = [(110, 290, 940, 529), (1080, 290, 355, 252), (1455, 290, 355, 252), (1080, 567, 355, 252), (1455, 567, 355, 252)]
     for i, (f, (x, y, w, h)) in enumerate(zip(fs, pos)):
         b.add(f'a ph ph{i}', f'left:{x}px;top:{y}px;width:{w}px;height:{h}px;border-radius:18px;overflow:hidden;border:2px solid #3a3533;box-shadow:0 20px 50px rgba(0,0,0,.5)',
               f'<img src="{f}" style="width:100%;height:100%;object-fit:cover"/>')
     b.add('a cap', 'left:110px;top:870px;width:1700px;display:flex;gap:20px;align-items:center',
-          '<span class="pill" style="background:#ff5a1f;color:#111;font-size:26px;font-weight:800;padding:10px 22px;border-radius:40px">말 한 줄</span>'
+          '<span class="pill" style="background:#ff5a1f;color:#111;font-size:26px;font-weight:800;padding:10px 22px;border-radius:40px">글 한 줄</span>'
           '<span style="font-size:40px;font-weight:800">“조선시대 열심히 공부하는 학자들”</span>')
     b.add('a cap2', 'left:110px;top:950px;font-size:30px;color:#a59f98', G.bold('→ 고치기: **“공부 후 휴식을 취하는 학자들, 저녁 배경으로”** · 다음 장: 이 사진으로 만든 영상'))
     js = G.HEAD_JS['mask'] + 'tl.from(".ph0",{opacity:0,scale:.9,duration:.8,ease:"power3.out"},.6).from(".ph1,.ph2,.ph3,.ph4",{opacity:0,y:40,duration:.6,stagger:.18,ease:"power3.out"},.9).from(".cap,.cap2",{opacity:0,y:20,duration:.6,stagger:.2},2.0);'
@@ -393,7 +393,7 @@ def build():
             hi=3, key='종이 한 장, **다시 칠 필요 없습니다**', fx='left', head='chars', kfx='type', numsize=80)
     m('ocr_flow')
     clip('v_gemini')
-    G.mission('m_photo', 2, '사진을 만들고\n고쳐 봅니다', 'Gemini', ['Gemini에 **글로 사진** 만들기', '나온 사진을 **말로 고치기**', '마음에 들면 **저장**'],
+    G.mission('m_photo', 2, '사진을 만들고\n고쳐 봅니다', 'Gemini', ['Gemini에 **글로 사진** 만들기', '나온 사진을 **글로 고치기**', '마음에 들면 **저장**'],
               ['세종대왕이 책을 읽는 사진', '책 읽는 상황 말고 노트북하는 상황으로 교체', '낚시하는 상황으로 교체'],
               '방금 영상에서 **강사가 쓴 문장 그대로**\n따라 쓰면 됩니다', 'scale')
     m('m_photo')
@@ -401,7 +401,7 @@ def build():
     flow_photos('flow_photos')
     flow_movie('flow_movie')
     clip('v_flow')
-    G.mission('m_flow', 3, '설치부터\n영상까지', 'Google Flow', ['Play 스토어 **「Google Flow」 설치**', '**+ 신규** → **이미지**로 말로 만들기', '사진 골라 **애니메이션**(영상)'],
+    G.mission('m_flow', 3, '설치부터\n영상까지', 'Google Flow', ['Play 스토어 **「Google Flow」 설치**', '**+ 신규** → **이미지**로 글로 만들기', '사진 골라 **애니메이션**(영상)'],
               ['조선시대 열심히 공부하는 학자들', '공부 후 휴식을 취하는 학자들, 저녁 배경으로', '신이 나서 흥이 나는 분위기 (애니메이션)'],
               '무료 — 하루 쓸 수 있는 양이 정해져 있음\n아이폰은 앱이 없으면 **flow.google.com**', 'left')
     m('m_flow')

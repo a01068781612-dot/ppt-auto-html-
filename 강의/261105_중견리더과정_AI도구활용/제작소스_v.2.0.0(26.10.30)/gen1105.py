@@ -225,7 +225,7 @@ def mission(id, n, title, tool, steps, says, note, fx):
               f'<div style="flex:none;width:84px;height:84px;border-radius:50%;border:2.5px solid {"#ff5a1f" if i == len(steps)-1 else "#55504c"};display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:{"#ff5a1f" if i == len(steps)-1 else "#f4f4f2"}">{i+1}</div>'
               f'<div style="font-size:40px;font-weight:700;line-height:1.3">{bold(s)}</div>')
     ys = 160 + len(steps) * 150 + 10
-    b.add('a slab', f'left:960px;top:{ys}px;font-size:22px;font-weight:700;letter-spacing:.3em;color:#8a847e', '이렇게 말해 보세요')
+    b.add('a slab', f'left:960px;top:{ys}px;font-size:22px;font-weight:700;letter-spacing:.3em;color:#8a847e', '이렇게 써 보세요')
     for i, s in enumerate(says):
         b.add(f'bub say say{i}', f'left:{960 + (i % 2) * 40}px;top:{ys + 50 + i * 92}px', '“' + s + '”')
     js = 'tl.from(".t-tag",{opacity:0,x:-30,duration:.5},0).from(".t-ghost",{opacity:0,x:80,duration:1.1},.2).from(".mnum",{opacity:0,letterSpacing:".6em",duration:.8},.2)'
