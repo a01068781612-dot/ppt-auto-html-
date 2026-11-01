@@ -19,7 +19,7 @@ const order = JSON.parse(fs.readFileSync(path.join(HF, "order.json"), "utf8"));
 // 10.20 워크숍 PPT에서 가져올 장 (장 번호)
 const W = { p_vintro: 2, p_intro: 3, p_prof1: 4, p_prof2: 5, p_n01: 9, p_c01: 10, p_n06: 25, p_c06: 26, p_n07: 31, p_c07: 32, p_n08: 34, p_c08: 35, p_art1: 43, p_art2: 44, p_art3: 45, p_promo: 50 };
 const MOLIT = process.env.MOLIT;   // 국토부 실습 PPT 장 그림 폴더 (mo06-006.png …)
-const FULLVIDEO = new Set(["p_intro", "p_c01", "p_c06", "p_c07", "p_c08", "p_promo"]);   // 영상 장 = 검은 바탕 전체화면
+const FULLVIDEO = new Set(["flow_movie", "p_intro", "p_c01", "p_c06", "p_c07", "p_c08", "p_promo"]);   // 영상 장 = 검은 바탕 전체화면
 
 const NOTES = {
   cover: "표지 — 제23기 중견리더과정 · 공무원을 위한 AI 도구 활용법",
@@ -59,6 +59,8 @@ const NOTES = {
   demo1: "▶ 노트북 전환: 1.도구1_시각화 자료만들기.html + 4.test1 엑셀 → 그래프 3개 PNG → 한글 표에 붙이기",
   mo30: "도구 3 취합·검증기 — 여러 기관 다른 양식 → 오류 검증 → 자동 병합",
   demo2: "▶ 노트북 전환: 3.도구3_취합검증기.html + test 파일 여러 개", mo45: "혼자서 해 보기 — 이렇게 말하면 만들어 줍니다 (요청문 예시)", ladder: "신문물 지도 1분", compare: "우리 일에 빗대면 — 시간 없으면 넘김",
+  flow_photos: "Flow로 만든 결과 사진 — “조선시대 열심히 공부하는 학자들” → 고치기 “공부 후 휴식…저녁 배경으로”",
+  flow_movie: "🎬 Flow로 만든 영상 전체 화면(10초, 소리 있음) — “신이 나서 흥이 나는 분위기” → 다음 장: 만드는 과정 녹화",
   pd_in: "PART 4 — 코딩은 모릅니다. 업무가 불편해서 말로 만들었습니다",
   tools: "업무 도구 소개 → 노트북으로 전환해 국토부 도구 1·3 실제 시연. (선택) 「작업」 모드",
   pe_in: "PART 5 — 사무실 PC에서 안 열리죠. 저도 그렇습니다",
@@ -72,7 +74,7 @@ const NOTES = {
 };
 const SEC = id => (["cover", "p_vintro", "p_intro", "room", "toc2"].includes(id) ? "오프닝" :
   ["pa_in", "champ", "p_art1", "p_art2", "p_art3", "reveal_black", "p_prof1", "p_prof2"].includes(id) ? "PART 1 정부가 인정한 AI 인재" :
-  ["pb_in", "m_ocr", "ocr_doc", "ocr_flow", "v_gemini", "m_photo", "photo_steps", "v_flow", "m_flow", "flow_phone", "break", "flow_show"].includes(id) ? "PART 2 폰으로 해 보기" :
+  ["pb_in", "m_ocr", "ocr_doc", "ocr_flow", "v_gemini", "m_photo", "photo_steps", "flow_photos", "flow_movie", "v_flow", "m_flow", "flow_phone", "break", "flow_show"].includes(id) ? "PART 2 폰으로 해 보기" :
   ["pc_in", "p_n01", "p_c01", "sum01", "ladder", "p_n06", "p_c06", "sum06", "p_n07", "p_c07", "sum07", "p_n08", "p_c08", "sum08", "compare"].includes(id) ? "PART 3 요즘 AI 트렌드" :
   ["pd_in", "mo06", "mo07", "mo08", "mo09", "mo10", "tools", "mo12", "mo20", "demo1", "mo30", "demo2", "mo45"].includes(id) ? "PART 4 말로 만든 업무 도구" :
   ["pe_in", "blocked", "safe2", "n2sf", "m4", "m4ans"].includes(id) ? "PART 5 우리 사정은 우리가 안다" : "마무리");
@@ -106,6 +108,8 @@ const secs = []; order.forEach(([id]) => { const s = SEC(id); if (!secs.includes
 secs.forEach(t => pres.addSection({ title: t }));
 
 let N = 0; const VIDS = []; const LOG = [];
+const TOTAL = order.length;
+const pg = s => s.addText(`${N} / ${TOTAL}`, { x: X(1660), y: X(1028), w: X(200), h: X(36), align: "right", fontSize: F(20), bold: true, color: "8A847E", fontFace: "Pretendard", margin: 0 });   // 쪽 번호
 for (const [id, kind] of order) {
   N++;
   const sec = SEC(id); const note = NOTES[id] || id;
@@ -115,7 +119,7 @@ for (const [id, kind] of order) {
     s.addText("📌 새 소개 영상 자리", { x: X(190), y: X(230), w: X(1500), h: X(50), fontSize: F(30), bold: true, color: COL.acc, fontFace: "Pretendard", margin: 0 });
     s.addText(note.replace(/ 자리.*$/, ""), { x: X(190), y: X(310), w: X(1540), h: X(200), fontSize: F(76), bold: true, color: COL.fg, fontFace: "Pretendard", margin: 0, valign: "top" });
     s.addText("강사님이 내려받은 영상 파일을 이 장에 넣어 주세요 (전체 화면 · 자동 재생)", { x: X(190), y: X(600), w: X(1540), h: X(100), fontSize: F(34), color: COL.cap, fontFace: "Pretendard", margin: 0 });
-    s.addNotes(note); LOG.push(`${N}\t${id}\t📌 새 영상 자리`); continue;
+    pg(s); s.addNotes(note); LOG.push(`${N}\t${id}\t📌 새 영상 자리`); continue;
   }
   if (kind[0] === "i") {
     const n = parseInt(kind.slice(1)), f = path.join(MOLIT, `mo${String(n).padStart(2, "0")}-${String(n).padStart(3, "0")}.png`);
@@ -141,7 +145,7 @@ for (const [id, kind] of order) {
     s.addImage({ path: qrImage("kakao_qr", KAKAO_URL, "단톡방 QR 자리"), x: X(QRBOX.x), y: X(QRBOX.y), w: X(QRBOX.s), h: X(QRBOX.s), objectName: "kakao_qr",
       hyperlink: KAKAO_URL ? { url: KAKAO_URL } : undefined });
   }
-  s.addNotes(note); LOG.push(`${N}\t${id}\t${kind}`);
+  pg(s); s.addNotes(note); LOG.push(`${N}\t${id}\t${kind}`);
 }
 fs.writeFileSync(path.join(path.dirname(path.resolve(OUT)), "vids.json"), JSON.stringify(VIDS));
 fs.writeFileSync(path.join(path.dirname(path.resolve(OUT)), "slides.tsv"), LOG.join("\n") + "\n");

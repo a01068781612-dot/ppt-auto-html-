@@ -13,7 +13,7 @@ W1030 = os.environ.get('W1030', '/home/user/ppt-auto-html-/data/west')
 UPD = os.environ.get('UPD', '/home/user/ppt-auto-html-/data/upd')
 FB, FX = '/root/.fonts/Pretendard-Bold.otf', '/root/.fonts/Pretendard-ExtraBold.otf'
 font = lambda s, p=FB: ImageFont.truetype(p, s)
-FPS = 30; FREEZE = 1.5
+FPS = 30; HOLD, ZIN, ZHOLD = 2.2, 1.3, 0.9   # 누르기: 정지(설명) → 천천히 확대 → 잠깐 유지
 WX, WY, WW, WH = 560, 170, 1000, 880        # 폰 화면 창
 SW, SH = 1080, 2340                          # 녹화 원본
 BG = Image.open(os.path.join(HERE, 'bg.png')).convert('RGB').resize((1920, 1080))
@@ -33,7 +33,7 @@ GEMINI = dict(
               (76.8, 60, 650, 960, 540), (87.4, 790, 2000, 200, 120), (91.5, 50, 120, 130, 120), (92.6, 80, 1960, 920, 150),
               (117.3, 830, 940, 130, 130), (133.9, 70, 730, 945, 515), (142.0, 45, 120, 130, 130), (167.4, 830, 1090, 130, 130),
               (188.6, 60, 650, 950, 530), (198.2, 55, 115, 130, 130)],
-        zooms=[(41, 58.2, 480, 900, 1.55, '입력'), (100, 117.2, 480, 880, 1.55, '입력'), (150, 167.3, 480, 1040, 1.55, '입력'),
+        zooms=[(41, 58.2, 540, 900, 1.0, '입력'), (100, 117.2, 540, 880, 1.0, '입력'), (150, 167.3, 540, 1040, 1.0, '입력'),
                (72, 76.5, 540, 920, 1.15, '결과'), (124, 133.8, 540, 920, 1.15, '결과'), (174, 188.5, 540, 1150, 1.15, '결과'),
                (77.4, 87.0, 540, 1170, 0.8, '결과'), (134.5, 141.6, 540, 1170, 0.8, '결과'), (189.2, 197.8, 540, 1170, 0.8, '결과')])])
 
@@ -41,8 +41,6 @@ FLOW = dict(
     title='Flow로 이미지 → 영상',
     steps=[('Flow 앱 설치', 'Play 스토어 → 「Google Flow」'), ('말로 이미지', '“조선시대 열심히 공부하는 학자들”'),
            ('말로 고치기', '“공부 후 휴식을 취하는 학자들, 저녁 배경으로”'), ('영상으로', '“신이 나서 흥이 나는 분위기”'), ('내려받기', '다운로드 → 720p')],
-    photos=[f'{UPD}/{f}' for f in sorted(os.listdir(UPD)) if f.endswith('.jpg')] if os.path.isdir(UPD) else [],
-    movie=f'{UPD}/767939166_1793497656491105.mp4',
     parts=[
       dict(file=f'{W1030}/Screen_Recording_20261030_210531_Flow.mp4', step_at=[(0, 0)],
         hide=[(45.3, 50.0, 0, 0, 1080, 2340), (43.5, 56.0, 0, 1760, 1080, 220)],   # 계정 목록(이메일) 가림
@@ -56,7 +54,7 @@ FLOW = dict(
         taps=[(1.5, 590, 1990, 240, 110), (14.0, 850, 1880, 130, 100), (19.2, 40, 1090, 700, 110), (31.7, 870, 1095, 130, 130),
               (85.1, 40, 2010, 470, 110), (125.4, 870, 1100, 130, 130), (209.9, 560, 2010, 480, 110), (255.0, 870, 995, 130, 130),
               (320.6, 10, 500, 530, 560), (337.4, 380, 850, 520, 90), (341.1, 190, 1180, 380, 80), (343.1, 370, 1380, 520, 90)],
-        zooms=[(19.5, 31.9, 370, 1015, 1.55, '입력'), (110, 125.4, 370, 1040, 1.55, '입력'), (216, 228, 370, 1010, 1.55, '입력'),
+        zooms=[(19.5, 31.9, 540, 1015, 1.0, '입력'), (110, 125.4, 540, 1040, 1.0, '입력'), (216, 228, 540, 1010, 1.0, '입력'),
                (64, 85, 540, 700, 1.0, '결과'), (160, 168, 540, 900, 1.15, '결과'), (292, 298, 540, 800, 1.0, '결과'),
                (321, 333, 540, 960, 1.1, '결과')])])
 
@@ -74,16 +72,17 @@ def panel(c, cur, tag):
     d.rounded_rectangle([WX - 14, WY - 14, WX + WW + 14, WY + WH + 14], 46, fill=(42, 37, 35))
     d.text((60, 250), f'{cur+1}', font=font(120, FX), fill=(255, 90, 31)); d.text((60, 400), steps[cur][0], font=font(46, FX), fill=(244, 244, 242))
     q = steps[cur][1]; lines, ln = [], ''
-    for ch in q:
-        if d.textlength(ln + ch, font=font(32)) > 440: lines.append(ln); ln = ''
-        ln += ch
+    for wd in q.split(' '):
+        tt = (ln + ' ' + wd).strip()
+        if ln and d.textlength(tt, font=font(32)) > 450: lines.append(ln); ln = wd
+        else: ln = tt
     lines.append(ln)
     for i, l in enumerate(lines): d.text((60, 470 + i * 46), l, font=font(32), fill=(214, 210, 201))
     if tag:
         red = tag == '누르기'
         d.rounded_rectangle([1620, 250, 1880, 330], 40, fill=(255, 30, 30) if red else (255, 90, 31))
         d.text((1650, 266), tag, font=font(38, FX), fill=(255, 255, 255) if red else (17, 17, 17))
-    d.text((60, 1030), '강사 폰 화면 녹화 · 누르는 곳은 멈추고 확대 · 기다리는 시간은 빠르게', font=font(20), fill=(138, 132, 126))
+    d.text((60, 1030), '강사 폰 화면 녹화 · 대기 시간은 빠르게', font=font(20), fill=(138, 132, 126))
     return o
 
 MASK = Image.new('L', (WW, WH), 0); ImageDraw.Draw(MASK).rounded_rectangle([0, 0, WW - 1, WH - 1], 34, fill=255)
@@ -103,7 +102,8 @@ def tapimg(im, x, y, w, h):
     fb = font(60); lab = '여기 누르기'; tw = d.textlength(lab, font=fb); bh = 96
     by = y - bh - 24 if y - bh - 24 > 0 else y + h + 24; bx = min(max(x + 20, 20), SW - tw - 60)
     d.rounded_rectangle([bx, by, bx + tw + 40, by + bh], 26, fill=(255, 30, 30)); d.text((bx + 20, by + 12), lab, font=fb, fill=(255, 255, 255))
-    return im
+    U = (min(x, bx) - 10, min(y, by) - 10, max(x + w, bx + tw + 40) + 10, max(y + h, by + bh) + 10)   # 테두리+글씨 전체
+    return im, U
 
 def frames_of(src, a, b, k):
     p = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-ss', f'{a:.3f}', '-to', f'{b:.3f}', '-i', src, '-an', '-vf', f'fps={FPS / k:.5f},scale={SW}:{SH}',
@@ -122,7 +122,7 @@ def grab(src, t):
 
 class Cam:
     def __init__(s): s.x, s.y, s.z = SW / 2, SH * 0.55, 1.0
-    def go(s, x, y, z, k=0.14):
+    def go(s, x, y, z, k=0.05):
         s.x += (x - s.x) * k; s.y += (y - s.y) * k; s.z += (z - s.z) * k
 
 def hide(im, part, t):
@@ -185,11 +185,18 @@ def render(id, c):
                         x, y, z, tag = target(t); cam.go(x, y, z)
                         o = pan(step(t), tag).copy(); o.paste(view(hide(im, part, t), cam.x, cam.y, cam.z), (WX, WY), MASK); put(o); nfr += 1
                 else:
-                    t, x, y, w, h = pc[1]; im = tapimg(hide(grab(src, t), part, t), x, y, w, h)
-                    zt = max(1.4, min(2.2, 900 / max(w, h * 1.1)))
-                    for j in range(int(FREEZE * FPS)):
-                        if j < FREEZE * FPS - 8: cam.go(x + w / 2, y + h / 2, zt, 0.2)
-                        o = pan(step(t), '누르기').copy(); o.paste(view(im, cam.x, cam.y, cam.z), (WX, WY), MASK); put(o); nfr += 1
+                    t, x, y, w, h = pc[1]; im, U = tapimg(hide(grab(src, t), part, t), x, y, w, h)
+                    uw, uh = U[2] - U[0] + 160, U[3] - U[1] + 160          # 여유 포함 — 글씨가 잘리지 않게
+                    zt = max(1.0, min(1.4, SW / uw, SW * WH / WW / uh))
+                    ease = lambda u: u * u * (3 - 2 * u)
+                    x0, y0, z0 = cam.x, cam.y, cam.z; bx, by = (U[0] + U[2]) / 2, (U[1] + U[3]) / 2
+                    keys = [(HOLD, (bx, by, 1.0), 0.6), (ZIN, (bx, by, zt), ZIN), (ZHOLD, (bx, by, zt), 0)]
+                    for dur, (tx, ty, tz), mv in keys:
+                        sx, sy, sz = cam.x, cam.y, cam.z
+                        for j in range(int(dur * FPS)):
+                            u = ease(min(1, j / max(1, mv * FPS))) if mv else 1
+                            cam.x, cam.y, cam.z = sx + (tx - sx) * u, sy + (ty - sy) * u, sz + (tz - sz) * u
+                            o = pan(step(t), '누르기').copy(); o.paste(view(im, cam.x, cam.y, cam.z), (WX, WY), MASK); put(o); nfr += 1
     enc.stdin.close(); enc.wait()
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-ss', '3', '-i', f'{d}/out.mp4', '-frames:v', '1', f'{d}/last.png'], check=True)
     print(id, round(nfr / FPS, 1), 's')

@@ -1,6 +1,6 @@
 # 슬라이드 v.2 (기획안 v.3.2.0) 장면 생성기 — gen1105.py의 레이아웃·모션 함수를 그대로 쓰고 내용만 바꿈
 # 사용: python3 gen1105v2.py <출력폴더> <lib폴더>   → <출력>/<id>/index.html, <출력>/order.json (장 순서)
-import os, sys, json, shutil
+import os, sys, json, shutil, subprocess
 import gen1105 as G
 
 OUT = G.OUT
@@ -96,8 +96,8 @@ def steps2(id):
 def phones(id):
     """Flow 폰 화면 5단계 (Play 스토어 실제 화면 + Google Play 공식 앱 스크린샷)"""
     items = [('k0.png', '설치', 'Play 스토어<br>「Google Flow」 설치'), ('k1.png', '시작', '구글 로그인 →<br><b>+ 신규</b>'),
-             ('k2.png', '말로 이미지', '<b>이미지</b> 고르고<br>만들 장면 입력'), ('k3.png', '영상으로', '사진 고르고<br><b>애니메이션</b>으로 입력'),
-             ('k4.png', '완성', '영상 재생 →<br><b>다운로드</b> → 카톡')]
+             ('k2.png', '말로 이미지', '<b>이미지</b> x4 고르고<br>“조선시대 … 학자들”'), ('k3.png', '영상으로', '사진 고르고 <b>애니메이션</b><br>“신이 나서 흥이 나는…”'),
+             ('k4.png', '완성', '영상 재생 →<br><b>다운로드</b> 720p')]
     b = G.B(8); G.header(b, 'PART 2 · 미션 3', '폰에서 이렇게 — Google Flow', 'Flow.', '설치부터 이미지·영상까지, 폰 화면으로', 'chars')
     for i, (img, t, cap) in enumerate(items):
         x = 110 + i * 344
@@ -307,6 +307,33 @@ def three_only():
         h = h.replace(l, nl)
     open(f, 'w').write(h)
 
+UPD = os.environ.get('UPD', os.path.join(os.path.dirname(os.path.dirname(OUT)), 'upd'))   # 11.01 업뎃 자료 (Flow 결과 사진·영상)
+
+def flow_photos(id):
+    """Flow로 만든 결과 사진 5장"""
+    fs = sorted(f for f in os.listdir(UPD) if f.endswith('.jpg'))
+    b = G.B(7); G.header(b, 'PART 2 · 미션 3', 'Google Flow로 만든 결과', 'Flow.', '말 한 줄로 만든 사진', 'mask')
+    pos = [(110, 290, 940, 529), (1080, 290, 355, 252), (1455, 290, 355, 252), (1080, 567, 355, 252), (1455, 567, 355, 252)]
+    for i, (f, (x, y, w, h)) in enumerate(zip(fs, pos)):
+        b.add(f'a ph ph{i}', f'left:{x}px;top:{y}px;width:{w}px;height:{h}px;border-radius:18px;overflow:hidden;border:2px solid #3a3533;box-shadow:0 20px 50px rgba(0,0,0,.5)',
+              f'<img src="{f}" style="width:100%;height:100%;object-fit:cover"/>')
+    b.add('a cap', 'left:110px;top:870px;width:1700px;display:flex;gap:20px;align-items:center',
+          '<span class="pill" style="background:#ff5a1f;color:#111;font-size:26px;font-weight:800;padding:10px 22px;border-radius:40px">말 한 줄</span>'
+          '<span style="font-size:40px;font-weight:800">“조선시대 열심히 공부하는 학자들”</span>')
+    b.add('a cap2', 'left:110px;top:950px;font-size:30px;color:#a59f98', G.bold('→ 고치기: **“공부 후 휴식을 취하는 학자들, 저녁 배경으로”** · 다음 장: 이 사진으로 만든 영상'))
+    js = G.HEAD_JS['mask'] + 'tl.from(".ph0",{opacity:0,scale:.9,duration:.8,ease:"power3.out"},.6).from(".ph1,.ph2,.ph3,.ph4",{opacity:0,y:40,duration:.6,stagger:.18,ease:"power3.out"},.9).from(".cap,.cap2",{opacity:0,y:20,duration:.6,stagger:.2},2.0);'
+    G.write(id, 7, b, js, assets=[os.path.join(UPD, f) for f in fs])
+    m(id)
+
+def flow_movie(id):
+    """Flow로 만든 영상 — 전체 화면 (소리 포함)"""
+    d = os.path.join(OUT, id); os.makedirs(d, exist_ok=True)
+    src = os.path.join(UPD, '767939166_1793497656491105.mp4')
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', src, '-vf', 'scale=1920:1080:flags=lanczos', '-c:v', 'libx264', '-crf', '20', '-preset', 'medium',
+                    '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', os.path.join(d, 'out.mp4')], check=True)
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-ss', '2', '-i', os.path.join(d, 'out.mp4'), '-frames:v', '1', os.path.join(d, 'last.png')], check=True)
+    ORDER.append((id, 'k'))   # k = 이미 만든 영상(렌더 안 함)
+
 def page(id, n):
     """국토부 실습 PPT(9.7판) 원본 장을 그림으로 그대로"""
     ORDER.append((id, 'i%d' % n))
@@ -371,9 +398,11 @@ def build():
               '방금 영상에서 **강사가 쓴 문장 그대로**\n따라 쓰면 됩니다', 'scale')
     m('m_photo')
     steps2('photo_steps')
+    flow_photos('flow_photos')
+    flow_movie('flow_movie')
     clip('v_flow')
     G.mission('m_flow', 3, '설치부터\n영상까지', 'Google Flow', ['Play 스토어 **「Google Flow」 설치**', '**+ 신규** → **이미지**로 말로 만들기', '사진 골라 **애니메이션**(영상)'],
-              ['경복궁 건설 과정을 처음부터 끝까지 이미지로 만들어 줘', '각 사진을 첫 프레임으로 경복궁 짓는 과정을 영상으로', '경남 서부청사를 짓는 과정을 미니어처 스타일로'],
+              ['조선시대 열심히 공부하는 학자들', '공부 후 휴식을 취하는 학자들, 저녁 배경으로', '신이 나서 흥이 나는 분위기 (애니메이션)'],
               '무료 — 하루 쓸 수 있는 양이 정해져 있음\n아이폰은 앱이 없으면 **flow.google.com**', 'left')
     m('m_flow')
     phones('flow_phone')
