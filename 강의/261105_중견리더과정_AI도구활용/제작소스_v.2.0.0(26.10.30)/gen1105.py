@@ -183,7 +183,7 @@ def intro(id, n, title, sub, chips, hi, fx):
 
 
 # ───────────── 2. 카드 화면 (정리형 일반화) ─────────────
-def cards(id, tag, sub, ghost, title, items, hi=-1, key=None, fx='rise', head='mask', kfx='type', top=300, h=470, dur=7, numsize=100, extra_js=''):
+def cards(id, tag, sub, ghost, title, items, hi=-1, key=None, fx='rise', head='mask', kfx='type', top=300, h=530, dur=7, numsize=100, extra_js=''):
     """items: [(번호표시, 소제목, 본문)]"""
     b = B(dur); header(b, tag, sub, ghost, title, head)
     n = len(items); gap = 30; cw = (1700 - gap * (n - 1)) / n
@@ -220,11 +220,11 @@ def mission(id, n, title, tool, steps, says, note, fx):
     b.add('a mnote', 'left:110px;top:560px;width:720px;font-size:30px;line-height:1.5;color:#a59f98;white-space:pre-line', bold(note))
     b.add('vl mvl', 'left:900px;top:150px;height:800px')
     for i, s in enumerate(steps):
-        y = 160 + i * 150
+        gap = 150 if len(steps) <= 3 else 118; y = 160 + i * gap
         b.add(f'a st st{i}', f'left:960px;top:{y}px;width:850px;height:120px;display:flex;align-items:center;gap:30px',
               f'<div style="flex:none;width:84px;height:84px;border-radius:50%;border:2.5px solid {"#ff5a1f" if i == len(steps)-1 else "#55504c"};display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:{"#ff5a1f" if i == len(steps)-1 else "#f4f4f2"}">{i+1}</div>'
               f'<div style="font-size:40px;font-weight:700;line-height:1.3">{bold(s)}</div>')
-    ys = 160 + len(steps) * 150 + 10
+    ys = 160 + len(steps) * (150 if len(steps) <= 3 else 118) + 10
     b.add('a slab', f'left:960px;top:{ys}px;font-size:22px;font-weight:700;letter-spacing:.3em;color:#8a847e', '이렇게 써 보세요')
     for i, s in enumerate(says):
         b.add(f'bub say say{i}', f'left:{960 + (i % 2) * 40}px;top:{ys + 50 + i * 92}px', '“' + s + '”')
