@@ -75,7 +75,7 @@ const NOTES = {
   m4: "AI가 틀린 곳 찾기 — 손들고 말하기", m4ans: "정답 — 숫자·출처는 사람이",
   act: "일단 써 보세요. 작은 것부터.",
   next: "“정부가 인정한 AI 인재, 다음은 여러분입니다.” 단톡방에 「내일 해 볼 것 하나」",
-  closing: "마무리", p_promo: "🎬 강사 홍보 영상 — 끝나면 Q&A", qna: "Q&A",
+  closing: "마무리", p_promo: "(최신 1080p, 1분 45초) 🎬 강사 홍보 영상 — 끝나면 Q&A", qna: "Q&A",
 };
 const SEC = id => (["cover", "p_vintro", "p_intro", "room", "toc2"].includes(id) ? "오프닝" :
   ["pa_in", "champ", "p_art1", "p_art2", "p_art3", "reveal_black", "p_prof1", "p_prof2"].includes(id) ? "PART 1 정부가 인정한 AI 인재" :
@@ -135,7 +135,8 @@ for (const [id, kind] of order) {
   }
   let mp4, poster, name;
   if (kind === "p") {
-    mp4 = path.join(W1020, "ppt/media", `media-${W[id]}-1.mp4`);
+    mp4 = (id === "p_promo" && process.env.PROMO) ? process.env.PROMO   // 강사 홍보 영상 최신본 (kimkyunghun 저장소 materials/video/intro-ppt-1080p.mp4)
+      : path.join(W1020, "ppt/media", `media-${W[id]}-1.mp4`);
     poster = frame(mp4, path.join(TMP, id + ".png"), !FULLVIDEO.has(id));
     name = (FULLVIDEO.has(id) ? "clip_" : "w_") + id;
   } else {
