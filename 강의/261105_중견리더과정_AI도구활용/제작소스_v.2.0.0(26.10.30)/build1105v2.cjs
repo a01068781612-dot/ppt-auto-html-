@@ -61,8 +61,13 @@ const NOTES = {
   demo2: "▶ 노트북 전환: 3.도구3_취합검증기.html + test 파일 여러 개", mo45: "혼자서 해 보기 — 이렇게 말하면 만들어 줍니다 (요청문 예시)", ladder: "신문물 지도 1분", compare: "우리 일에 빗대면 — 시간 없으면 넘김",
   flow_photos: "Flow로 만든 결과 사진 — “조선시대 열심히 공부하는 학자들” → 고치기 “공부 후 휴식…저녁 배경으로”",
   flow_movie: "🎬 Flow로 만든 영상 전체 화면(10초, 소리 있음) — “신이 나서 흥이 나는 분위기” → 다음 장: 만드는 과정 녹화",
+  gem_photos: "Gemini 결과 사진 3장 — 만들기 → 고치기 → 한 번 더. 다음 장: 강사 폰 시연 영상",
+  gcut1: "따라 하기 1~4단계 — 폰을 들고 같이", gcut2: "따라 하기 5~8단계", gcut3: "따라 하기 9~12단계",
+  fcut1: "Flow 따라 하기 1~4 — 설치", fcut2: "Flow 따라 하기 5~8", fcut3: "Flow 따라 하기 9~12", fcut4: "Flow 따라 하기 13~16 — 다운로드",
+  html_def: "HTML = HyperText Markup Language — 설치 없이 · 파일 하나 · 내 PC 안에서",
+  made_prompts: "이렇게 만들었습니다 — 글 한 줄씩 기능 더하기 (STEP 1~5)",
   pd_in: "PART 4 — 코딩은 모릅니다. 업무가 불편해서 말로 만들었습니다",
-  tools: "업무 도구 소개 → 노트북으로 전환해 국토부 도구 1·3 실제 시연. (선택) 「작업」 모드",
+  tools: "보고서 그래프 페인 포인트 — 업무 도구 소개 → 노트북으로 전환해 국토부 도구 1·3 실제 시연. (선택) 「작업」 모드",
   pe_in: "PART 5 — 사무실 PC에서 안 열리죠. 저도 그렇습니다",
   blocked: "손들기: 사무실 PC에서 챗GPT 열리시나요? → 업무망·인터넷망 분리",
   safe2: "넣어도 되는 것 / 안 되는 것 — 오늘 OCR·단톡방과 연결",
@@ -74,10 +79,10 @@ const NOTES = {
 };
 const SEC = id => (["cover", "p_vintro", "p_intro", "room", "toc2"].includes(id) ? "오프닝" :
   ["pa_in", "champ", "p_art1", "p_art2", "p_art3", "reveal_black", "p_prof1", "p_prof2"].includes(id) ? "PART 1 정부가 인정한 AI 인재" :
-  ["pb_in", "m_ocr", "ocr_doc", "ocr_flow", "v_gemini", "m_photo", "photo_steps", "flow_photos", "flow_movie", "v_flow", "m_flow", "flow_phone", "break", "flow_show"].includes(id) ? "PART 2 폰으로 해 보기" :
-  ["pc_in", "p_n01", "p_c01", "sum01", "ladder", "p_n06", "p_c06", "sum06", "p_n07", "p_c07", "sum07", "p_n08", "p_c08", "sum08", "compare"].includes(id) ? "PART 3 요즘 AI 트렌드" :
-  ["pd_in", "mo06", "mo07", "mo08", "mo09", "mo10", "tools", "mo12", "mo20", "demo1", "mo30", "demo2", "mo45"].includes(id) ? "PART 4 말로 만든 업무 도구" :
-  ["pe_in", "blocked", "safe2", "n2sf", "m4", "m4ans"].includes(id) ? "PART 5 우리 사정은 우리가 안다" : "마무리");
+  (/^(pb_in|m_ocr|ocr_doc|ocr_flow|m_photo|gem_photos|v_gemini|gcut\d|m_flow|flow_photos|flow_movie|v_flow|fcut\d|break|flow_show)$/.test(id)) ? "PART 2 폰으로 해 보기" :
+  (/^(pc_in|p_n0\d|p_c0\d|sum0\d|ladder|compare)$/.test(id)) ? "PART 3 요즘 AI 트렌드" :
+  ["pd_in", "mo07", "html_def", "html_what", "tools", "t1_intro", "t1_full", "demo1", "made_prompts"].includes(id) ? "PART 4 말로 만든 업무 도구" :
+  (/^(pe_in|app_\w+|m4|m4ans)$/.test(id)) ? "PART 5 중견리더의 AI 앱 서랍" : "마무리");
 
 const dur = f => Math.round(parseFloat(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f]).toString()) * 1000);
 const frame = (f, out, last) => { execFileSync("ffmpeg", ["-loglevel", "error", "-y", ...(last ? ["-sseof", "-0.1"] : ["-ss", "0.5"]), "-i", f, "-frames:v", "1", out]); return out; };
