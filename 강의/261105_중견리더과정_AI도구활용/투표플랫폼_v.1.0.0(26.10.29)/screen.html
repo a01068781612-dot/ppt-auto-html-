@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#0c0b0b;--card:#1d1a19;--line:#3a3533;--fg:#f4f4f2;--sub:#a59f98;--dim:#8a847e;--acc:#ff5a1f}
+*{box-sizing:border-box;margin:0;padding:0;word-break:keep-all}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,sans-serif}
+body{background:radial-gradient(ellipse 70% 80% at 42% 45%,#2a2725 0%,#151312 55%,#0c0b0b 100%)}
+.stage{position:absolute;inset:0;padding:4.2vw 5.7vw 7vw;display:grid;grid-template-columns:1fr 26vw;gap:4vw}
+.tag{font-size:1.15vw;letter-spacing:.14em;color:var(--dim)}.tag b{color:var(--acc)}
+h1{margin-top:1vw;font-size:3.4vw;font-weight:900;letter-spacing:-.03em;line-height:1.2;position:relative}
+h1:before{content:"";position:absolute;left:-1.4vw;top:-.9vw;width:1.6vw;height:1.6vw;border-left:.18vw solid var(--fg);border-top:.18vw solid var(--fg)}
+.hl{height:1px;background:#55504c;margin:2vw 0 2.4vw}
+.bars{display:grid;gap:2vw}
+.bar{display:grid;grid-template-columns:20vw 1fr 8vw;align-items:center;gap:1.4vw;transition:opacity .4s}
+.bar .lb{font-size:2.1vw;font-weight:700;line-height:1.25}
+.bar .tr{height:4.4vw;border-radius:1vw;background:#1d1a19;border:1.5px solid var(--line);overflow:hidden}
+.bar .fl{height:100%;width:0;border-radius:1vw;background:#55504c;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bar .pc{font-size:2.6vw;font-weight:900;text-align:right}.bar .pc small{display:block;font-size:.95vw;font-weight:600;color:var(--sub)}
+.bar.top .fl{background:var(--acc)}
+.bar.right .fl{background:var(--acc)}.bar.right .lb:after{content:"  정답";color:var(--acc);font-size:1.2vw;font-weight:900;letter-spacing:.1em}
+.reveal .bar:not(.right){opacity:.35}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:3vw}
+.two h3{font-size:1.3vw;letter-spacing:.2em;color:var(--dim);margin-bottom:1.2vw}.two h3 b{color:var(--acc)}
+.two .bar{grid-template-columns:1fr;gap:.5vw}.two .bar .row{display:grid;grid-template-columns:1fr 6vw;align-items:center;gap:1vw}
+.two .bar .lb{font-size:1.3vw}.two .bar .tr{height:2.3vw}.two .bar .pc{font-size:1.6vw}
+.wall{display:flex;flex-wrap:wrap;gap:1vw;align-content:flex-start;max-height:58vh;overflow:hidden}
+.note{background:#1d1a19;border:1.5px solid var(--line);border-radius:1.2vw;padding:1vw 1.4vw;font-size:1.55vw;font-weight:700;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.note:nth-child(5n+1){border-color:var(--acc)}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+.side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6vw}
+.qr{background:var(--fg);border-radius:1.8vw;padding:1.3vw;box-shadow:0 0 0 .6vw rgba(255,90,31,.18),0 2vw 5vw rgba(0,0,0,.5)}
+.qr #qrc{width:20vw;height:20vw}.qr #qrc img,.qr #qrc canvas{width:100%!important;height:100%!important}
+.cnt{font-size:4.6vw;font-weight:900;color:var(--acc);line-height:1}.cntl{font-size:1.2vw;letter-spacing:.2em;color:var(--sub)}
+.cap{font-size:1.25vw;font-weight:700;text-align:center;line-height:1.5}
+.standby{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vw}
+.standby h1{font-size:4.2vw;text-align:center}.standby h1:before{display:none}
+.ctl{position:fixed;left:0;right:0;bottom:0;display:flex;gap:.6vw;align-items:center;justify-content:center;padding:1vw;background:linear-gradient(transparent,rgba(0,0,0,.85));opacity:0;transition:opacity .3s}
+.ctl:hover,.ctl.show{opacity:1}
+.ctl button,.ctl select{font:inherit;font-size:1vw;font-weight:700;border-radius:999px;border:1.5px solid var(--line);background:#1d1a19;color:var(--fg);padding:.6vw 1.2vw;cursor:pointer}
+.ctl button.a{background:var(--acc);border-color:var(--acc);color:#111}
+.toast{position:fixed;top:1.4vw;right:1.4vw;font-size:1vw;color:var(--sub)}
+.login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(12,11,11,.92);z-index:9}
+.login div{background:#1d1a19;border:1.5px solid var(--line);border-radius:1.6vw;padding:2.4vw;text-align:center;width:28vw}
+.login input{margin-top:1.4vw;width:100%;font:inherit;font-size:2vw;text-align:center;letter-spacing:.4em;padding:.8vw;border-radius:1vw;border:1.5px solid var(--line);background:#0c0b0b;color:var(--fg)}
+.login button{margin-top:1vw;width:100%;font:inherit;font-size:1.3vw;font-weight:900;padding:.9vw;border:none;border-radius:999px;background:var(--acc);color:#111}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div class="ctl" id="ctl">
+  <button onclick="move(-1)">◀ 이전</button>
+  <select id="sel" onchange="go(this.value)"></select>
+  <button onclick="move(1)">다음 ▶</button>
+  <button class="a" onclick="toggleReveal()">정답 공개 (R)</button>
+  <button onclick="toggleQR()">QR 크게 (Q)</button>
+  <button onclick="go('')">대기 화면 (0)</button>
+  <button onclick="resetCur()">이 문제 초기화</button>
+</div>
+<div class="toast" id="toast"></div>
+<div class="login" id="login"><div><div style="font-size:1.4vw;font-weight:800">강사 비밀번호</div><input id="pin" type="password" inputmode="numeric" autofocus><button onclick="login()">시작</button><div id="lerr" style="margin-top:1vw;color:#ff5a1f;font-size:1vw"></div></div></div>
+<script>
+const Q = <?!= questionsJson ?>;
+const URL_VOTE = <?!= JSON.stringify(voteUrl) ?>;
+const QM = {}; Q.forEach(q => QM[q.id] = q);
+let PIN = ''; try { PIN = localStorage.getItem('aipin') || ''; } catch (e) {}
+let state = { cur: null, reveal: false }, res = null, bigQR = false, seen = 0;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const toast = t => { $('#toast').textContent = t; clearTimeout(toast.t); toast.t = setTimeout(() => $('#toast').textContent = '', 2500); };
+
+$('#sel').innerHTML = '<option value="">— 대기 화면 —</option>' + Q.map(q => `<option value="${q.id}">${esc(q.part)} · ${esc(q.title)}</option>`).join('');
+
+function qrInto(el, size) { el.innerHTML = ''; new QRCode(el, { text: URL_VOTE, width: size, height: size, colorDark: '#111111', colorLight: '#f4f4f2', correctLevel: QRCode.CorrectLevel.M }); }
+
+function side(n) {
+  return `<div class="side"><div class="qr"><div id="qrc"></div></div><div class="cap">폰 카메라로 QR을 비춰 주세요</div><div style="text-align:center"><div class="cnt" id="cnt">${n}</div><div class="cntl">명 참여</div></div></div>`;
+}
+
+function bars(q, r, reveal) {
+  const tot = Math.max(1, r.n); const mx = Math.max.apply(null, r.counts);
+  return `<div class="bars ${reveal ? 'reveal' : ''}">` + q.options.map((o, i) => {
+    const c = r.counts[i], p = Math.round(c * 100 / tot);
+    const cls = (reveal && q.answer === i ? ' right' : '') + (!reveal && c === mx && c > 0 ? ' top' : '');
+    return `<div class="bar${cls}"><div class="lb">${esc(o)}</div><div class="tr"><div class="fl" data-w="${p}"></div></div><div class="pc">${p}%<small>${c}명</small></div></div>`;
+  }).join('') + '</div>';
+}
+function mini(title, opts, counts, n, hi) {
+  const tot = Math.max(1, n); const mx = Math.max.apply(null, counts);
+  return `<div><h3>${hi ? '<b>지금</b>' : '처음'} · ${esc(title)}<span> · ${n}명</span></h3><div class="bars">` + opts.map((o, i) => {
+    const p = Math.round(counts[i] * 100 / tot);
+    return `<div class="bar${hi && counts[i] === mx && mx > 0 ? ' top' : ''}"><div class="lb">${esc(o)}</div><div class="row"><div class="tr"><div class="fl" data-w="${p}"></div></div><div class="pc">${p}%</div></div></div>`;
+  }).join('') + '</div></div>';
+}
+
+function draw() {
+  const q = QM[state.cur];
+  $('#sel').value = state.cur || '';
+  if (!q || bigQR) {
+    $('#stage').innerHTML = `<div class="standby"><div class="tag"><b>AI 특강</b> · 제23기 중견리더과정</div><h1>${q ? esc(q.title) : '폰으로 함께합니다'}</h1><div class="qr"><div id="qrc" style="width:24vw;height:24vw"></div></div><div class="cap">폰 카메라로 QR을 비춰 주세요${res ? ` · <span style="color:#ff5a1f">${res.n}명 참여</span>` : ''}</div></div>`;
+    qrInto($('#qrc'), 600); return;
+  }
+  const r = res && res.id === q.id ? res : { n: 0, counts: q.options.map(() => 0), texts: [] };
+  let body;
+  if (q.type === 'text') body = `<div class="wall">${(r.texts || []).slice().reverse().map(t => `<div class="note">${esc(t)}</div>`).join('')}</div>`;
+  else if (r.cmp) body = `<div class="two">${mini(r.cmp.title, r.cmp.options, r.cmp.counts, r.cmp.n, false)}${mini(q.title, q.options, r.counts, r.n, true)}</div>`;
+  else body = bars(q, r, state.reveal && q.answer !== null && q.answer !== undefined);
+  $('#stage').innerHTML = `<div class="stage"><div><div class="tag"><b>${esc(q.part)}</b>  실시간 투표</div><h1>${esc(q.title)}</h1><div class="hl"></div>${body}</div>${side(r.n)}</div>`;
+  qrInto($('#qrc'), 480);
+  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.fl').forEach(f => f.style.width = f.dataset.w + '%')));
+}
+
+// 결과만 바뀌면 화면 전체를 다시 그리지 않고 막대·숫자만 갱신
+function update(r) {
+  const q = QM[state.cur];
+  const prev = res; res = r;
+  if (!q || bigQR || !prev || prev.id !== r.id || !document.querySelector('.stage')) return draw();
+  const cn = $('#cnt'); if (cn) cn.textContent = r.n;
+  if (q.type === 'text') { if ((prev.texts || []).length !== (r.texts || []).length || (prev.texts || []).join('|') !== (r.texts || []).join('|')) draw(); return; }
+  const sets = r.cmp ? [[r.cmp.counts, r.cmp.n], [r.counts, r.n]] : [[r.counts, r.n]];
+  const fl = document.querySelectorAll('.fl'), pc = document.querySelectorAll('.pc'), bs = document.querySelectorAll('.bar');
+  let k = 0;
+  sets.forEach(([counts, n], si) => {
+    const tot = Math.max(1, n), mx = Math.max.apply(null, counts);
+    counts.forEach(c => {
+      const p = Math.round(c * 100 / tot);
+      if (fl[k]) fl[k].style.width = p + '%';
+      if (pc[k]) pc[k].innerHTML = r.cmp ? p + '%' : `${p}%<small>${c}명</small>`;
+      if (bs[k] && !state.reveal && (!r.cmp || si === 1)) bs[k].classList.toggle('top', c === mx && c > 0);
+      k++;
+    });
+  });
+  if (r.cmp) document.querySelectorAll('.two h3').forEach((h, i) => h.lastChild.textContent = ' · ' + (i ? r.n : r.cmp.n) + '명');
+}
+
+function call(fn, ...a) { return new Promise((ok, no) => google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn](...a)); }
+async function act(action, arg) {
+  try { const r = await call('admin', PIN, action, arg); if (!r.ok) { toast(r.msg); if (/비밀번호/.test(r.msg)) $('#login').style.display = 'flex'; return; } state = r.state; res = null; bigQR = false; draw(); tick(true); }
+  catch (e) { toast('연결 실패 — 다시 시도해 주세요'); }
+}
+const go = id => act('go', id);
+function move(d) { const i = Q.findIndex(q => q.id === state.cur); const j = Math.min(Q.length - 1, Math.max(0, (i < 0 ? (d > 0 ? -1 : Q.length) : i) + d)); go(Q[j].id); }
+function toggleReveal() { const q = QM[state.cur]; if (!q || q.answer === null || q.answer === undefined) return toast('이 문제는 정답이 없습니다'); act('reveal', !state.reveal); }
+function toggleQR() { bigQR = !bigQR; draw(); }
+function resetCur() { if (state.cur && confirm('이 문제의 투표를 모두 지울까요?')) act('reset', state.cur); }
+async function login() {
+  PIN = $('#pin').value.trim();
+  try { const r = await call('admin', PIN, 'check'); if (!r.ok) { $('#lerr').textContent = r.msg; return; } try { localStorage.setItem('aipin', PIN); } catch (e) {} $('#login').style.display = 'none'; start(); }
+  catch (e) { $('#lerr').textContent = '연결 실패 — 다시 눌러 주세요'; }
+}
+$('#pin').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+async function tick(once) {
+  try {
+    const s = await call('getState');
+    if (s.cur !== state.cur || s.reveal !== state.reveal) { state = s; res = null; draw(); }
+    if (state.cur) update(await call('results', state.cur));
+  } catch (e) { toast('재연결 중…'); }
+  if (!once) setTimeout(tick, 2000);
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') move(1);
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') move(-1);
+  else if (e.key === 'r' || e.key === 'R' || e.key === 'ㄱ') toggleReveal();
+  else if (e.key === 'q' || e.key === 'Q' || e.key === 'ㅂ') toggleQR();
+  else if (e.key === '0') go('');
+  else if (e.key === 'c' || e.key === 'C') $('#ctl').classList.toggle('show');
+});
+let started = false;
+function start() { if (started) return; started = true; draw(); tick(); }
+if (PIN) call('admin', PIN, 'check').then(r => { if (r.ok) { $('#login').style.display = 'none'; start(); } }).catch(() => {});
+</script>
+</body>
+</html>

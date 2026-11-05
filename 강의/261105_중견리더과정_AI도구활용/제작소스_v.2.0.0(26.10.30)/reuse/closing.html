@@ -1,0 +1,64 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/><script src="gsap.min.js"></script><style>@font-face{font-family:"Pretendard";src:url("PretendardVariable.woff2") format("woff2");font-weight:100 900}
+*{margin:0;padding:0;box-sizing:border-box}html,body{width:1920px;height:1080px;overflow:hidden;background:#0c0b0b}
+#root{width:100%;height:100%;position:relative;font-family:"Pretendard",sans-serif;color:#f4f4f2;background:#0c0b0b url(bg.png) center/cover no-repeat}
+.a{position:absolute}
+.acc{color:#ff5a1f}.cap{color:#a59f98}.dim{color:#8a847e}.body{color:#d6d2c9}
+.ghost{position:absolute;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.13);font-weight:900;letter-spacing:-.04em;line-height:1;white-space:nowrap}
+.blk{font-weight:900;letter-spacing:-.035em}
+.tag{position:absolute;left:110px;top:92px;font-size:22px;letter-spacing:.12em;white-space:nowrap}
+.tag b{color:#ff5a1f}.tag span{color:#8a847e}
+.ttl{position:absolute;left:110px;top:130px;width:1640px;font-size:66px;font-weight:900;letter-spacing:-.03em;line-height:1.25;white-space:nowrap}
+.hl{position:absolute;height:1px;background:#55504c;transform-origin:left}
+.hl2{position:absolute;height:1px;background:#3a3533;transform-origin:left}
+.vl{position:absolute;width:1px;background:#55504c;transform-origin:top}
+.sq{position:absolute;border:3px solid #f4f4f2}
+.card{position:absolute;background:#1d1a19;border:1.5px solid #3a3533;border-radius:29px}
+.card.hi{background:#2a2523;border:4px solid #ff5a1f}
+.mask{display:block;overflow:hidden}.mask>span{display:block}
+.ch{display:inline-block;white-space:pre}
+*{word-break:keep-all;overflow-wrap:break-word}
+.cur{position:absolute;width:46px;height:46px;z-index:20}
+.rip{position:absolute;width:90px;height:90px;border-radius:50%;border:4px solid #ff5a1f;z-index:19}
+.flash{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#fff;opacity:0;z-index:30;pointer-events:none}
+</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1920" data-height="1080">
+<div class="a c-lb dim clip" style="left:150px;top:108px;font-size:22px;letter-spacing:.3em" data-start="0" data-duration="7" data-track-index="0">CLOSING</div>
+<div class="hl c-hl clip" style="left:150px;top:170px;width:1620px" data-start="0" data-duration="7" data-track-index="1"></div>
+<div data-sq=".c-t" class="sq c-sq clip" data-start="0" data-duration="7" data-track-index="2"></div>
+<div class="a c-t blk clip" style="left:150px;top:350px;font-size:140px;line-height:1.05" data-start="0" data-duration="7" data-track-index="3"><span class="mask"><span>AI는 선택이 아닌</span></span><span class="mask"><span><span class="acc c-must" style="position:relative;display:inline-block">필수<i class="c-ul" style="position:absolute;left:0;right:0;bottom:6px;height:10px;background:#ff5a1f;transform-origin:left"></i></span>입니다</span></span></div>
+<div class="a c-s clip" style="left:150px;top:760px;font-size:36px;color:#cbc5ba;line-height:1.3;white-space:pre-line" data-start="0" data-duration="7" data-track-index="4">도구보다 일하는 방식,
+그 변화는 리더에게서 시작됩니다</div>
+<div class="vl c-vl clip" style="left:1280px;top:300px;height:600px" data-start="0" data-duration="7" data-track-index="5"></div>
+<div class="a c-rc clip" style="left:1340px;top:300px;width:470px;height:200px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="6"><div class="a acc" style="top:28px;font-size:28px;font-weight:700">01</div><div class="a blk" style="top:70px;font-size:46px">써 보기</div><div class="a cap" style="top:136px;font-size:24px">말로 만든 업무 도구</div></div>
+<div class="a c-rc clip" style="left:1340px;top:500px;width:470px;height:200px;border-bottom:1px solid #3a3533" data-start="0" data-duration="7" data-track-index="7"><div class="a acc" style="top:28px;font-size:28px;font-weight:700">02</div><div class="a blk" style="top:70px;font-size:46px">알아보기</div><div class="a cap" style="top:136px;font-size:24px">대답하는 AI에서 일하는 AI로</div></div>
+<div class="a c-rc clip" style="left:1340px;top:700px;width:470px;height:200px" data-start="0" data-duration="7" data-track-index="8"><div class="a acc" style="top:28px;font-size:28px;font-weight:700">03</div><div class="a blk" style="top:70px;font-size:46px">바꾸기</div><div class="a cap" style="top:136px;font-size:24px">제도 · 기관장 · 현장의 변화</div></div>
+</div>
+<script>
+const tl=gsap.timeline({paused:true});
+tl.from(".c-lb",{opacity:0,duration:.5},0).from(".c-hl",{scaleX:0,duration:1,ease:"power2.inOut"},0).from(".c-sq",{opacity:0,scale:.3,rotation:-90,duration:.7,ease:"back.out(1.8)"},.3).from(".c-t .mask>span",{yPercent:105,duration:.9,stagger:.25,ease:"power3.out"},.4).from(".c-ul",{scaleX:0,duration:.7,ease:"power3.out"},1.5).fromTo(".c-must",{scale:1},{scale:1.08,transformOrigin:"left bottom",duration:.35,yoyo:true,repeat:1,ease:"sine.inOut"},1.6).from(".c-s",{opacity:0,y:24,duration:.7},1.7).from(".c-vl",{scaleY:0,duration:.9,ease:"power2.inOut"},1.0).from(".c-rc",{opacity:0,x:60,duration:.6,stagger:.25,ease:"power3.out"},1.4);
+window.__timelines["main"]=tl;
+(function(){
+if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);
+function firstText(el){const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.trim()?1:3});return w.nextNode();}
+function place(){
+  const st=document.createElement('style'); st.textContent='#root *{transform:none!important;translate:none!important;scale:none!important;rotate:none!important}'; document.head.appendChild(st);
+  const cv=document.createElement('canvas').getContext('2d');
+  document.querySelectorAll('[data-sq]').forEach(sq=>{
+    const el=document.querySelector(sq.dataset.sq); if(!el) return; const tn=firstText(el); if(!tn) return;
+    let i=0; while(i<tn.nodeValue.length && /\s/.test(tn.nodeValue[i])) i++;
+    const ch=tn.nodeValue[i]; const r=document.createRange(); r.setStart(tn,i); r.setEnd(tn,i+1); const b=r.getBoundingClientRect();
+    const cs=getComputedStyle(tn.parentElement); const f=parseFloat(cs.fontSize);
+    cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily; const m=cv.measureText(ch);
+    const base=b.top+(m.fontBoundingBoxAscent||0.93*f);
+    const inkTop=base-m.actualBoundingBoxAscent, inkLeft=b.left-m.actualBoundingBoxLeft;
+    const s=Math.round(Math.max(40,Math.min(90,0.45*f))), T=Math.max(3,Math.round(0.06*s)), c='#f4f4f2', g='linear-gradient('+c+','+c+')';
+    const dx=parseFloat(sq.dataset.dx||0)*f, dy=parseFloat(sq.dataset.dy||0)*f; sq.style.left=(inkLeft-0.55*s+dx)+'px'; sq.style.top=(inkTop-0.55*s+dy)+'px'; sq.style.width=s+'px'; sq.style.height=s+'px';
+    sq.style.right='auto'; sq.style.bottom='auto'; sq.style.border='none';
+    sq.style.background=g+' left top/100% '+T+'px no-repeat,'+g+' left top/'+T+'px 100% no-repeat,'+g+' right top/'+T+'px 25% no-repeat,'+g+' left bottom/30% '+T+'px no-repeat';
+  });
+  st.remove();
+}
+place(); if(document.fonts) document.fonts.ready.then(place);
+})();
+tl.seek(0);
+</script></body></html>

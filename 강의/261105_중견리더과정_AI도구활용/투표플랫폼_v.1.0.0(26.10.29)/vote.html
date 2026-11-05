@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{--bg:#0c0b0b;--card:#1d1a19;--line:#3a3533;--fg:#f4f4f2;--sub:#a59f98;--acc:#ff5a1f}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;word-break:keep-all}
+html,body{background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,-apple-system,sans-serif;min-height:100%}
+body{background:radial-gradient(ellipse 90% 60% at 50% 0%,#2a2725 0%,#151312 60%,#0c0b0b 100%) fixed;min-height:100vh}
+.wrap{max-width:560px;margin:0 auto;padding:22px 18px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.2em;color:#8a847e}
+.top b{color:var(--acc);font-weight:800}
+.part{margin-top:34px;font-size:14px;font-weight:800;letter-spacing:.2em;color:var(--acc)}
+h1{margin-top:10px;font-size:30px;font-weight:900;line-height:1.3;letter-spacing:-.02em}
+.sq{display:inline-block;width:18px;height:18px;border-left:3px solid var(--fg);border-top:3px solid var(--fg);margin-right:6px;vertical-align:top;transform:translateY(-4px)}
+.opts{margin-top:26px;display:grid;gap:12px}
+.opt{width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:20px;padding:20px 20px;font-size:20px;font-weight:700;font-family:inherit;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .1s,border-color .2s,background .2s}
+.opt:active{transform:scale(.98)}
+.opt i{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid #55504c;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:16px;font-weight:900;color:var(--sub)}
+.opt.on{border-color:var(--acc);background:#2a2523}
+.opt.on i{background:var(--acc);border-color:var(--acc);color:#111}
+.opt.right{border-color:var(--acc);box-shadow:0 0 0 4px rgba(255,90,31,.2)}
+.big2{grid-template-columns:1fr 1fr}.big2 .opt{flex-direction:column;justify-content:center;text-align:center;padding:34px 10px;font-size:24px}
+textarea{width:100%;margin-top:26px;min-height:120px;border-radius:20px;border:1.5px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-size:20px;padding:18px;resize:none;outline:none}
+textarea:focus{border-color:var(--acc)}
+.send{margin-top:12px;width:100%;border:none;border-radius:999px;background:var(--acc);color:#111;font:inherit;font-size:20px;font-weight:900;padding:18px}
+.msg{margin-top:20px;min-height:24px;text-align:center;font-size:16px;color:var(--sub)}
+.msg.ok{color:var(--acc);font-weight:800}
+.wait{margin-top:90px;text-align:center}
+.wait h2{font-size:26px;font-weight:900;line-height:1.4}
+.wait p{margin-top:14px;color:var(--sub);font-size:16px;line-height:1.6}
+.dots{display:inline-flex;gap:8px;margin-top:26px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--acc);animation:b 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes b{0%,100%{opacity:.2}50%{opacity:1}}
+.foot{margin-top:40px;text-align:center;font-size:12px;color:#5f5955;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><span><b>AI 특강</b> · 제23기 중견리더과정</span><span id="net"></span></div>
+  <div id="app"></div>
+  <div class="foot">이 페이지도 AI에게 말로 주문해서 만들었습니다</div>
+</div>
+<script>
+const Q = <?!= questionsJson ?>;
+const QM = {}; Q.forEach(q => QM[q.id] = q);
+let uid = null;
+try { uid = localStorage.getItem('aiuid'); } catch (e) {}
+if (!uid) { uid = 'u' + Math.random().toString(36).slice(2) + Date.now().toString(36); try { localStorage.setItem('aiuid', uid); } catch (e) {} }
+const mine = (() => { try { return JSON.parse(localStorage.getItem('aimine') || '{}'); } catch (e) { return {}; } })();
+const saveMine = () => { try { localStorage.setItem('aimine', JSON.stringify(mine)); } catch (e) {} };
+let state = { cur: null, reveal: false, rev: -1 }, shown = null, busy = false;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function render() {
+  const q = QM[state.cur];
+  shown = state.cur + ':' + state.reveal;
+  if (!q) {
+    $('#app').innerHTML = '<div class="wait"><h2>강의 화면을 봐 주세요</h2><p>문제가 나오면 이 화면에<br>자동으로 나타납니다</p><div class="dots"><i></i><i></i><i></i></div></div>';
+    return;
+  }
+  let h = `<div class="part">${esc(q.part)}</div><h1><span class="sq"></span>${esc(q.title)}</h1>`;
+  if (q.type === 'text') {
+    h += `<textarea id="tx" maxlength="60" placeholder="예) 회의 녹음을 회의록으로">${esc(mine[q.id] || '')}</textarea><button class="send" onclick="sendText()">보내기</button>`;
+  } else {
+    h += `<div class="opts ${q.options.length === 2 ? 'big2' : ''}">` + q.options.map((o, i) => {
+      const cls = (mine[q.id] === i ? ' on' : '') + (state.reveal && q.answer === i ? ' right' : '');
+      return `<button class="opt${cls}" onclick="vote(${i})"><i>${i + 1}</i><span>${esc(o)}</span></button>`;
+    }).join('') + '</div>';
+  }
+  const done = mine[q.id] !== undefined;
+  let m = done ? '✓ 투표했습니다 — 바꾸려면 다시 누르세요' : '';
+  if (state.reveal && q.answer !== null && q.answer !== undefined) m = (mine[q.id] === q.answer ? '🎉 정답입니다!' : '정답은 「' + q.options[q.answer] + '」');
+  if (q.type === 'text' && done) m = '✓ 보냈습니다 — 화면을 봐 주세요';
+  h += `<div class="msg ${done ? 'ok' : ''}" id="msg">${esc(m)}</div>`;
+  $('#app').innerHTML = h;
+}
+
+function vote(i) {
+  const q = QM[state.cur]; if (!q || busy) return;
+  busy = true; const prev = mine[q.id]; mine[q.id] = i; render(); $('#msg').textContent = '보내는 중…';
+  google.script.run.withSuccessHandler(r => {
+    busy = false;
+    if (!r.ok) { if (prev === undefined) delete mine[q.id]; else mine[q.id] = prev; render(); $('#msg').textContent = r.msg; return; }
+    saveMine(); render();
+  }).withFailureHandler(() => { busy = false; if (prev === undefined) delete mine[q.id]; else mine[q.id] = prev; render(); $('#msg').textContent = '연결이 잠깐 끊겼어요. 다시 눌러 주세요'; })
+    .submit(q.id, uid, i);
+}
+
+function sendText() {
+  const q = QM[state.cur]; const v = $('#tx').value.trim(); if (!q || !v || busy) return;
+  busy = true; $('#msg').textContent = '보내는 중…';
+  google.script.run.withSuccessHandler(r => {
+    busy = false; if (!r.ok) { $('#msg').textContent = r.msg; return; }
+    mine[q.id] = v; saveMine(); render();
+  }).withFailureHandler(() => { busy = false; $('#msg').textContent = '연결이 잠깐 끊겼어요. 다시 보내 주세요'; }).submit(q.id, uid, v);
+}
+
+function poll() {
+  if (document.hidden) return setTimeout(poll, 3000);
+  google.script.run.withSuccessHandler(s => {
+    $('#net').textContent = '';
+    state = s;
+    const typing = document.activeElement && document.activeElement.id === 'tx';
+    if (shown !== s.cur + ':' + s.reveal && !(typing && shown && shown.startsWith(s.cur + ':'))) render();
+    setTimeout(poll, 3000);
+  }).withFailureHandler(() => { $('#net').textContent = '재연결 중'; setTimeout(poll, 5000); }).getState();
+}
+render(); poll();
+</script>
+</body>
+</html>

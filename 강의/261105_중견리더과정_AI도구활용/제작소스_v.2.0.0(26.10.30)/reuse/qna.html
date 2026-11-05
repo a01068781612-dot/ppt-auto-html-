@@ -1,0 +1,65 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1920, height=1080"/><script src="gsap.min.js"></script><style>@font-face{font-family:"Pretendard";src:url("PretendardVariable.woff2") format("woff2");font-weight:100 900}
+*{margin:0;padding:0;box-sizing:border-box}html,body{width:1920px;height:1080px;overflow:hidden;background:#0c0b0b}
+#root{width:100%;height:100%;position:relative;font-family:"Pretendard",sans-serif;color:#f4f4f2;background:#0c0b0b url(bg.png) center/cover no-repeat}
+.a{position:absolute}
+.acc{color:#ff5a1f}.cap{color:#a59f98}.dim{color:#8a847e}.body{color:#d6d2c9}
+.ghost{position:absolute;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.13);font-weight:900;letter-spacing:-.04em;line-height:1;white-space:nowrap}
+.blk{font-weight:900;letter-spacing:-.035em}
+.tag{position:absolute;left:110px;top:92px;font-size:22px;letter-spacing:.12em;white-space:nowrap}
+.tag b{color:#ff5a1f}.tag span{color:#8a847e}
+.ttl{position:absolute;left:110px;top:130px;width:1640px;font-size:66px;font-weight:900;letter-spacing:-.03em;line-height:1.25;white-space:nowrap}
+.hl{position:absolute;height:1px;background:#55504c;transform-origin:left}
+.hl2{position:absolute;height:1px;background:#3a3533;transform-origin:left}
+.vl{position:absolute;width:1px;background:#55504c;transform-origin:top}
+.sq{position:absolute;border:3px solid #f4f4f2}
+.card{position:absolute;background:#1d1a19;border:1.5px solid #3a3533;border-radius:29px}
+.card.hi{background:#2a2523;border:4px solid #ff5a1f}
+.mask{display:block;overflow:hidden}.mask>span{display:block}
+.ch{display:inline-block;white-space:pre}
+*{word-break:keep-all;overflow-wrap:break-word}
+.cur{position:absolute;width:46px;height:46px;z-index:20}
+.rip{position:absolute;width:90px;height:90px;border-radius:50%;border:4px solid #ff5a1f;z-index:19}
+.flash{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#fff;opacity:0;z-index:30;pointer-events:none}
+</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="6" data-width="1920" data-height="1080">
+<div data-sq=".z-q" class="sq z-sq clip" data-start="0" data-duration="6" data-track-index="8"></div>
+<div class="a z-q blk clip" style="left:110px;top:150px;font-size:230px;line-height:1.1" data-start="0" data-duration="6" data-track-index="0"><span class="ch">Q</span><span class="ch">&</span><span class="ch">A</span></div>
+<div class="a z-ty blk clip" style="left:110px;top:420px;font-size:110px;color:#2a2725" data-start="0" data-duration="6" data-track-index="1">Thank you.</div>
+<div class="a z-s clip" style="left:110px;top:600px;font-size:36px;color:#cbc5ba" data-start="0" data-duration="6" data-track-index="2">궁금하신 점을 편하게 물어봐 주세요</div>
+<div class="hl z-l clip" style="left:110px;top:700px;width:760px" data-start="0" data-duration="6" data-track-index="3"></div>
+<div class="a z-r clip" style="left:110px;top:700px;width:760px;height:76px;border-bottom:1px solid #3a3533" data-start="0" data-duration="6" data-track-index="4"><div class="a dim" style="left:0;top:24px;font-size:20px;font-weight:700;letter-spacing:.3em">WEB</div><div class="a" style="left:140px;top:16px;font-size:30px;font-weight:700">ssca1612.pages.dev</div></div>
+<div class="a z-r clip" style="left:110px;top:776px;width:760px;height:76px;border-bottom:1px solid #3a3533" data-start="0" data-duration="6" data-track-index="5"><div class="a dim" style="left:0;top:24px;font-size:20px;font-weight:700;letter-spacing:.3em">BLOG</div><div class="a" style="left:140px;top:16px;font-size:30px;font-weight:700">blog.naver.com/ai-sobang</div></div>
+<div class="a z-r clip" style="left:110px;top:852px;width:760px;height:76px;border-bottom:1px solid #3a3533" data-start="0" data-duration="6" data-track-index="6"><div class="a dim" style="left:0;top:24px;font-size:20px;font-weight:700;letter-spacing:.3em">MAIL</div><div class="a" style="left:140px;top:16px;font-size:30px;font-weight:700">ssca1612@korea.kr</div></div>
+<div class="a z-fr clip" style="left:960px;top:230px;width:850px;height:620px;border:1.5px solid #55504c" data-start="0" data-duration="6" data-track-index="7"></div>
+<div class="a z-qr clip" style="left:990px;top:270px;width:790px;height:461px" data-start="0" data-duration="6" data-track-index="9"><img src="qr_card.png" style="width:100%;height:100%"/></div>
+<div class="a z-c cap clip" style="left:990px;top:770px;width:790px;text-align:center;font-size:26px" data-start="0" data-duration="6" data-track-index="10">QR을 찍으면 수상작·강의 자료로 바로 연결됩니다</div>
+</div>
+<script>
+const tl=gsap.timeline({paused:true});
+tl.from(".z-q .ch",{opacity:0,y:-160,duration:.8,stagger:.15,ease:"bounce.out"},0).from(".z-ty",{opacity:0,x:-120,duration:1.1,ease:"power3.out"},.6).from(".z-s",{opacity:0,y:20,duration:.6},1.0).from(".z-l",{scaleX:0,duration:.7},1.2).from(".z-r",{opacity:0,x:-40,duration:.5,stagger:.15},1.3).from(".z-fr",{clipPath:"inset(100% 0 0 0)",duration:1,ease:"power3.inOut"},.3).from(".z-sq",{opacity:0,scale:.3,rotation:-90,duration:.7,ease:"back.out(1.8)"},.9).from(".z-qr",{opacity:0,rotationY:-90,transformPerspective:1600,duration:1,ease:"power3.out"},1.0).from(".z-c",{opacity:0,duration:.6},1.8);
+window.__timelines["main"]=tl;
+(function(){
+if(document.querySelector('.sqn')) tl.from('.sqn',{opacity:0,scale:.4,rotation:-45,duration:.6,ease:'back.out(1.8)'},0.5);
+function firstText(el){const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.trim()?1:3});return w.nextNode();}
+function place(){
+  const st=document.createElement('style'); st.textContent='#root *{transform:none!important;translate:none!important;scale:none!important;rotate:none!important}'; document.head.appendChild(st);
+  const cv=document.createElement('canvas').getContext('2d');
+  document.querySelectorAll('[data-sq]').forEach(sq=>{
+    const el=document.querySelector(sq.dataset.sq); if(!el) return; const tn=firstText(el); if(!tn) return;
+    let i=0; while(i<tn.nodeValue.length && /\s/.test(tn.nodeValue[i])) i++;
+    const ch=tn.nodeValue[i]; const r=document.createRange(); r.setStart(tn,i); r.setEnd(tn,i+1); const b=r.getBoundingClientRect();
+    const cs=getComputedStyle(tn.parentElement); const f=parseFloat(cs.fontSize);
+    cv.font=cs.fontWeight+' '+f+'px '+cs.fontFamily; const m=cv.measureText(ch);
+    const base=b.top+(m.fontBoundingBoxAscent||0.93*f);
+    const inkTop=base-m.actualBoundingBoxAscent, inkLeft=b.left-m.actualBoundingBoxLeft;
+    const s=Math.round(Math.max(40,Math.min(90,0.45*f))), T=Math.max(3,Math.round(0.06*s)), c='#f4f4f2', g='linear-gradient('+c+','+c+')';
+    const dx=parseFloat(sq.dataset.dx||0)*f, dy=parseFloat(sq.dataset.dy||0)*f; sq.style.left=(inkLeft-0.55*s+dx)+'px'; sq.style.top=(inkTop-0.55*s+dy)+'px'; sq.style.width=s+'px'; sq.style.height=s+'px';
+    sq.style.right='auto'; sq.style.bottom='auto'; sq.style.border='none';
+    sq.style.background=g+' left top/100% '+T+'px no-repeat,'+g+' left top/'+T+'px 100% no-repeat,'+g+' right top/'+T+'px 25% no-repeat,'+g+' left bottom/30% '+T+'px no-repeat';
+  });
+  st.remove();
+}
+place(); if(document.fonts) document.fonts.ready.then(place);
+})();
+tl.seek(0);
+</script></body></html>
